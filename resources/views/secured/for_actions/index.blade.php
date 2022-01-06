@@ -22,7 +22,11 @@
       <section class="content container-fluid">
         <div class="box box-default">
           <div class="box-header with-border">
+<<<<<<< HEAD
             <img id="" src="../img/tools.jpg" style="width:38px;"> <b>Applications for Action - </b>
+=======
+            <img id="" src="../../img/Tools.jpg" style="width:38px;"> <b>Applications for Action - </b>
+>>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
           </div>
           <div class="box-body">
           <div class="box-header">

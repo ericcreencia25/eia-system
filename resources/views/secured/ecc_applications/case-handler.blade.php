@@ -1,23 +1,29 @@
 @extends('layouts.adminlte.default.layout')
 
 @section('header')
-    <section class="content-header">
-        <h1 class="hidden-sm">
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-cog"></i>ECC Applications</a></li>
-        </ol>
-    </section>
+<section class="content-header">
+  <h1 class="hidden-sm">
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-cog"></i>ECC Applications</a></li>
+  </ol>
+</section>
 @stop
 
 @section('content')
-    <div class="content-wrapper">
-      <!-- Main content -->
-      <section class="content container-fluid">
-        <div class="box">
-          <div class="box-header with-border">
-            <img id="" src="../img/doc1.jpg" style="width:38px;"><h1 class="box-title"><b>ECC APPLICATIONS</b></h1>
+<div class="content-wrapper">
+  <!-- Main content -->
+  <section class="content container-fluid">
+    <div class="box">
+      <div class="box-header with-border">
+        <img id="" src="../img/doc1.jpg" style="width:38px;"><h1 class="box-title"><b>ECC APPLICATIONS</b></h1>
+      </div>
+      <div class="box-body">
+        <div class="col-md-9">
+          <div class="box-header">
+            Listed below are the ECC Applications. Click the corresponding folder icon to view attachments or the select icon to view details.
           </div>
+<<<<<<< HEAD
           <div class="box-body">
             <div class="col-md-9">
               <div class="box-header">
@@ -46,10 +52,35 @@
                   <tbody></tbody>
                 </table> 
               </div>
+=======
+        </div>
+        <div class="col-md-3">
+          <select class="form-control pull-right" id="status_filter" >
+            <option value="Pending All">Pending All</option>
+            <option value="Pending with Proponents">Pending with Proponents</option>
+            <option value="Pending with EMB" selected>Pending with EMB</option>
+            <option value="Decided">Decided</option>
+            <option value="Approved">Approved</option>
+            <option value="Approved (Auto)">Approved (Auto)</option>
+            <option value="Denied">Denied</option>
+          </select>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body no-padding">
+          <table class="table table-bordered" id="ECCApplicationsTable" style="width: 100%;  display: table; table-layout: fixed;">
+            <thead>
+              <th style="width: 50%">Details</th>
+              <th style="width: 20%">Status</th>
+              <th style="width: 30%">Remarks</th>
+            </thead>
+            <tbody></tbody>
+          </table>
+>>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
         </div>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
+</div>
 @stop
 <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
@@ -74,6 +105,7 @@ var UserName = "{{session('data')['UserName']}}";
 var UserRole = "{{session('data')['UserRole']}}";
 
 $(document).ready(function(){
+<<<<<<< HEAD
     var status_filter = $("#status_filter").val();
 
     dataTable(status_filter);
@@ -84,12 +116,24 @@ $(document).ready(function(){
     });
     
   });
+=======
+  var status_filter = $("#status_filter").val();
+
+  dataTable(status_filter);
+
+  $("#status_filter").on('change', function() {
+    var status_filter = $("#status_filter").val();
+    dataTable(status_filter);
+  });
+});
+>>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
 
 function dataTable(status_filter){
   $('#ECCApplicationsTable').DataTable({
     destroy:true,
     processing:true,
     info:true,
+<<<<<<< HEAD
     searching: false,
     ordering: false,
     bPaginate: false,
@@ -99,6 +143,17 @@ function dataTable(status_filter){
     bAutoWidth: false,
     ajax: {
       "url": "{{route('get.ecc.applications')}}",
+=======
+    searching: true,
+    ordering: false,
+    bPaginate: true,
+    bLengthChange: true,
+    bFilter: true,
+    bInfo: true,
+    bAutoWidth: false,
+    ajax: {
+      "url": "{{route('get.ecc.applications.casehandler')}}",
+>>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
       "type": "POST",
       "data": {
         UserName : UserName,

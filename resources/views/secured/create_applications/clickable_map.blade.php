@@ -162,7 +162,12 @@
       var view = new MapView({
         container: "viewDiv",
         map: map,
+<<<<<<< HEAD
         center: center_location, // longitude, latitude
+=======
+        // center: [center_location], // longitude, latitude
+        center:[-118.821527826096, 34.0139576938577],
+>>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
         zoom: 18
       });
       
@@ -195,6 +200,31 @@
         graphicsLayer.add(polygonGraphic1);
       }
 
+<<<<<<< HEAD
+=======
+      var simpleLineSymbol = {
+         type: "simple-line",
+         color: [226, 119, 40], // orange
+         width: 2
+       };
+
+       var polyline = {
+         type: "polyline",
+         paths: [
+           [-118.821527826096, 34.0139576938577],
+           [-118.814893761649, 34.0080602407843],
+           [-118.808878330345, 34.0016642996246]
+         ]
+       };
+
+       var polylineGraphic = new Graphic({
+         geometry: polyline,
+         symbol: simpleLineSymbol
+       });
+
+       graphicsLayer.add(polylineGraphic);
+
+>>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
       /*******************************************************************
       * This click event sets generic content on the popup not tied to
       * a layer, graphic, or popupTemplate. The location of the point is

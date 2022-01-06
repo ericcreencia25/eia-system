@@ -50,6 +50,12 @@
                     <div style="padding-top:20px; padding-bottom:20px;">
                         <b>Recent Activity:</b> <a  href="" style="text-decoration:none;" id="remarks"></a> 
                     </div>
+<<<<<<< HEAD
+=======
+
+                @if($project['RoutedTo'] == Session::get('data')['UserName'])
+                    
+>>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
                     <div id="ContentPlaceHolder1_dvRouting">
                         <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;  cursor:pointer;">RETURN THIS APPLICATION TO EMB</div>
                         <br>
@@ -97,6 +103,11 @@
                         <br>
                         <br>
                     </div>
+<<<<<<< HEAD
+=======
+                    @endif
+                    <!--- END IF ELSE ---->
+>>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
                     <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">Routing History
                     </div>
                     <table class="table table-bordered" id="RoutingHistoryTable">
