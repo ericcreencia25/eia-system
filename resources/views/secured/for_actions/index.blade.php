@@ -22,7 +22,7 @@
       <section class="content container-fluid">
         <div class="box box-default">
           <div class="box-header with-border">
-            <img id="" src="../img/tools.jpg" style="width:38px;"> <b>Applications for Action - </b>
+            <img id="" src="../../img/Tools.jpg" style="width:38px;"> <b>Applications for Action - </b>
           </div>
           <div class="box-body">
           <div class="box-header">
