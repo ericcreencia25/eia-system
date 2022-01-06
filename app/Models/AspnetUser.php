@@ -9,7 +9,7 @@ class AspnetUser extends Model
 {
     protected $connection = 'mysql';
     
-    protected $table = 'aspnet_Users';
+    protected $table = 'aspnet_users';
     use HasFactory;
 
     protected $fillable = [

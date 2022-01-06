@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectGeoCoordinates extends Model
 {   
-    protected $table = 'ProjectGeocoordinates';
+    protected $table = 'projectgeocoordinates';
     use HasFactory;
 
     protected $fillable = [

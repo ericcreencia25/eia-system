@@ -18,13 +18,15 @@ class CustomAuth
     public function handle(Request $request, Closure $next)
     {
         $path = $request->path();
-        if(($path == 'login' && Session::get('data') != null)){
+        $paths = explode("/",$path);
+
+        if(($paths[0] == 'login' && Session::get('data') != null) || ($paths[0] == 'welcome' && Session::get('data') != null)){
             return redirect('default');
-        }
-        else if(($path != 'login' && !Session::get('data')) && ($path != 'login-user' && !Session::get('data'))){
-            // dd($path);
-            // dd(Session::get('data'));
-            return redirect('login');
+        }else if(
+            ($paths[0] != 'login' && !Session::get('data')) && 
+            ($paths[0] != 'login-user' && !Session::get('data')) && 
+            ($paths[0] != 'welcome' && !Session::get('data'))){
+            return redirect('welcome');
         }
 
         return $next($request);

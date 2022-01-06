@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProjectActivityAttachment extends Model
+class ProjectActivityAttachmentTemp extends Model
 {   
-    protected $table = 'projectactivityattachment';
+    protected $table = 'projectactivityattachmenttemp';
     use HasFactory;
 
     protected $fillable = [
