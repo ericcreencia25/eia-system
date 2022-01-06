@@ -2,109 +2,106 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>ECCOnline</title>
-  <!-- Tell the browser to be responsive to screen width -->
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <!-- Bootstrap 3.3.7 -->
-  <link rel="stylesheet" href="../../adminlte/bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AdminLTE 3 | Dashboard</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="../../adminlte/bower_components/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../../adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="../../adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="../../adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="../../adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <!-- Ionicons -->
-  <link rel="stylesheet" href="../../adminlte/bower_components/Ionicons/css/ionicons.min.css">
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- Tempusdominus Bootstrap 4 -->
+  <link rel="stylesheet" href="../../adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="../../adminlte-3.1.0/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- JQVMap -->
+  <link rel="stylesheet" href="../../adminlte-3.1.0/plugins/jqvmap/jqvmap.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="../../adminlte/dist/css/AdminLTE.min.css">
-  <!-- AdminLTE Skins. Choose a skin from the css/skins
-       folder instead of downloading all of them to reduce the load. -->
-  <link rel="stylesheet" href="../../adminlte/dist/css/skins/_all-skins.min.css">
+  <link rel="stylesheet" href="../../adminlte-3.1.0/dist/css/adminlte.min.css">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="../../adminlte-3.1.0/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+  <!-- Daterange picker -->
+  <link rel="stylesheet" href="../../adminlte-3.1.0/plugins/daterangepicker/daterangepicker.css">
+  <!-- summernote -->
+  <link rel="stylesheet" href="../../adminlte-3.1.0/plugins/summernote/summernote-bs4.min.css">
 
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
-
-  <!-- Google Font -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 </head>
 <!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
 <body class="hold-transition skin-blue layout-top-nav">
 <div class="wrapper">
 
-  <header class="main-header">
-    <nav class="navbar navbar-static-top">
-      <div class="container">
-        <div class="navbar-header">
-          <a href="../../index2.html" class="navbar-brand"><b>ECC</b></a>
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
-            <i class="fa fa-bars"></i>
-          </button>
-        </div>
+  <nav class="main-header navbar navbar-expand-md navbar-primary navbar-dark" style="background-color: #1E8CBE">
+    <div class="container">
+      <a href="../../index3.html" class="navbar-brand">
+        <span class="brand-text font-weight-light" style="color: white"><b>ECC</b></span>
+      </a>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="{{ url("Default") }}">For Action <span class="sr-only">(current)</span></a></li>
-            <li><a href="{{ url("ECCApplications") }}">ECC Applications</a></li>
-            <form class="navbar-form navbar-left" role="search">
-              <div class="form-group">
-                <input type="text" class="form-control" id="navbar-search-input" placeholder="Search Applications">
-              </div>
-            </form>
-            <li><a href="">Load ECC Dashboard</a></li>
-            <li><a href="">Go to CNC Online</a></li>
-          </ul>
-        </div>
-        <!-- /.navbar-collapse -->
-        <!-- Navbar Right Menu -->
-        <div class="navbar-custom-menu">
-          <ul class="nav navbar-nav">
-            <!-- Messages: style can be found in dropdown.less-->
-            
-            <!-- /.messages-menu -->
+      <button class="navbar-toggler order-1" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-            <!-- Notifications Menu -->
-            
-            <!-- Tasks Menu -->
-            
-            <!-- User Account Menu -->
-            <li class="dropdown user user-menu">
-              <!-- Menu Toggle Button -->
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <!-- The user image in the navbar-->
-                <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                <span class="hidden-xs">Alexander Pierce</span>
-              </a>
-              <ul class="dropdown-menu">
-                <!-- The user image in the menu -->
-                <li class="user-header">
+      <div class="collapse navbar-collapse order-3" id="navbarCollapse">
+        <!-- Left navbar links -->
+        <ul class="navbar-nav">
 
-                  <p>
-                    Alexander Pierce - Web Developer
-                    <small>Member since Nov. 2012</small>
-                  </p>
-                </li>
-                <!-- Menu Body -->
-                
-                <!-- Menu Footer-->
-                <li class="user-footer">
-                  <div class="pull-left">
-                    <a href="#" class="btn btn-default btn-flat">Profile</a>
-                  </div>
-                  <div class="pull-right">
-                    <a href="{{ url("logout") }}" class="btn btn-default btn-flat">Sign out</a>
-                  </div>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-        <!-- /.navbar-custom-menu -->
+
+          @if(session('data')['UserRole'] == 'Evaluator')
+              <li class="nav-item"><a href="{{ url("default") }}" class="nav-link" style="color: white">For Action <span class="sr-only">(current)</span></a></li>
+              <li class="nav-item"> <a href="{{ url("documents") }}" class="nav-link" style="color: white">ECC Applications</a></li>
+              <form class="navbar-form navbar-left" role="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="navbar-search-input" placeholder="Search Applications">
+                </div>
+              </form>
+              <li class="nav-item"><a href="" class="nav-link" style="color: white">Load ECC Dashboard</a></li>
+              <li class="nav-item"><a href="" class="nav-link" style="color: white">Go to CNC Online</a></li>
+              @else
+              <li class="nav-item"><a href="{{ url("default") }}" class="nav-link" style="color: white">For Action <span class="sr-only">(current)</span></a></li>
+              <li class="nav-item"><a href='' id="newApplication" class="nav-link" style="color: white">New Application</a></li>
+              <li class="nav-item"><a href="{{ url("documents") }}" class="nav-link" style="color: white">ECC Applications</a></li>
+              @endif
+        </ul>
       </div>
-      <!-- /.container-fluid -->
-    </nav>
-  </header>
+
+      <!-- Right navbar links -->
+      <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+        <!-- Messages Dropdown Menu -->
+        <!-- Notifications Dropdown Menu -->
+        <li class="nav-item dropdown">
+          <a class="nav-link" data-toggle="dropdown" href="#" style="color: white">
+            <i class="far fa-bell"> Welcome {{session('data')['UserName']}}</i>
+            <!-- <span class="badge badge-warning navbar-badge">15</span> -->
+          </a>
+          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <!-- <span class="dropdown-header">15 Notifications</span> -->
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">
+              <i class="fas fa-envelope mr-2"></i> Manage Account
+              <!-- <span class="float-right text-muted text-sm"></span> -->
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">
+              <i class="fas fa-users mr-2"></i> User's Manual
+              <!-- <span class="float-right text-muted text-sm">12 hours</span> -->
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="{{ url("logout") }}" class="dropdown-item">
+              <i class="fas fa-file mr-2"></i> Logout
+              <!-- <span class="float-right text-muted text-sm">2 days</span> -->
+            </a>
+            <div class="dropdown-divider"></div>
+            <!-- <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a> -->
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
   <!-- Full Width Column -->
 
   <div class="content-wrapper">
@@ -121,31 +118,84 @@
             <!-- /.content -->
         </div>
   
-  <!-- /.content-wrapper -->
-  <footer class="main-footer">
-    <div class="container">
-      <div class="pull-right hidden-xs">
-        <b>Version</b> 2.4.0
-      </div>
-      <strong>Copyright &copy; 2021 <a href="">Erik's Studio</a>.</strong> All rights
-      reserved.
-    </div>
-    <!-- /.container -->
-  </footer>
 </div>
 <!-- ./wrapper -->
 
-<!-- jQuery 3 -->
-<script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
-<!-- Bootstrap 3.3.7 -->
-<script src="../../adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- SlimScroll -->
-<script src="../../adminlte/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-<!-- FastClick -->
-<script src="../../adminlte/bower_components/fastclick/lib/fastclick.js"></script>
+<!-- jQuery -->
+<script src="../../adminlte-3.1.0/plugins/jquery/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="../../adminlte-3.1.0/plugins/jquery-ui/jquery-ui.min.js"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+<!-- Bootstrap 4 -->
+<script src="../../adminlte-3.1.0/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables  & Plugins -->
+<script src="../../adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="../../adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="../../adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="../../adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="../../adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="../../adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="../../adminlte-3.1.0/plugins/jszip/jszip.min.js"></script>
+<script src="../../adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="../../adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="../../adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="../../adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="../../adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<!-- ChartJS -->
+<script src="../../adminlte-3.1.0/plugins/chart.js/Chart.min.js"></script>
+<!-- Sparkline -->
+<script src="../../adminlte-3.1.0/plugins/sparklines/sparkline.js"></script>
+<!-- JQVMap -->
+<script src="../../adminlte-3.1.0/plugins/jqvmap/jquery.vmap.min.js"></script>
+<script src="../../adminlte-3.1.0/plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
+<!-- jQuery Knob Chart -->
+<script src="../../adminlte-3.1.0/plugins/jquery-knob/jquery.knob.min.js"></script>
+<!-- daterangepicker -->
+<script src="../../adminlte-3.1.0/plugins/moment/moment.min.js"></script>
+<script src="../../adminlte-3.1.0/plugins/daterangepicker/daterangepicker.js"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="../../adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<!-- Summernote -->
+<script src="../../adminlte-3.1.0/plugins/summernote/summernote-bs4.min.js"></script>
+<!-- overlayScrollbars -->
+<script src="../../adminlte-3.1.0/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
 <!-- AdminLTE App -->
-<script src="../../adminlte/dist/js/adminlte.min.js"></script>
+<script src="../../adminlte-3.1.0/dist/js/adminlte.js"></script>
 <!-- AdminLTE for demo purposes -->
-<script src="../../adminlte/dist/js/demo.js"></script>
+<script src="../../adminlte-3.1.0/dist/js/demo.js"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script src="../../adminlte-3.1.0/dist/js/pages/dashboard.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
 </body>
 </html>
+
+
+<script>
+
+  $(document).ready(function(){
+    $("#newApplication").click(function(){
+      var href = "NewDocument/";
+
+      $.ajax({url: "{{route('createNewGUID')}}", 
+        success: function(result){
+          document.location = href + result;
+        }});
+    });
+
+
+    // toastr.options = {
+    //   "debug": false,
+    //   "positionClass": "toast-bottom-left",
+    //   "onclick": null,
+    //   "fadeIn": 300,
+    //   "fadeOut": 1000,
+    //   "timeOut": 5000,
+    //   "extendedTimeOut": 1000,
+    // }
+
+  });
+</script>

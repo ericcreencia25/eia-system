@@ -9,7 +9,6 @@
                 <th style="width: 5%">Count</th>
                 <th style="width: 45%"> Requirements</th>
                 <th style="width: 30%">Files</th>
-                <th style="width: 20%">Action</th>
             </thead>
             <tbody></tbody>
         </table> 
@@ -43,7 +42,6 @@
           {data: 'Counts', name: 'Counts'},
           {data: 'Requirements', name: 'Requirements'},
           {data: 'Files', name: 'Files'},
-          {data: 'Action', name: 'Action'},
       ]
     })
 

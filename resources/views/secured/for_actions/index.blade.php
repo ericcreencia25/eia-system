@@ -4,11 +4,16 @@
     <section class="content-header">
         <h1 class="hidden-sm">
         </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-cog"></i>For Action</a></li>
-        </ol>
+        <!-- <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#"><i class="fa fa-cog"></i>For Action</a></li>
+        </ol> -->
     </section>
 @stop
+
+
+<style>
+  .pointer {cursor: pointer;}
+</style>
 
 @section('content')
 
@@ -17,7 +22,7 @@
       <section class="content container-fluid">
         <div class="box box-default">
           <div class="box-header with-border">
-            <img id="" src="../img/doc1.jpg" style="width:38px;"><h1 class="box-title"><b>Applications for Action   -  </b></h1>
+            <img id="" src="../img/tools.jpg" style="width:38px;"> <b>Applications for Action - </b>
           </div>
           <div class="box-body">
           <div class="box-header">
@@ -59,26 +64,55 @@
 var UserOffice = "{{session('data')['UserOffice']}}";
 var UserName = "{{session('data')['UserName']}}";
 var UserRole = "{{session('data')['UserRole']}}";
-  $(document).ready(function(){
-    $('#ForActionTable').DataTable({
-      processing:true,
-      info:true,
-       ajax: {
-            "url": "{{route('get.users.list')}}",
-            "type": "POST",
-            "data": {
-                UserName : UserName,
-                UserRole : UserRole,
-                UserOffice : UserOffice,
-                _token: '{{csrf_token()}}' ,
-            }, 
-        },
-      columns: [
-      {data: 'Details', name: 'Details'},
-      {data: 'Status', name: 'Status'},
-      {data: 'Remarks', name: 'Remarks'},
-      ]
-    })
+$(document).ready(function(){
+  ResetSession();
+  localStorage.clear();
 
+  $('#ForActionTable').DataTable({
+    processing:true,
+    info:true,
+    ajax: {
+      "url": "{{route('get.users.list')}}",
+      "type": "POST",
+      "data": {
+        UserName : UserName,
+        UserRole : UserRole,
+        UserOffice : UserOffice,
+        _token: '{{csrf_token()}}' ,
+      },
+    },
+    columns: [
+    {data: 'Details', name: 'Details'},
+    {data: 'Status', name: 'Status'},
+    {data: 'Remarks', name: 'Remarks'},
+    ]
   });
+});
+
+  function ResetSession(){
+    $.ajax({
+      url: "{{route('ResetInputs')}}",
+      type: 'GET',
+      success: function(response){
+      }
+    });
+  }
+
+  function NewDocument(result){
+    var href = "NewDocument/";
+
+    $.ajax({
+        url: "{{route('putExistingDataInSession')}}",
+        type: 'POST',
+        data: {
+          ProjectGUID : result,
+          _token: '{{csrf_token()}}' ,
+        },
+        success: function(response){
+          document.location = href + result;
+        }
+      });
+
+    
+  }
 </script>

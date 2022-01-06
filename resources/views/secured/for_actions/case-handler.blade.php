@@ -17,7 +17,23 @@
       <section class="content container-fluid">
         <div class="box box-default">
           <div class="box-header with-border">
-            <img id="" src="../img/doc1.jpg" style="width:38px;"><h1 class="box-title"><b>Applications for Action   -  </b></h1>
+            <div class="col-md-9">
+              <img id="" src="../img/doc1.jpg" style="width:38px;"><h1 class="box-title"><b>Applications for Action   -  </b></h1>
+            </div>
+            <div class="col-md-3">
+              <!-- <div class="form-group"> -->
+                <label>Date range:</label>
+
+                <div class="input-group">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right" id="reservation">
+                </div>
+                <!-- /.input group -->
+              <!-- </div> -->
+            </div>
+            
           </div>
           <div class="box-body">
           <div class="box-header">
@@ -60,27 +76,111 @@
 var UserOffice = "{{session('data')['UserOffice']}}";
 var UserName = "{{session('data')['UserName']}}";
 var UserRole = "{{session('data')['UserRole']}}";
-  $(document).ready(function(){
+
+$(document).ready(function(){
+  ResetSession();
+  localStorage.clear();
+  
+  var now = moment().format("YYYY/MM/DD");
+  var start_date = now;
+  var end_date = now;
+
+  var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+
+  //get First day of the current month
+  var firstDay = new Date(y, m, 1);
+  var FirstDate = getDateFormat(firstDay);
+
+  //get Last day of the current month
+  var lastDay = new Date(y, m + 1, 0);
+  var LastDate = getDateFormat(lastDay);
+
+  $('#CaseHandlerForActionTable').DataTable({
+    destroy : true,
+    processing:true,
+    info:true,
+    order: false,
+    ajax: {
+      "url": "{{route('getCaseHandlerForActionsTable')}}",
+      "type": "POST",
+      "data": {
+        UserName : UserName,
+        UserRole : UserRole,
+        UserOffice : UserOffice,
+        StartDate : FirstDate,
+        EndDate : LastDate,
+        _token: '{{csrf_token()}}' ,
+      },
+    },
+    columns: [
+    {data: 'Details', name: 'Details'},
+    {data: 'Status', name: 'Status'},
+    {data: 'Remarks', name: 'Remarks'},
+    {data: 'IncurredDate', name: 'IncurredDate'},
+    ]
+  });
+
+
+  $('#reservation').daterangepicker({
+    maxSpan: {"days":31},
+    locale : { format: 'YYYY-MM-DD' },
+    startDate : FirstDate,
+    endDate: LastDate
+  }, function(start,end,label){
+    start_date = start.format('YYYY-MM-DD');
+    end_date =  end.format('YYYY-MM-DD');
+  });
+
+  $('#reservation').on('change', function() {
+    var date_filter = $('#reservation').val();
+    var date_filter_split = date_filter.split(" - ");
+    var sd = date_filter_split[0];
+    var ed = date_filter_split[1];
+
     $('#CaseHandlerForActionTable').DataTable({
+      destroy : true,
       processing:true,
       info:true,
-       ajax: {
-            "url": "{{route('getCaseHandlerForActionsTable')}}",
-            "type": "POST",
-            "data": {
-                UserName : UserName,
-                UserRole : UserRole,
-                UserOffice : UserOffice,
-                _token: '{{csrf_token()}}' ,
-            }, 
+      order: false,
+      ajax: {
+        "url": "{{route('getCaseHandlerForActionsTable')}}",
+        "type": "POST",
+        "data": {
+          UserName : UserName,
+          UserRole : UserRole,
+          UserOffice : UserOffice,
+          StartDate : sd,
+          EndDate : ed,
+          _token: '{{csrf_token()}}' ,
         },
+      },
       columns: [
       {data: 'Details', name: 'Details'},
       {data: 'Status', name: 'Status'},
       {data: 'Remarks', name: 'Remarks'},
       {data: 'IncurredDate', name: 'IncurredDate'},
       ]
-    })
-
+    });
   });
+});
+
+
+function getDateFormat(FilterDate)
+{
+  var dd = String(FilterDate.getDate()).padStart(2, '0');
+  var mm = String(FilterDate.getMonth() + 1).padStart(2, '0');
+  var yyyy = FilterDate.getFullYear();
+
+  return yyyy + '/' + mm + '/' + dd;
+}
+
+function ResetSession(){
+    $.ajax({
+      url: "{{route('ResetInputs')}}",
+      type: 'GET',
+      success: function(response){
+      }
+    });
+  }
+
 </script>

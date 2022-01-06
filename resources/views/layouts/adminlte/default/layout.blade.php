@@ -15,7 +15,18 @@
   <link rel="stylesheet" href="../../adminlte/bower_components/Ionicons/css/ionicons.min.css">
   <!-- Theme style -->
 
+  <!-- daterange picker -->
+  <link rel="stylesheet" href="../../adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.css">
+  <!-- bootstrap datepicker -->
+  <link rel="stylesheet" href="../../adminlte/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+
+  <!-- Select2 -->
+  <link rel="stylesheet" href="../../adminlte/bower_components/select2/dist/css/select2.min.css">
+
   <link rel="stylesheet" href="../../adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+  <!-- jvectormap -->
+  <link rel="stylesheet" href="../../adminlte/bower_components/jvectormap/jquery-jvectormap.css">
+
   <link rel="stylesheet" href="../../adminlte/dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
@@ -30,6 +41,8 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 </head>
 <!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
 <body class="hold-transition skin-blue layout-top-nav">
@@ -60,7 +73,7 @@
               <li><a href="">Go to CNC Online</a></li>
               @else
               <li><a href="{{ url("default") }}">For Action <span class="sr-only">(current)</span></a></li>
-              <li><a href="{{ url("new_document") }}">New Application</a></li>
+              <li><a href='' id="newApplication">New Application</a></li>
               <li><a href="{{ url("documents") }}">ECC Applications</a></li>
               @endif
             
@@ -68,31 +81,30 @@
         </div>
         <div class="navbar-custom-menu">
           <ul class="nav navbar-nav">
-            <li class="dropdown user user-menu">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <span class="hidden-xs"> {{session('data')['UserName']}}</span>
-              </a>
-              <ul class="dropdown-menu">
-                <!-- The user image in the menu -->
-                <li class="user-header">
-                  {{session('data')['UserName']}}
-                  <p>
-                    <!-- <small>Member since Nov. 2012</small> -->
-                  </p>
-                </li>
-                <!-- Menu Body -->
-                
-                <!-- Menu Footer-->
-                <li class="user-footer">
-                  <div class="pull-left">
-                    <a href="#" class="btn btn-default btn-flat">Profile</a>
-                  </div>
-                  <div class="pull-right">
-                    <a href="{{ url("logout") }}" class="btn btn-default btn-flat">Sign out</a>
-                  </div>
-                </li>
-              </ul>
-            </li>
+            <li class="dropdown tasks-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <span class="hidden-xs"> <i class="fa fa-fw fa-user"></i> Welcome {{session('data')['UserName']}} </span>
+            </a>
+            <ul class="dropdown-menu">
+              
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                  <li><!-- Task item -->
+                    <a href="#">Manage Account
+                    </a>
+                  </li>
+                  <li><!-- Task item -->
+                    <a href="#">User's Manual</a>
+                  </li>
+                  <li><!-- Task item -->
+                    <a href="{{ url("logout") }}" >Sign out</a>
+                  </li>
+                  <!-- end task item -->
+                </ul>
+              </li>
+            </ul>
+          </li>
           </ul>
         </div>
         <!-- /.navbar-custom-menu -->
@@ -123,10 +135,23 @@
 <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="../../adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Select2 -->
+<script src="../../adminlte/bower_components/select2/dist/js/select2.full.min.js"></script>
+
 <!-- SlimScroll -->
 <script src="../../adminlte/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
 <script src="../../adminlte/bower_components/fastclick/lib/fastclick.js"></script>
+
+
+<!-- jvectormap  -->
+<script src="../../adminlte/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="../../adminlte/plugins/jvectormap/jquery-jvectormap-ph-mill-en.js"></script>
+
+<!-- date-range-picker -->
+<script src="../../adminlte/bower_components/moment/min/moment.min.js"></script>
+<script src="../../adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+<!-- bootstrap datepicker -->
 <!-- AdminLTE App -->
 <script src="../../adminlte/dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
@@ -135,5 +160,36 @@
 <!-- DataTables -->
 <script src="../../adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="../../adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
 </body>
 </html>
+
+
+<script>
+
+  $(document).ready(function(){
+    $("#newApplication").click(function(){
+      // var href = "NewDocument/";
+
+
+      $.ajax({url: "{{route('createNewGUID')}}", 
+        success: function(result){
+          document.location.href = "/NewDocument/" + result;
+        }});
+    });
+
+
+    // toastr.options = {
+    //   "debug": false,
+    //   "positionClass": "toast-bottom-left",
+    //   "onclick": null,
+    //   "fadeIn": 300,
+    //   "fadeOut": 1000,
+    //   "timeOut": 5000,
+    //   "extendedTimeOut": 1000,
+    // }
+
+  });
+</script>

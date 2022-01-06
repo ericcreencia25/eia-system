@@ -19,8 +19,21 @@
             <img id="" src="../img/doc1.jpg" style="width:38px;"><h1 class="box-title"><b>ECC APPLICATIONS</b></h1>
           </div>
           <div class="box-body">
+            <div class="col-md-9">
               <div class="box-header">
                 Listed below are the ECC Applications. Click the corresponding folder icon to view attachments or the select icon to view details.
+              </div>
+            </div>
+              <div class="col-md-3">
+                <select class="form-control pull-right" id="status_filter" >
+                  <option value="Pending All">Pending All</option>
+                  <option value="Pending with Proponents">Pending with Proponents</option>
+                  <option value="Pending with EMB" selected>Pending with EMB</option>
+                  <option value="Decided">Decided</option>
+                  <option value="Approved">Approved</option>
+                  <option value="Approved (Auto)">Approved (Auto)</option>
+                  <option value="Denied">Denied</option>
+                </select>
               </div>
               <!-- /.box-header -->
               <div class="box-body no-padding">
@@ -60,26 +73,46 @@ var UserOffice = "{{session('data')['UserOffice']}}";
 var UserName = "{{session('data')['UserName']}}";
 var UserRole = "{{session('data')['UserRole']}}";
 
-  $(document).ready(function(){
-    $('#ECCApplicationsTable').DataTable({
-      processing:true,
-      info:true,
-      ajax: {
-            "url": "{{route('get.ecc.applications')}}",
-            "type": "POST",
-            "data": {
-                UserName : UserName,
-                UserRole : UserRole,
-                UserOffice : UserOffice,
-                _token: '{{csrf_token()}}' ,
-            }, 
-        },
-      columns: [
-      {data: 'Details', name: 'Details'},
-      {data: 'Status', name: 'Status'},
-      {data: 'Remarks', name: 'Remarks'},
-      ]
-    })
+$(document).ready(function(){
+    var status_filter = $("#status_filter").val();
 
+    dataTable(status_filter);
+
+    $("#status_filter").on('change', function() {
+      var status_filter = $("#status_filter").val();
+      dataTable(status_filter);
+    });
+    
   });
+
+function dataTable(status_filter){
+  $('#ECCApplicationsTable').DataTable({
+    destroy:true,
+    processing:true,
+    info:true,
+    searching: false,
+    ordering: false,
+    bPaginate: false,
+    bLengthChange: true,
+    bFilter: true,
+    bInfo: false,
+    bAutoWidth: false,
+    ajax: {
+      "url": "{{route('get.ecc.applications')}}",
+      "type": "POST",
+      "data": {
+        UserName : UserName,
+        UserRole : UserRole,
+        UserOffice : UserOffice,
+        StatusFilter :status_filter,
+        _token: '{{csrf_token()}}' ,
+      },
+    },
+    columns: [
+    {data: 'Details', name: 'Details'},
+    {data: 'Status', name: 'Status'},
+    {data: 'Remarks', name: 'Remarks'},
+    ]
+  });
+}
 </script>
