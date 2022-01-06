@@ -26,9 +26,9 @@ class AspnetUserController extends Controller
 
     public function loginUser(Request $req)
     {
-        $user = AspnetUser::on('mysql')->where('aspnet_users.UserName', '=', $req->username)
-        ->where('aspnet_membership.Password', '=', $req->password )
-        ->leftJoin('aspnet_membership', 'aspnet_users.UserId', '=', 'aspnet_membership.UserId')
+        $user = AspnetUser::on('mysql')->where('aspnet_Users.UserName', '=', $req->username)
+        ->where('aspnet_Membership.Password', '=', $req->password )
+        ->leftJoin('aspnet_Membership', 'aspnet_Users.UserId', '=', 'aspnet_Membership.UserId')
         ->first();
         
         if($user){
