@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Component extends Model
 {
     protected $connection = 'mysql2';
-    protected $table = 'component';
+    protected $table = 'Component';
     use HasFactory;
 
     protected $fillable = [

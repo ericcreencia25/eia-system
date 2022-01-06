@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectApplicationRequirements extends Model
 {   
-    protected $table = 'project_applicationrequirements';
+    protected $table = 'Project_ApplicationRequirements';
     use HasFactory;
 
     protected $fillable = [
