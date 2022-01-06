@@ -86,35 +86,35 @@ class NewApplicationsController extends Controller
         $sess = $request->session()->get('data');
         $UserRole = $sess->UserRole;
         
-        $project = Project::where('project.GUID', '=', $GUID)
-        ->where('project.Stage', '=', 0 )
-        ->leftJoin('projectactivity', 'project.GUID', '=', 'projectactivity.ProjectGUID')
-        ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
-        ->select('project.Address AS Address',
-        'project.Municipality  AS Municipality',
-        'project.Province AS Province', 
-        'project.ProjectSize AS ProjectSize', 
-        'project.Address', 
-        'projectactivity.Status', 
-        'projectactivity.Details AS Remarks', 
-        'project.ProjectName', 
-        'project.Region AS Region', 
-        'projectactivity.RoutedTo', 
-        'projectactivity.RoutedFrom', 
-        'projectactivity.CreatedDate', 
-        'project.GUID AS ProjectGUID', 
-        'project.PreviousECCNo', 
-        'project.Purpose', 
-        'project.PriorTo1982', 
-        'project.InNIPAS', 
-        'project.Description', 
-        'project.ComponentGUID', 
-        'project.ZoneClassification',
-        'project.LandAreaInSqM',
-        'project.FootPrintAreaInSqM',
-        'project.NoOfEmployees',
-        'project.ProjectCost',
-        'proponent.*')
+        $project = Project::where('Project.GUID', '=', $GUID)
+        ->where('Project.Stage', '=', 0 )
+        ->leftJoin('projectactivity', 'Project.GUID', '=', 'ProjectActivity.ProjectGUID')
+        ->leftJoin('Proponent', 'Project.ProponentGUID', '=', 'Proponent.GUID')
+        ->select('Project.Address AS Address',
+        'Project.Municipality  AS Municipality',
+        'Project.Province AS Province', 
+        'Project.ProjectSize AS ProjectSize', 
+        'Project.Address', 
+        'ProjectActivity.Status', 
+        'ProjectActivity.Details AS Remarks', 
+        'Project.ProjectName', 
+        'Project.Region AS Region', 
+        'ProjectActivity.RoutedTo', 
+        'ProjectActivity.RoutedFrom', 
+        'ProjectActivity.CreatedDate', 
+        'Project.GUID AS ProjectGUID', 
+        'Project.PreviousECCNo', 
+        'Project.Purpose', 
+        'Project.PriorTo1982', 
+        'Project.InNIPAS', 
+        'Project.Description', 
+        'Project.ComponentGUID', 
+        'Project.ZoneClassification',
+        'Project.LandAreaInSqM',
+        'Project.FootPrintAreaInSqM',
+        'Project.NoOfEmployees',
+        'Project.ProjectCost',
+        'Proponent.*')
         ->first();
 
         if($UserRole == 'Evaluator'){
@@ -171,20 +171,20 @@ class NewApplicationsController extends Controller
         $ProjectGUID = $req['data'];
         
         $ProjectArea = ProjectArea::where('ProjectGUID', '=', $ProjectGUID)
-        ->leftJoin('projectgeocoordinates', 'projectarea.GUID', '=', 'projectgeocoordinates.AreaGUID')
+        ->leftJoin('ProjectGeocoordinates', 'ProjectArea.GUID', '=', 'ProjectGeocoordinates.AreaGUID')
         ->select(
-            'projectarea.GUID AS AreaGUID',
-            'projectarea.Area',
-            'projectarea.AreaType AS Type',
-            'projectgeocoordinates.LongDeg',
-            'projectgeocoordinates.LongMin',
-            'projectgeocoordinates.LongSec',
-            'projectgeocoordinates.LatDeg',
-            'projectgeocoordinates.LatMin',
-            'projectgeocoordinates.LatSec',
-            'projectgeocoordinates.Longitude',
-            'projectgeocoordinates.Latitude',
-            'projectgeocoordinates.Sorter',
+            'ProjectArea.GUID AS AreaGUID',
+            'ProjectArea.Area',
+            'ProjectArea.AreaType AS Type',
+            'ProjectGeocoordinates.LongDeg',
+            'ProjectGeocoordinates.LongMin',
+            'ProjectGeocoordinates.LongSec',
+            'ProjectGeocoordinates.LatDeg',
+            'ProjectGeocoordinates.LatMin',
+            'ProjectGeocoordinates.LatSec',
+            'ProjectGeocoordinates.Longitude',
+            'ProjectGeocoordinates.Latitude',
+            'ProjectGeocoordinates.Sorter',
         )
         ->orderByRaw('Sorter ASC')
         ->get();
