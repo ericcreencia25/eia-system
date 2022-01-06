@@ -11,8 +11,6 @@ div.col-md-6 {
 </style>
 
 <div class="box-body">
-  <button type="button" class="pull-right btn btn-default" id="sendEmail">Next    <i class="fa fa-arrow-circle-right" onclick="window.location='{{ url("new_applications/1") }}'"></i></button>
-  <button type="button" class="pull-right btn btn-default" id="sendEmail"><i class="fa fa-arrow-circle-left" onclick="window.location='{{ url("new_applications/1") }}'"></i>Previous</button>
   <h4><b>5.  BASIC PROJECT INFORMATION: </b><br></h4>
   <i>
     Provide below the proponent and project information. All fields below are required.

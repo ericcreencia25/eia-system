@@ -1,11 +1,13 @@
 
     <div class="box-body">
-      <h4><b>PURPOSE</b><br></h4>
-      <i>In compliace with MC2019-003, all projects that fall under Category B of MC 2014-005 must be applied through the ECC Online Application System. Please answer the questions below then click the Next button. 
-        <span style=" color:red; font-style:italic;">For BARMM located project, please submit your application to BARMM environmental office</span></i>
-        <br><br>
-
-        <div class="box">
+      <div>
+    <button type="button" class="btn btn-primary pull-right" id="check_step_1">Save <i class="fa fa-fw fa-save"></i></button>
+  </div>
+  <h4><b>1. PURPOSE:  
+    <span id="proceed_1"></span>
+  </b><br></h4>
+  <i>In compliace with MC2019-003, all projects that fall under Category B of MC 2014-005 must be applied through the ECC Online Application System. Please answer the questions below then click the Next button. <span style=" color:red; font-style:italic;">For BARMM located project, please submit your application to BARMM environmental office</span></i><br><br>
+  <div class="box">
           <div class="box-body no-padding">
             <table class="table table-condensed">
               <tbody>
@@ -13,17 +15,14 @@
                   <td>1.</td>
                   <td>Select the purpose of this application</td>
                   <td>
-                    <select class="form-control">
+                    <select class="form-control" id="purpose_application">
                       @if ($project['Purpose'] == "New Application")
-                        <option value=""></option>
                         <option value="New Application" selected="selected">New Application</option>
                         <option value="Amendment">ECC Amendment</option>
                       @elseif ($project['Purpose'] == 'Ammendment')
-                        <option selected="selected" value=""></option>
                         <option value="New Application">New Application</option>
                         <option value="Amendment" selected="selected">ECC Amendment</option>
                       @else
-                        <option selected="selected" value=""></option>
                         <option value="New Application">New Application</option>
                         <option value="Amendment">ECC Amendment</option>
                       @endif
@@ -97,3 +96,11 @@
             </div>
           </div>
         </div>
+
+<script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<!-- <script src="../../adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js"></script> -->
+<!-- DataTables -->
+<script src="../../adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="../../adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+

@@ -10,6 +10,10 @@
     </section>
 @stop
 
+<style>
+  .pointer {cursor: pointer;}
+</style>
+
 @section('content')
     <div class="content-wrapper">
       <!-- Main content -->
@@ -80,4 +84,22 @@ var UserRole = "{{session('data')['UserRole']}}";
     })
 
   });
+
+  function NewDocument(result){
+    var href = "NewDocument/";
+
+    $.ajax({
+        url: "{{route('putExistingDataInSession')}}",
+        type: 'POST',
+        data: {
+          ProjectGUID : result,
+          _token: '{{csrf_token()}}' ,
+        },
+        success: function(response){
+          document.location = href + result;
+        }
+      });
+
+    
+  }
 </script>
