@@ -59,10 +59,10 @@ class AspnetUserController extends Controller
         $UserRole = $req['UserRole'];
         $UserOffice = $req['UserOffice'];
 
-        $projects = Project::select('projectactivity', 'project.GUID', '=', 'projectactivity.ProjectGUID')
-        ->select('project.Address AS Address', 'project.Municipality  AS Municipality', 'project.Province AS Province', 'projectactivity.Status', 'projectactivity.Details AS Remarks', 'project.ProjectName', 'project.Region  AS Region', 'projectactivity.RoutedTo', 'projectactivity.RoutedFrom', 'project.GUID AS ProjectGUID', 'project.Stage', 'projectactivity.CreatedDate')
-        ->where('project.CreatedBy', '=', $UserName)
-            ->leftJoin('projectactivity', 'project.GUID', '=', 'projectactivity.ProjectGUID')
+        $projects = Project::select('ProjectActivity', 'Project.GUID', '=', 'ProjectActivity.ProjectGUID')
+        ->select('Project.Address AS Address', 'Project.Municipality  AS Municipality', 'Project.Province AS Province', 'ProjectActivity.Status', 'ProjectActivity.Details AS Remarks', 'Project.ProjectName', 'Project.Region  AS Region', 'ProjectActivity.RoutedTo', 'ProjectActivity.RoutedFrom', 'Project.GUID AS ProjectGUID', 'Project.Stage', 'ProjectActivity.CreatedDate')
+        ->where('Project.CreatedBy', '=', $UserName)
+            ->leftJoin('ProjectActivity', 'Project.GUID', '=', 'ProjectActivity.ProjectGUID')
             ->get();
 
         $project = $projects;

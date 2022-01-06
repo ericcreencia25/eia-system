@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Proponent extends Model
 {   
-    protected $table = 'proponent';
+    protected $table = 'Proponent';
     use HasFactory;
 
     protected $fillable = [
