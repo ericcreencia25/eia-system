@@ -317,7 +317,7 @@ class NewApplicationsController extends Controller
 
     public function new_document($GUID)
     {
-        return view('secured\create_applications\application_tab');
+        return view('secured.create_applications.application_tab');
     }
 
     public function putExistingDataInSession(Request $req)
