@@ -280,26 +280,11 @@ class NewApplicationsController extends Controller
         $ProjectGUID = $req['data'];
         
         $ProjectArea = ProjectArea::where('ProjectGUID', '=', $ProjectGUID)
-<<<<<<< HEAD
-        ->leftJoin('ProjectGeocoordinates', 'ProjectArea.GUID', '=', 'ProjectGeocoordinates.AreaGUID')
-=======
         ->leftJoin('ProjectGeoCoordinates', 'ProjectArea.GUID', '=', 'ProjectGeoCoordinates.AreaGUID')
->>>>>>> 90ac8d907c11ced00ceafaeba716d1e74fd4f5df
         ->select(
             'ProjectArea.GUID AS AreaGUID',
             'ProjectArea.Area',
             'ProjectArea.AreaType AS Type',
-<<<<<<< HEAD
-            'ProjectGeocoordinates.LongDeg',
-            'ProjectGeocoordinates.LongMin',
-            'ProjectGeocoordinates.LongSec',
-            'ProjectGeocoordinates.LatDeg',
-            'ProjectGeocoordinates.LatMin',
-            'ProjectGeocoordinates.LatSec',
-            'ProjectGeocoordinates.Longitude',
-            'ProjectGeocoordinates.Latitude',
-            'ProjectGeocoordinates.Sorter',
-=======
             'ProjectGeoCoordinates.LongDeg',
             'ProjectGeoCoordinates.LongMin',
             'ProjectGeoCoordinates.LongSec',
@@ -309,7 +294,6 @@ class NewApplicationsController extends Controller
             'ProjectGeoCoordinates.Longitude',
             'ProjectGeoCoordinates.Latitude',
             'ProjectGeoCoordinates.Sorter',
->>>>>>> 90ac8d907c11ced00ceafaeba716d1e74fd4f5df
         )
         ->orderByRaw('Sorter ASC')
         ->get();
@@ -732,11 +716,7 @@ class NewApplicationsController extends Controller
             $deleteArea = DB::table('ProjectArea')->where('ProjectGUID', '=', $ProjectGUID)->get();
 
             foreach($deleteArea as $Area){
-<<<<<<< HEAD
-                DB::table('ProjectGeocoordinates')->where('AreaGUID', '=', $Area->GUID)->delete();
-=======
                 DB::table('ProjectGeoCoordinates')->where('AreaGUID', '=', $Area->GUID)->delete();
->>>>>>> 90ac8d907c11ced00ceafaeba716d1e74fd4f5df
                 DB::table('ProjectArea')->where('ProjectGUID', '=', $ProjectGUID)
                 ->where('GUID', '=', $Area->GUID)->delete();
             }
@@ -804,11 +784,7 @@ class NewApplicationsController extends Controller
             $all_raw['Longitude'] = $geo_steps[5];
             $all_raw['Latitude'] = $geo_steps[4];
 
-<<<<<<< HEAD
-            $last = DB::table('ProjectGeocoordinates')
-=======
             $last = DB::table('ProjectGeoCoordinates')
->>>>>>> 90ac8d907c11ced00ceafaeba716d1e74fd4f5df
             ->select('id')
             ->orderByRaw('ID DESC')
             ->first();
@@ -835,11 +811,7 @@ class NewApplicationsController extends Controller
             }
 
             // insert into database geocoordinates
-<<<<<<< HEAD
-            DB::table('ProjectGeocoordinates')->insert($all_raw);
-=======
             DB::table('ProjectGeoCoordinates')->insert($all_raw);
->>>>>>> 90ac8d907c11ced00ceafaeba716d1e74fd4f5df
 
             // array_push($saveGeo, $all_raw);
         }
