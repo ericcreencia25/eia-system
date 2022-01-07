@@ -163,16 +163,22 @@ Route::group(['middleware'=>'web'], function(){
 /// VIEW 
 
     Route::view('default', 'secured.for_actions.default');
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7222d2419d482341086177e6a9c3549733df9d28
     Route::view('map', 'secured.create_applications.map');
 
     // Route::view('new_document', 'secured\create_applications\new_application_tab');
 
     Route::view('documents', 'secured.ecc_applications.document');
     Route::view('{GUID}/map', 'secured.create_applications.clickable_map');
+<<<<<<< HEAD
 
     Route::view('new_document', 'secured.create_applications.application_tab');
 
     Route::view('documents', 'secured.ecc_applications.document');
+=======
+>>>>>>> 7222d2419d482341086177e6a9c3549733df9d28
 
 });
