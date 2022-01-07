@@ -34,10 +34,10 @@ class ForActionsController extends Controller
             $join->on('Project.GUID', '=', 'ProjectActivity.ProjectGUID');
             // $join->on('ProjectActivity.CreateDate','>=', DB::raw("'2012-05-01'"));
 
-            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 
+            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
                 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
         })
-        ->leftJoin('proponent', 'Project.ProponentGUID', '=', 'proponent.GUID')
+        ->leftJoin('Proponent', 'Project.ProponentGUID', '=', 'Proponent.GUID')
         ->select(
             'Project.Purpose',
             'Project.Address AS Address', 
@@ -47,7 +47,7 @@ class ForActionsController extends Controller
             'Project.CreatedBy AS CreatedBy', 
             'Project.GUID AS GUID', 
             'Project.PreviousECCNo',
-            'proponent.ProponentName',
+            'Proponent.ProponentName',
             'Project.ProjectName', 
             'Project.Region  AS Region', 
 
@@ -250,27 +250,8 @@ class ForActionsController extends Controller
             // $join->on('ProjectActivity.CreateDate','>=', DB::raw("'2012-05-01'"));
 
             $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 
-                join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+                join Project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
         })
-<<<<<<< HEAD
-        ->where('project.Region', '=', $UserOffice)
-<<<<<<< HEAD
-        ->where('project.UpdatedDate', '>=', $StartDate)
-        ->where('project.UpdatedDate', '<=', $EndDate)
-=======
-        // ->where('project.UpdatedDate', '>=', $StartDate)
-        // ->where('project.UpdatedDate', '<=', $EndDate)
->>>>>>> e84a8a8d27eacc4590e30549e216c1222fe17fb6
-        ->where('projectactivity.RoutedTo', '<=', $UserName)
-        ->where('projectactivity.RoutedToOffice', '<=', $UserOffice)
-        // ->orderByRaw('CreatedDate DESC')
-        ->whereNotIn('Status', array('Approved', 'Denied'))
-        ->groupBy('project.GUID')
-<<<<<<< HEAD
-=======
-        ->orderByRaw('project.CreatedDate DESC')
->>>>>>> e84a8a8d27eacc4590e30549e216c1222fe17fb6
-=======
         ->where('Project.Region', '=', $UserOffice)
         // ->where('Project.UpdatedDate', '>=', $StartDate)
         // ->where('Project.UpdatedDate', '<=', $EndDate)
@@ -280,7 +261,6 @@ class ForActionsController extends Controller
         ->whereNotIn('Status', array('Approved', 'Denied'))
         ->groupBy('Project.GUID')
         ->orderByRaw('Project.CreatedDate DESC')
->>>>>>> a8eaf5a50f8f4d3b70bc422226fd9f18baeabead
         ->get();
 
         // $project = collect([]);
@@ -313,7 +293,7 @@ class ForActionsController extends Controller
             return $details;
         })
         ->addColumn('Remarks', function($project){
-            // $ProjectActivity = ProjectActivity::on('mysql')->where('ProjectActivity.ProjectGUID', '=', $project->ProjectGUID)
+            // $projectactivity = ProjectActivity::on('mysql')->where('ProjectActivity.ProjectGUID', '=', $project->ProjectGUID)
             // ->orderByRaw('ID Desc')
             // ->first();
 
@@ -322,11 +302,11 @@ class ForActionsController extends Controller
             return $details;
         })
         ->addColumn('IncurredDate', function($project){
-            //  $ProjectActivity = ProjectActivity::on('mysql')->where('ProjectActivity.ProjectGUID', '=', $project->ProjectGUID)
+            //  $projectactivity = ProjectActivity::on('mysql')->where('ProjectActivity.ProjectGUID', '=', $project->ProjectGUID)
             // ->orderByRaw('ID Desc')
             // ->first();
 
-            // $start_date = date("d-m-Y", strtotime($ProjectActivity->UpdatedDate));
+            // $start_date = date("d-m-Y", strtotime($projectactivity->UpdatedDate));
             // $end_date = date('d-m-Y');
             $start_date = $project->UpdatedDate;
             $end_date = date('Y-m-d');
@@ -334,16 +314,12 @@ class ForActionsController extends Controller
             // $dateDiff = $this->dateDiffInDays($start_date, $end_date);
             $dateDiff = $this->Count_Days_Without_Weekends($start_date, $end_date);
 
-<<<<<<< HEAD
-            $details = '<small>'. ($dateDiff - 1).'/'.$project->ProcTimeFrameInDays.', days incurred from last submission - </small><span class="label label-success">'.($dateDiff - 1).'</span>';
-=======
             if($dateDiff > 21){
                 $details = '<small>'. ($dateDiff - 1).'/'.$project->ProcTimeFrameInDays.', days incurred from last submission - </small><span class="label label-danger">'.($dateDiff - 1).'</span>';
             } else {
                 $details = '<small>'. ($dateDiff - 1).'/'.$project->ProcTimeFrameInDays.', days incurred from last submission - </small><span class="label label-success">'.($dateDiff - 1).'</span>';
             }
             
->>>>>>> e84a8a8d27eacc4590e30549e216c1222fe17fb6
             return $details;
         })
         ->rawColumns(['Details', 'Status', 'Remarks', 'IncurredDate'])
@@ -469,8 +445,8 @@ class ForActionsController extends Controller
         $CreatedBy = $req['CreatedBy'];
 
         $Account = AspnetUser::where('UserName', '=', $CreatedBy)
-        ->leftJoin('aspnet_membership', 'aspnet_users.UserId', '=', 'aspnet_membership.UserId')
-        ->select('aspnet_users.*', 'aspnet_membership.*')
+        ->leftJoin('aspnet_Membership', 'aspnet_Users.UserId', '=', 'aspnet_Membership.UserId')
+        ->select('aspnet_Users.*', 'aspnet_Membership.*')
         ->first();
 
         return $Account;
@@ -527,29 +503,29 @@ class ForActionsController extends Controller
         $ProjectGUID = $req['ProjectGUID']; 
         $Description = $req['Description']; 
 
-        $project = ProjectRequirements::where('projectrequirement.ProjectGUID', '=', $ProjectGUID)
-        ->where('projectrequirement.ID', '=', $ID)
-        ->where('projectrequirement.Description', '=', $Description)
+        $project = ProjectRequirements::where('ProjectRequirement.ProjectGUID', '=', $ProjectGUID)
+        ->where('ProjectRequirement.ID', '=', $ID)
+        ->where('ProjectRequirement.Description', '=', $Description)
         ->Join('ProjectActivity', function($join)
         {
-            $join->on('projectrequirement.ProjectGUID', '=', 'ProjectActivity.ProjectGUID');
+            $join->on('ProjectRequirement.ProjectGUID', '=', 'ProjectActivity.ProjectGUID');
         })
-        ->Join('ProjectActivityattachment', function($join)
+        ->Join('ProjectActivityAttachment', function($join)
         {
-            $join->on('ProjectActivityattachment.ActivityGUID', '=', 'ProjectActivity.GUID');
-            $join->on('ProjectActivityattachment.Description', '=', 'projectrequirement.Description');
+            $join->on('ProjectActivityAttachment.ActivityGUID', '=', 'ProjectActivity.GUID');
+            $join->on('ProjectActivityAttachment.Description', '=', 'ProjectRequirement.Description');
         })
         ->select(
-            'projectrequirement.Description', 
-            'projectrequirement.Remarks', 
-            'projectrequirement.Required',
-            'projectrequirement.Compliant',  
-            'projectrequirement.ID as PRID',
+            'ProjectRequirement.Description', 
+            'ProjectRequirement.Remarks', 
+            'ProjectRequirement.Required',
+            'ProjectRequirement.Compliant',  
+            'ProjectRequirement.ID as PRID',
             'ProjectActivity.GUID', 
-            'ProjectActivityattachment.ActivityGUID',
-            'ProjectActivityattachment.FileName',
-            'ProjectActivityattachment.FilePath',
-            'ProjectActivityattachment.Directory',
+            'ProjectActivityAttachment.ActivityGUID',
+            'ProjectActivityAttachment.FileName',
+            'ProjectActivityAttachment.FilePath',
+            'ProjectActivityAttachment.Directory',
 
         )
         ->first();
@@ -582,7 +558,7 @@ class ForActionsController extends Controller
 
         $now = new \DateTime(); 
 
-        DB::table('projectrequirement')
+        DB::table('ProjectRequirement')
         ->where('ProjectGUID','=', $ProjectGUID)
         ->where('ID', '=', $PRID)
         ->update([
@@ -636,23 +612,23 @@ class ForActionsController extends Controller
         $projectActivity['TotWorkDays'] = $dateDiff;
         $projectActivity['TotElapsedDays'] = $dateDiff;
 
-        if(DB::table('ProjectActivity')->insert($projectActivity)){
+        if(DB::table('projectactivity')->insert($projectActivity)){
             $AdditionalRequirements = $req['AdditionalRequirements'];
 
             if($AdditionalRequirements != null){
                 foreach ($AdditionalRequirements as $key => $value) {
-                    $projectrequirement = array();
-                    $projectrequirement['ProjectGUID'] = $ProjectGUID;
-                    $projectrequirement['Description'] = $value['description']; 
-                    $projectrequirement['Required'] = 0;
-                    $projectrequirement['Compliant'] = 0; 
-                    DB::table('projectrequirement')->insert($projectrequirement);
+                    $ProjectRequirement = array();
+                    $ProjectRequirement['ProjectGUID'] = $ProjectGUID;
+                    $ProjectRequirement['Description'] = $value['description']; 
+                    $ProjectRequirement['Required'] = 0;
+                    $ProjectRequirement['Compliant'] = 0; 
+                    DB::table('ProjectRequirement')->insert($ProjectRequirement);
                 }
             }
 
             if($IncludeAttachment === "true"){
 
-                $data = DB::table('ProjectActivityattachmenttemp')
+                $data = DB::table('ProjectActivityAttachmenttemp')
                     ->select('GUID','ActivityGUID','Description','FileName','Directory','FilePath','FileSizeInKB','CreatedBy','CreatedDate')
                     ->where('ActivityGUID', '=', $NewActivityGUID)
                     ->get();
@@ -662,7 +638,7 @@ class ForActionsController extends Controller
                     })->toArray();
 
 
-                if(DB::table('ProjectActivityattachment')->insert($array)){
+                if(DB::table('ProjectActivityAttachment')->insert($array)){
                     ProjectActivityAttachmentTemp::where('ActivityGUID', $NewActivityGUID)->delete();
                 }
                 
@@ -719,7 +695,7 @@ class ForActionsController extends Controller
 
 
         if(DB::table('ProjectActivity')->insert($projectActivity)){
-            DB::table('ProjectActivityattachment')->insert($attachedDocuments);
+            DB::table('ProjectActivityAttachment')->insert($attachedDocuments);
         }
 
     }
@@ -795,7 +771,7 @@ class ForActionsController extends Controller
              $data['FileSizeInKB'] = round($filesize, 3);
              $data['CreatedBy'] = $UserName;
 
-             DB::table('ProjectActivityattachmenttemp')->insert($data);
+             DB::table('ProjectActivityAttachmenttemp')->insert($data);
          }else{
              // Response
              $rtrn['success'] = 2;
@@ -866,7 +842,7 @@ class ForActionsController extends Controller
              $data['FileSizeInKB'] = round($filesize, 3);
              $data['CreatedBy'] = $UserName;
 
-             // DB::table('ProjectActivityattachmenttemp')->insert($data);
+             // DB::table('ProjectActivityAttachmenttemp')->insert($data);
              return response()->json($data);
          }else{
              // Response
