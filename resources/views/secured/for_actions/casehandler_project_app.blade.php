@@ -10,13 +10,10 @@
     </section> -->
 @stop
 
-<<<<<<< HEAD
 <style>
     #pointer {cursor: pointer;}
 </style>
 
-=======
->>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
 @section('content')
 <div class="content-wrapper">
     <!-- Main content -->
@@ -138,12 +135,10 @@
                             <div style="padding-top:20px; padding-bottom:20px;">
                                 <b>Recent Activity/Comments:</b> <a  href="" style="text-decoration:none;" id="remarks"></a> <span id="name_date"></span>
                             </div>
-<<<<<<< HEAD
 
-=======
                             <!---IF ELSE --->
                             @if($project['RoutedTo'] == Session::get('data')['UserName'])
->>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
+
                             <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">ENDORSE APPLICATION
                             </div>
                             
@@ -253,10 +248,9 @@
                         <br>
                         <br>
                     </div>
-<<<<<<< HEAD
-=======
+
                     @endif
->>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
+                    
                     <!--Routing History-->
                     <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">ROUTING HISTORY
                     </div>
