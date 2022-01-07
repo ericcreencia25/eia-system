@@ -43,7 +43,7 @@ class NewApplicationsController extends Controller
         
         if(empty($ComponentGUID) && empty($ProjectSize)){
             $component = Component::where('active', '=', 1)
-            ->where('component.ProjectType', 'LIKE', '%'. $search.'%')
+            ->where('Component.ProjectType', 'LIKE', '%'. $search.'%')
             ->get();
         }
         else{
