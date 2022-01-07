@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AspnetMembership extends Model
 {
-    protected $table = 'aspnet_Membership';
+    protected $table = 'aspnet_membership';
     use HasFactory;
 
     protected $fillable = [

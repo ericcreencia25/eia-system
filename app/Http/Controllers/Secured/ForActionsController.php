@@ -253,13 +253,22 @@ class ForActionsController extends Controller
                 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
         })
         ->where('project.Region', '=', $UserOffice)
+<<<<<<< HEAD
         ->where('project.UpdatedDate', '>=', $StartDate)
         ->where('project.UpdatedDate', '<=', $EndDate)
+=======
+        // ->where('project.UpdatedDate', '>=', $StartDate)
+        // ->where('project.UpdatedDate', '<=', $EndDate)
+>>>>>>> e84a8a8d27eacc4590e30549e216c1222fe17fb6
         ->where('projectactivity.RoutedTo', '<=', $UserName)
         ->where('projectactivity.RoutedToOffice', '<=', $UserOffice)
         // ->orderByRaw('CreatedDate DESC')
         ->whereNotIn('Status', array('Approved', 'Denied'))
         ->groupBy('project.GUID')
+<<<<<<< HEAD
+=======
+        ->orderByRaw('project.CreatedDate DESC')
+>>>>>>> e84a8a8d27eacc4590e30549e216c1222fe17fb6
         ->get();
 
         // $project = collect([]);
@@ -313,7 +322,16 @@ class ForActionsController extends Controller
             // $dateDiff = $this->dateDiffInDays($start_date, $end_date);
             $dateDiff = $this->Count_Days_Without_Weekends($start_date, $end_date);
 
+<<<<<<< HEAD
             $details = '<small>'. ($dateDiff - 1).'/'.$project->ProcTimeFrameInDays.', days incurred from last submission - </small><span class="label label-success">'.($dateDiff - 1).'</span>';
+=======
+            if($dateDiff > 21){
+                $details = '<small>'. ($dateDiff - 1).'/'.$project->ProcTimeFrameInDays.', days incurred from last submission - </small><span class="label label-danger">'.($dateDiff - 1).'</span>';
+            } else {
+                $details = '<small>'. ($dateDiff - 1).'/'.$project->ProcTimeFrameInDays.', days incurred from last submission - </small><span class="label label-success">'.($dateDiff - 1).'</span>';
+            }
+            
+>>>>>>> e84a8a8d27eacc4590e30549e216c1222fe17fb6
             return $details;
         })
         ->rawColumns(['Details', 'Status', 'Remarks', 'IncurredDate'])

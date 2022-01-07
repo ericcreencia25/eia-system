@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Municipality extends Model
 {   
-    protected $table = 'Municipality';
+    protected $table = 'municipality';
     use HasFactory;
 
     protected $fillable = [
