@@ -988,7 +988,7 @@ class NewApplicationsController extends Controller
         </table>';
 
         ///getting region from province
-        $province = DB::table('province')
+        $province = DB::table('Province')
         ->where('Province', '=', $step_5['province'])
         ->first();
 
