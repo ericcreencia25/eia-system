@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectActivityAttachmentTemp extends Model
 {   
-    protected $table = 'projectactivityattachmenttemp';
+    protected $table = 'ProjectActivityAttachmentTemp';
     use HasFactory;
 
     protected $fillable = [

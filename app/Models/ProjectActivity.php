@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectActivity extends Model
 {   
-    protected $table = 'projectactivity';
+    protected $table = 'ProjectActivity';
     use HasFactory;
 
     protected $fillable = [
