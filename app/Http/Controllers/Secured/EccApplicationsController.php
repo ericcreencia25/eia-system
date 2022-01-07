@@ -125,7 +125,7 @@ class EccApplicationsController extends Controller
             'ProjectActivity.RoutedToOffice',
             'ProjectActivity.Status',
             )
-        ->Join('projectactivity', function ($join) {
+        ->Join('ProjectActivity', function ($join) {
             $join->on('Project.GUID', '=', 'ProjectActivity.ProjectGUID');
 
             $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 join Project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
