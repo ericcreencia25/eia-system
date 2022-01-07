@@ -115,7 +115,7 @@ class AspnetUserController extends Controller
             $join->on('Project.GUID', '=', 'ProjectActivity.ProjectGUID');
 
             $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 
-                join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+                join Project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
         })
 
         ->where('ProjectActivity.Status', '<>', "For Screening")
