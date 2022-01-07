@@ -34,8 +34,8 @@ class ForActionsController extends Controller
             $join->on('Project.GUID', '=', 'ProjectActivity.ProjectGUID');
             // $join->on('ProjectActivity.CreateDate','>=', DB::raw("'2012-05-01'"));
 
-            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
-                join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 
+                join Project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
         })
         ->leftJoin('Proponent', 'Project.ProponentGUID', '=', 'Proponent.GUID')
         ->select(
