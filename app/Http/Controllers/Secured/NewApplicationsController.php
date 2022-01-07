@@ -342,11 +342,11 @@ class NewApplicationsController extends Controller
         $req->session()->put('step_3', $step_3);
 
         ///4th 
-        $projectGeo = ProjectArea::where('projectarea.ProjectGUID', '=', $ProjectGUID)
-        ->Join('projectgeocoordinates', 'projectarea.GUID', '=', 'projectgeocoordinates.AreaGUID')
+        $projectGeo = ProjectArea::where('ProjectArea.ProjectGUID', '=', $ProjectGUID)
+        ->Join('ProjectGeocoordinates', 'ProjectArea.GUID', '=', 'ProjectGeocoordinates.AreaGUID')
         ->select(
-            'projectarea.*',
-            'projectgeocoordinates.*'
+            'ProjectArea.*',
+            'ProjectGeocoordinates.*'
         )->get();
 
         $arrayGeo = array();
