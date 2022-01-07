@@ -47,6 +47,8 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::post('/getECCApplications', [EccApplicationsController::class, 'getECCApplications'])->name('get.ecc.applications');
 
+    Route::post('/getECCApplicationsCaseHandler', [EccApplicationsController::class, 'getECCApplicationsCaseHandler'])->name('get.ecc.applications.casehandler');
+
 
 //// FOR ACTIONS CONTROLLER
     Route::get('index', [App\Http\Controllers\Secured\ForActionsController::class, 'index'])->name('index');
