@@ -375,7 +375,7 @@ class NewApplicationsController extends Controller
 
         ///5th Step
         $ProponentGUID = session::get('data')['ProponentGUID'];
-        $proponent = Proponent::where('proponent.GUID', '=', $ProponentGUID)
+        $proponent = Proponent::where('Proponent.GUID', '=', $ProponentGUID)
         ->first();
 
         $fifth = array();
