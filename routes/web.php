@@ -163,11 +163,11 @@ Route::group(['middleware'=>'web'], function(){
 /// VIEW 
 
     Route::view('default', 'secured.for_actions.default');
-    Route::view('map', 'secured\create_applications\map');
+    Route::view('map', 'secured.create_applications.map');
 
     // Route::view('new_document', 'secured\create_applications\new_application_tab');
 
-    Route::view('documents', 'secured\ecc_applications\document');
-    Route::view('{GUID}/map', 'secured\create_applications\clickable_map');
+    Route::view('documents', 'secured.ecc_applications.document');
+    Route::view('{GUID}/map', 'secured.create_applications.clickable_map');
 
 });
