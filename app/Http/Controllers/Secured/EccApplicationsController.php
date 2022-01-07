@@ -57,7 +57,7 @@ class EccApplicationsController extends Controller
         ->Join('ProjectActivity', function ($join) {
             $join->on('Project.GUID', '=', 'ProjectActivity.ProjectGUID');
 
-            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 join Project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
             })
             // ->where('RoutedFrom', '=', $UserOffice)
             // ->where('Project.CreatedDate', '>=', '2021-01-01')
@@ -125,10 +125,10 @@ class EccApplicationsController extends Controller
             'ProjectActivity.RoutedToOffice',
             'ProjectActivity.Status',
             )
-        ->Join('ProjectActivity', function ($join) {
+        ->Join('projectactivity', function ($join) {
             $join->on('Project.GUID', '=', 'ProjectActivity.ProjectGUID');
 
-            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 join Project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
             });
         if($StatusFilter === 'Pending with EMB'){
             $project->where('RoutedToOffice', '=', $UserOffice)
