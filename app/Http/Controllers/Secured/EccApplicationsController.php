@@ -35,35 +35,35 @@ class EccApplicationsController extends Controller
         $tomorrow = date('Y-m-d', strtotime( $todate . " +1 days"));
 
         $project = Project::select(
-            'project.Address AS Address',
-            'project.Municipality  AS Municipality', 
-            'project.Province AS Province',
-            'project.CreatedBy',
-            'project.ProjectName',
-            'project.Region  AS Region',
-            'project.GUID AS ProjectGUID',
-            'project.Stage', 
-            'project.ProcTimeFrameInDays',
-            'project.TotProcDays',
+            'Project.Address AS Address',
+            'Project.Municipality  AS Municipality', 
+            'Project.Province AS Province',
+            'Project.CreatedBy',
+            'Project.ProjectName',
+            'Project.Region  AS Region',
+            'Project.GUID AS ProjectGUID',
+            'Project.Stage', 
+            'Project.ProcTimeFrameInDays',
+            'Project.TotProcDays',
 
-            'projectactivity.Details AS Remarks',
-            'projectactivity.RoutedTo',
-            'projectactivity.GUID AS ActivityGUID', 
-            'projectactivity.RoutedFrom',
-            'projectactivity.CreatedDate',
-            'projectactivity.RoutedToOffice',
-            'projectactivity.Status',
+            'ProjectActivity.Details AS Remarks',
+            'ProjectActivity.RoutedTo',
+            'ProjectActivity.GUID AS ActivityGUID', 
+            'ProjectActivity.RoutedFrom',
+            'ProjectActivity.CreatedDate',
+            'ProjectActivity.RoutedToOffice',
+            'ProjectActivity.Status',
             )
-        ->Join('projectactivity', function ($join) {
-            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+        ->Join('ProjectActivity', function ($join) {
+            $join->on('Project.GUID', '=', 'ProjectActivity.ProjectGUID');
 
-            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
             })
             // ->where('RoutedFrom', '=', $UserOffice)
-            // ->where('project.CreatedDate', '>=', '2021-01-01')
-            // ->where('project.CreatedDate', '<=', $tomorrow)
-        ->where('project.CreatedBy', '=', $UserName)
-        ->groupBy('project.GUID')
+            // ->where('Project.CreatedDate', '>=', '2021-01-01')
+            // ->where('Project.CreatedDate', '<=', $tomorrow)
+        ->where('Project.CreatedBy', '=', $UserName)
+        ->groupBy('Project.GUID')
         ->get();
 
         return DataTables::of($project)
@@ -106,29 +106,29 @@ class EccApplicationsController extends Controller
         $tomorrow = date('Y-m-d', strtotime( $todate . " +1 days"));
 
         $project = Project::select(
-            'project.Address AS Address',
-            'project.Municipality  AS Municipality', 
-            'project.Province AS Province',
-            'project.CreatedBy',
-            'project.ProjectName',
-            'project.Region  AS Region',
-            'project.GUID AS ProjectGUID',
-            'project.Stage', 
-            'project.ProcTimeFrameInDays',
-            'project.TotProcDays',
+            'Project.Address AS Address',
+            'Project.Municipality  AS Municipality', 
+            'Project.Province AS Province',
+            'Project.CreatedBy',
+            'Project.ProjectName',
+            'Project.Region  AS Region',
+            'Project.GUID AS ProjectGUID',
+            'Project.Stage', 
+            'Project.ProcTimeFrameInDays',
+            'Project.TotProcDays',
 
-            'projectactivity.Details AS Remarks',
-            'projectactivity.RoutedTo',
-            'projectactivity.GUID AS ActivityGUID', 
-            'projectactivity.RoutedFrom',
-            'projectactivity.CreatedDate',
-            'projectactivity.RoutedToOffice',
-            'projectactivity.Status',
+            'ProjectActivity.Details AS Remarks',
+            'ProjectActivity.RoutedTo',
+            'ProjectActivity.GUID AS ActivityGUID', 
+            'ProjectActivity.RoutedFrom',
+            'ProjectActivity.CreatedDate',
+            'ProjectActivity.RoutedToOffice',
+            'ProjectActivity.Status',
             )
-        ->Join('projectactivity', function ($join) {
-            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+        ->Join('ProjectActivity', function ($join) {
+            $join->on('Project.GUID', '=', 'ProjectActivity.ProjectGUID');
 
-            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
             });
         if($StatusFilter === 'Pending with EMB'){
             $project->where('RoutedToOffice', '=', $UserOffice)
@@ -154,12 +154,12 @@ class EccApplicationsController extends Controller
         }
 
         
-            // ->where('project.CreatedDate', '>=', '2021-01-01')
-            // ->where('project.CreatedDate', '<=', $tomorrow)
-        // ->where('project.CreatedBy', '=', $UserName)
+            // ->where('Project.CreatedDate', '>=', '2021-01-01')
+            // ->where('Project.CreatedDate', '<=', $tomorrow)
+        // ->where('Project.CreatedBy', '=', $UserName)
 
-        $project->groupBy('project.GUID')
-        ->orderByRaw('projectactivity.UpdatedDate DESC')
+        $project->groupBy('Project.GUID')
+        ->orderByRaw('ProjectActivity.UpdatedDate DESC')
         ->get();
 
         return DataTables::of($project)

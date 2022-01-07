@@ -28,41 +28,41 @@ class ForActionsController extends Controller
 
     public function project_app($GUID, $ActivityGUID)
     {   
-        $project = Project::where('project.GUID', '=', $GUID)
-        // ->where('project.Stage', '>', 0 )
-        ->Join('projectactivity', function ($join) {
-            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
-            // $join->on('projectactivity.CreateDate','>=', DB::raw("'2012-05-01'"));
+        $project = Project::where('Project.GUID', '=', $GUID)
+        // ->where('Project.Stage', '>', 0 )
+        ->Join('ProjectActivity', function ($join) {
+            $join->on('Project.GUID', '=', 'ProjectActivity.ProjectGUID');
+            // $join->on('ProjectActivity.CreateDate','>=', DB::raw("'2012-05-01'"));
 
-            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
+            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 
                 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
         })
-        ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
+        ->leftJoin('proponent', 'Project.ProponentGUID', '=', 'proponent.GUID')
         ->select(
-            'project.Purpose',
-            'project.Address AS Address', 
-            'project.Municipality  AS Municipality', 
-            'project.Province AS Province', 
-            'project.Address', 
-            'project.CreatedBy AS CreatedBy', 
-            'project.GUID AS GUID', 
-            'project.PreviousECCNo',
+            'Project.Purpose',
+            'Project.Address AS Address', 
+            'Project.Municipality  AS Municipality', 
+            'Project.Province AS Province', 
+            'Project.Address', 
+            'Project.CreatedBy AS CreatedBy', 
+            'Project.GUID AS GUID', 
+            'Project.PreviousECCNo',
             'proponent.ProponentName',
-            'project.ProjectName', 
-            'project.Region  AS Region', 
+            'Project.ProjectName', 
+            'Project.Region  AS Region', 
 
-            'projectactivity.RoutedTo', 
-            'projectactivity.RoutedFrom', 
+            'ProjectActivity.RoutedTo', 
+            'ProjectActivity.RoutedFrom', 
 
-            'projectactivity.RoutedToOffice', 
-            'projectactivity.RoutedFromOffice', 
+            'ProjectActivity.RoutedToOffice', 
+            'ProjectActivity.RoutedFromOffice', 
 
-            'projectactivity.CreatedDate', 
-            'projectactivity.Status', 
-            'projectactivity.Details AS Remarks', 
-            'projectactivity.GUID AS ActivityGUID',
-            'projectactivity.FromDate AS FromDate',
-            'projectactivity.UpdatedDate AS UpdatedDate',
+            'ProjectActivity.CreatedDate', 
+            'ProjectActivity.Status', 
+            'ProjectActivity.Details AS Remarks', 
+            'ProjectActivity.GUID AS ActivityGUID',
+            'ProjectActivity.FromDate AS FromDate',
+            'ProjectActivity.UpdatedDate AS UpdatedDate',
             
         )
         ->first();
@@ -80,26 +80,26 @@ class ForActionsController extends Controller
         $GUID = $req['data']; 
         
         $project = DB::table('project')
-        ->where('project.GUID', '=', $GUID)
-        ->leftJoin('projectactivity', 'project.GUID', '=', 'projectactivity.ProjectGUID')
-        ->select('project.Address AS Address', 
-            'project.Municipality  AS Municipality', 
-            'project.Province AS Province', 
-            'project.Address', 
-            'projectactivity.Status',
-            'projectactivity.Details AS Remarks', 
-            'project.ProjectName', 
-            'project.Region  AS Region', 
-            'projectactivity.RoutedTo', 
-            'projectactivity.RoutedFrom', 
-            'projectactivity.CreatedDate', 
-            'project.GUID AS GUID', 
-            'projectactivity.RoutedToOffice',
-            'projectactivity.UpdatedDate', 
-            'projectactivity.GUID AS ActivityGUID', 
-            'projectactivity.CreatedBy AS CreatedBy' 
+        ->where('Project.GUID', '=', $GUID)
+        ->leftJoin('ProjectActivity', 'Project.GUID', '=', 'ProjectActivity.ProjectGUID')
+        ->select('Project.Address AS Address', 
+            'Project.Municipality  AS Municipality', 
+            'Project.Province AS Province', 
+            'Project.Address', 
+            'ProjectActivity.Status',
+            'ProjectActivity.Details AS Remarks', 
+            'Project.ProjectName', 
+            'Project.Region  AS Region', 
+            'ProjectActivity.RoutedTo', 
+            'ProjectActivity.RoutedFrom', 
+            'ProjectActivity.CreatedDate', 
+            'Project.GUID AS GUID', 
+            'ProjectActivity.RoutedToOffice',
+            'ProjectActivity.UpdatedDate', 
+            'ProjectActivity.GUID AS ActivityGUID', 
+            'ProjectActivity.CreatedBy AS CreatedBy' 
         )
-        ->orderByRaw('projectactivity.UpdatedDate DESC')
+        ->orderByRaw('ProjectActivity.UpdatedDate DESC')
         ->get();
 
         return DataTables::of($project)
@@ -129,21 +129,21 @@ class ForActionsController extends Controller
         $GUID = $req['data']; 
         
         $project = DB::table('project')
-        ->where('project.GUID', '=', $GUID)
-        ->leftJoin('projectactivity', 'project.GUID', '=', 'projectactivity.ProjectGUID')
+        ->where('Project.GUID', '=', $GUID)
+        ->leftJoin('ProjectActivity', 'Project.GUID', '=', 'ProjectActivity.ProjectGUID')
         ->select(
-            'projectactivity.Status', 
-            'projectactivity.RoutedTo', 
-            'projectactivity.RoutedFrom',
-            'projectactivity.RoutedToOffice', 
-            'projectactivity.UpdatedDate',  
-            'projectactivity.GUID AS ActivityGUID', 
-            'projectactivity.CreatedBy AS CreatedBy', 
-            'projectactivity.RoutedFromOffice', 
-            'projectactivity.TotAccumulatedDays',
-            'projectactivity.Details AS Remarks', 
+            'ProjectActivity.Status', 
+            'ProjectActivity.RoutedTo', 
+            'ProjectActivity.RoutedFrom',
+            'ProjectActivity.RoutedToOffice', 
+            'ProjectActivity.UpdatedDate',  
+            'ProjectActivity.GUID AS ActivityGUID', 
+            'ProjectActivity.CreatedBy AS CreatedBy', 
+            'ProjectActivity.RoutedFromOffice', 
+            'ProjectActivity.TotAccumulatedDays',
+            'ProjectActivity.Details AS Remarks', 
         )
-        ->orderByRaw('projectactivity.UpdatedDate DESC')
+        ->orderByRaw('ProjectActivity.UpdatedDate DESC')
         ->get();
 
         return DataTables::of($project)
@@ -226,41 +226,41 @@ class ForActionsController extends Controller
         $tomorrow = date('Y-m-d', strtotime( $todate . " +1 days"));
 
         $projects = Project::select(
-            'project.Address AS Address',
-            'project.Municipality  AS Municipality', 
-            'project.Province AS Province', 
-            'projectactivity.Status', 
-            'projectactivity.Details AS Remarks', 
-            'project.ProjectName', 
-            'project.Region  AS Region', 
-            'projectactivity.RoutedTo', 
-            'projectactivity.RoutedFrom', 
-            'project.GUID AS ProjectGUID', 
-            'project.Stage', 
-            'projectactivity.CreatedDate',
-            'project.ProcTimeFrameInDays',
-            'project.TotProcDays',
-            'project.TotProcDays',
-            'projectactivity.GUID AS ActivityGUID',
-            'projectactivity.Status',
-            'projectactivity.UpdatedDate'
+            'Project.Address AS Address',
+            'Project.Municipality  AS Municipality', 
+            'Project.Province AS Province', 
+            'ProjectActivity.Status', 
+            'ProjectActivity.Details AS Remarks', 
+            'Project.ProjectName', 
+            'Project.Region  AS Region', 
+            'ProjectActivity.RoutedTo', 
+            'ProjectActivity.RoutedFrom', 
+            'Project.GUID AS ProjectGUID', 
+            'Project.Stage', 
+            'ProjectActivity.CreatedDate',
+            'Project.ProcTimeFrameInDays',
+            'Project.TotProcDays',
+            'Project.TotProcDays',
+            'ProjectActivity.GUID AS ActivityGUID',
+            'ProjectActivity.Status',
+            'ProjectActivity.UpdatedDate'
         )
-        ->Join('projectactivity', function ($join) {
-            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
-            // $join->on('projectactivity.CreateDate','>=', DB::raw("'2012-05-01'"));
+        ->Join('ProjectActivity', function ($join) {
+            $join->on('Project.GUID', '=', 'ProjectActivity.ProjectGUID');
+            // $join->on('ProjectActivity.CreateDate','>=', DB::raw("'2012-05-01'"));
 
-            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
+            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 
                 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
         })
-        ->where('project.Region', '=', $UserOffice)
-        // ->where('project.UpdatedDate', '>=', $StartDate)
-        // ->where('project.UpdatedDate', '<=', $EndDate)
-        ->where('projectactivity.RoutedTo', '<=', $UserName)
-        ->where('projectactivity.RoutedToOffice', '<=', $UserOffice)
+        ->where('Project.Region', '=', $UserOffice)
+        // ->where('Project.UpdatedDate', '>=', $StartDate)
+        // ->where('Project.UpdatedDate', '<=', $EndDate)
+        ->where('ProjectActivity.RoutedTo', '<=', $UserName)
+        ->where('ProjectActivity.RoutedToOffice', '<=', $UserOffice)
         // ->orderByRaw('CreatedDate DESC')
         ->whereNotIn('Status', array('Approved', 'Denied'))
-        ->groupBy('project.GUID')
-        ->orderByRaw('project.CreatedDate DESC')
+        ->groupBy('Project.GUID')
+        ->orderByRaw('Project.CreatedDate DESC')
         ->get();
 
         // $project = collect([]);
@@ -293,7 +293,7 @@ class ForActionsController extends Controller
             return $details;
         })
         ->addColumn('Remarks', function($project){
-            // $projectactivity = ProjectActivity::on('mysql')->where('projectactivity.ProjectGUID', '=', $project->ProjectGUID)
+            // $ProjectActivity = ProjectActivity::on('mysql')->where('ProjectActivity.ProjectGUID', '=', $project->ProjectGUID)
             // ->orderByRaw('ID Desc')
             // ->first();
 
@@ -302,11 +302,11 @@ class ForActionsController extends Controller
             return $details;
         })
         ->addColumn('IncurredDate', function($project){
-            //  $projectactivity = ProjectActivity::on('mysql')->where('projectactivity.ProjectGUID', '=', $project->ProjectGUID)
+            //  $ProjectActivity = ProjectActivity::on('mysql')->where('ProjectActivity.ProjectGUID', '=', $project->ProjectGUID)
             // ->orderByRaw('ID Desc')
             // ->first();
 
-            // $start_date = date("d-m-Y", strtotime($projectactivity->UpdatedDate));
+            // $start_date = date("d-m-Y", strtotime($ProjectActivity->UpdatedDate));
             // $end_date = date('d-m-Y');
             $start_date = $project->UpdatedDate;
             $end_date = date('Y-m-d');
@@ -506,14 +506,14 @@ class ForActionsController extends Controller
         $project = ProjectRequirements::where('projectrequirement.ProjectGUID', '=', $ProjectGUID)
         ->where('projectrequirement.ID', '=', $ID)
         ->where('projectrequirement.Description', '=', $Description)
-        ->Join('projectactivity', function($join)
+        ->Join('ProjectActivity', function($join)
         {
-            $join->on('projectrequirement.ProjectGUID', '=', 'projectactivity.ProjectGUID');
+            $join->on('projectrequirement.ProjectGUID', '=', 'ProjectActivity.ProjectGUID');
         })
-        ->Join('projectactivityattachment', function($join)
+        ->Join('ProjectActivityattachment', function($join)
         {
-            $join->on('projectactivityattachment.ActivityGUID', '=', 'projectactivity.GUID');
-            $join->on('projectactivityattachment.Description', '=', 'projectrequirement.Description');
+            $join->on('ProjectActivityattachment.ActivityGUID', '=', 'ProjectActivity.GUID');
+            $join->on('ProjectActivityattachment.Description', '=', 'projectrequirement.Description');
         })
         ->select(
             'projectrequirement.Description', 
@@ -521,11 +521,11 @@ class ForActionsController extends Controller
             'projectrequirement.Required',
             'projectrequirement.Compliant',  
             'projectrequirement.ID as PRID',
-            'projectactivity.GUID', 
-            'projectactivityattachment.ActivityGUID',
-            'projectactivityattachment.FileName',
-            'projectactivityattachment.FilePath',
-            'projectactivityattachment.Directory',
+            'ProjectActivity.GUID', 
+            'ProjectActivityattachment.ActivityGUID',
+            'ProjectActivityattachment.FileName',
+            'ProjectActivityattachment.FilePath',
+            'ProjectActivityattachment.Directory',
 
         )
         ->first();
@@ -612,7 +612,7 @@ class ForActionsController extends Controller
         $projectActivity['TotWorkDays'] = $dateDiff;
         $projectActivity['TotElapsedDays'] = $dateDiff;
 
-        if(DB::table('projectactivity')->insert($projectActivity)){
+        if(DB::table('ProjectActivity')->insert($projectActivity)){
             $AdditionalRequirements = $req['AdditionalRequirements'];
 
             if($AdditionalRequirements != null){
@@ -628,7 +628,7 @@ class ForActionsController extends Controller
 
             if($IncludeAttachment === "true"){
 
-                $data = DB::table('projectactivityattachmenttemp')
+                $data = DB::table('ProjectActivityattachmenttemp')
                     ->select('GUID','ActivityGUID','Description','FileName','Directory','FilePath','FileSizeInKB','CreatedBy','CreatedDate')
                     ->where('ActivityGUID', '=', $NewActivityGUID)
                     ->get();
@@ -638,7 +638,7 @@ class ForActionsController extends Controller
                     })->toArray();
 
 
-                if(DB::table('projectactivityattachment')->insert($array)){
+                if(DB::table('ProjectActivityattachment')->insert($array)){
                     ProjectActivityAttachmentTemp::where('ActivityGUID', $NewActivityGUID)->delete();
                 }
                 
@@ -694,8 +694,8 @@ class ForActionsController extends Controller
         $projectActivity['TotElapsedDays'] = $dateDiff;
 
 
-        if(DB::table('projectactivity')->insert($projectActivity)){
-            DB::table('projectactivityattachment')->insert($attachedDocuments);
+        if(DB::table('ProjectActivity')->insert($projectActivity)){
+            DB::table('ProjectActivityattachment')->insert($attachedDocuments);
         }
 
     }
@@ -771,7 +771,7 @@ class ForActionsController extends Controller
              $data['FileSizeInKB'] = round($filesize, 3);
              $data['CreatedBy'] = $UserName;
 
-             DB::table('projectactivityattachmenttemp')->insert($data);
+             DB::table('ProjectActivityattachmenttemp')->insert($data);
          }else{
              // Response
              $rtrn['success'] = 2;
@@ -842,7 +842,7 @@ class ForActionsController extends Controller
              $data['FileSizeInKB'] = round($filesize, 3);
              $data['CreatedBy'] = $UserName;
 
-             // DB::table('projectactivityattachmenttemp')->insert($data);
+             // DB::table('ProjectActivityattachmenttemp')->insert($data);
              return response()->json($data);
          }else{
              // Response
