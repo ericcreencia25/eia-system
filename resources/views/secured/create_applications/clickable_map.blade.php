@@ -162,12 +162,9 @@
       var view = new MapView({
         container: "viewDiv",
         map: map,
-<<<<<<< HEAD
         center: center_location, // longitude, latitude
-=======
         // center: [center_location], // longitude, latitude
-        center:[-118.821527826096, 34.0139576938577],
->>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
+        // center:[-118.821527826096, 34.0139576938577],
         zoom: 18
       });
       
@@ -200,8 +197,6 @@
         graphicsLayer.add(polygonGraphic1);
       }
 
-<<<<<<< HEAD
-=======
       var simpleLineSymbol = {
          type: "simple-line",
          color: [226, 119, 40], // orange
