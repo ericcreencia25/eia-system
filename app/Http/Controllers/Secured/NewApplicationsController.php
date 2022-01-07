@@ -119,35 +119,35 @@ class NewApplicationsController extends Controller
         $sess = $request->session()->get('data');
         $UserRole = $sess->UserRole;
         
-        $project = Project::where('project.GUID', '=', $GUID)
-        ->where('project.Stage', '=', 0 )
-        ->leftJoin('projectactivity', 'project.GUID', '=', 'projectactivity.ProjectGUID')
-        ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
-        ->select('project.Address AS Address',
-        'project.Municipality  AS Municipality',
-        'project.Province AS Province', 
-        'project.ProjectSize AS ProjectSize', 
-        'project.Address', 
-        'projectactivity.Status', 
-        'projectactivity.Details AS Remarks', 
-        'project.ProjectName', 
-        'project.Region AS Region', 
-        'projectactivity.RoutedTo', 
-        'projectactivity.RoutedFrom', 
-        'projectactivity.CreatedDate', 
-        'project.GUID AS ProjectGUID', 
-        'project.PreviousECCNo', 
-        'project.Purpose', 
-        'project.PriorTo1982', 
-        'project.InNIPAS', 
-        'project.Description', 
-        'project.ComponentGUID', 
-        'project.ZoneClassification',
-        'project.LandAreaInSqM',
-        'project.FootPrintAreaInSqM',
-        'project.NoOfEmployees',
-        'project.ProjectCost',
-        'proponent.*')
+        $project = Project::where('Project.GUID', '=', $GUID)
+        ->where('Project.Stage', '=', 0 )
+        ->leftJoin('ProjectActivity', 'Project.GUID', '=', 'ProjectActivity.ProjectGUID')
+        ->leftJoin('Proponent', 'Project.ProponentGUID', '=', 'Proponent.GUID')
+        ->select('Project.Address AS Address',
+        'Project.Municipality  AS Municipality',
+        'Project.Province AS Province', 
+        'Project.ProjectSize AS ProjectSize', 
+        'Project.Address', 
+        'ProjectActivity.Status', 
+        'ProjectActivity.Details AS Remarks', 
+        'Project.ProjectName', 
+        'Project.Region AS Region', 
+        'ProjectActivity.RoutedTo', 
+        'ProjectActivity.RoutedFrom', 
+        'ProjectActivity.CreatedDate', 
+        'Project.GUID AS ProjectGUID', 
+        'Project.PreviousECCNo', 
+        'Project.Purpose', 
+        'Project.PriorTo1982', 
+        'Project.InNIPAS', 
+        'Project.Description', 
+        'Project.ComponentGUID', 
+        'Project.ZoneClassification',
+        'Project.LandAreaInSqM',
+        'Project.FootPrintAreaInSqM',
+        'Project.NoOfEmployees',
+        'Project.ProjectCost',
+        'Proponent.*')
         ->first();
 
         if($UserRole == 'Evaluator'){
@@ -174,7 +174,7 @@ class NewApplicationsController extends Controller
         if(empty($ID)){
             $project['data'] = Municipality::all();    
         } else {
-            $project['data'] = Municipality::where('municipality.municipality', '=', $municipality)->get();
+            $project['data'] = Municipality::where('Municipality.municipality', '=', $municipality)->get();
         }
         
         return response()->json($project);
@@ -185,7 +185,7 @@ class NewApplicationsController extends Controller
     {   
         $ID = $req['data'];
 
-        $project['data'] = Municipality::where('municipality.ID', '=', $ID)->first();
+        $project['data'] = Municipality::where('Municipality.ID', '=', $ID)->first();
         
         return response()->json($project);
     }
@@ -280,20 +280,20 @@ class NewApplicationsController extends Controller
         $ProjectGUID = $req['data'];
         
         $ProjectArea = ProjectArea::where('ProjectGUID', '=', $ProjectGUID)
-        ->leftJoin('projectgeocoordinates', 'projectarea.GUID', '=', 'projectgeocoordinates.AreaGUID')
+        ->leftJoin('ProjectGeoCoordinates', 'ProjectArea.GUID', '=', 'ProjectGeoCoordinates.AreaGUID')
         ->select(
-            'projectarea.GUID AS AreaGUID',
-            'projectarea.Area',
-            'projectarea.AreaType AS Type',
-            'projectgeocoordinates.LongDeg',
-            'projectgeocoordinates.LongMin',
-            'projectgeocoordinates.LongSec',
-            'projectgeocoordinates.LatDeg',
-            'projectgeocoordinates.LatMin',
-            'projectgeocoordinates.LatSec',
-            'projectgeocoordinates.Longitude',
-            'projectgeocoordinates.Latitude',
-            'projectgeocoordinates.Sorter',
+            'ProjectArea.GUID AS AreaGUID',
+            'ProjectArea.Area',
+            'ProjectArea.AreaType AS Type',
+            'ProjectGeoCoordinates.LongDeg',
+            'ProjectGeoCoordinates.LongMin',
+            'ProjectGeoCoordinates.LongSec',
+            'ProjectGeoCoordinates.LatDeg',
+            'ProjectGeoCoordinates.LatMin',
+            'ProjectGeoCoordinates.LatSec',
+            'ProjectGeoCoordinates.Longitude',
+            'ProjectGeoCoordinates.Latitude',
+            'ProjectGeoCoordinates.Sorter',
         )
         ->orderByRaw('Sorter ASC')
         ->get();
@@ -343,10 +343,10 @@ class NewApplicationsController extends Controller
 
         ///4th 
         $projectGeo = ProjectArea::where('ProjectArea.ProjectGUID', '=', $ProjectGUID)
-        ->Join('ProjectGeocoordinates', 'ProjectArea.GUID', '=', 'ProjectGeocoordinates.AreaGUID')
+        ->Join('ProjectGeoCoordinates', 'ProjectArea.GUID', '=', 'ProjectGeoCoordinates.AreaGUID')
         ->select(
             'ProjectArea.*',
-            'ProjectGeocoordinates.*'
+            'ProjectGeoCoordinates.*'
         )->get();
 
         $arrayGeo = array();
@@ -477,7 +477,7 @@ class NewApplicationsController extends Controller
         $ProjectGUID = $data['ProjectGUID'];
 
         $ProponentGUID = session::get('data')['ProponentGUID'];
-        $proponent = Proponent::where('proponent.GUID', '=', $ProponentGUID)
+        $proponent = Proponent::where('Proponent.GUID', '=', $ProponentGUID)
         ->select('MailingAddress AS proponent_address')
         ->first();
 
@@ -501,7 +501,7 @@ class NewApplicationsController extends Controller
     {
         $data = ProjectApplicationRequirements::all();
 
-        $check = DB::table('projectrequirement')->where('ProjectGUID', '=', $ProjectGUID)->get();
+        $check = DB::table('ProjectRequirement')->where('ProjectGUID', '=', $ProjectGUID)->get();
 
         if(count($check) == 0){
             $row = array();
@@ -576,7 +576,7 @@ class NewApplicationsController extends Controller
              $data['FileSizeInKB'] = $filesize;
              $data['CreatedBy'] = $UserName;
 
-             DB::table('projectactivityattachmenttemp')->insert($data);
+             DB::table('ProjectActivityAttachmentTemp')->insert($data);
          }else{
              // Response
              $rtrn['success'] = 2;
@@ -705,26 +705,26 @@ class NewApplicationsController extends Controller
         $checkIfExistingProject = DB::table('project')->where('GUID', '=', $ProjectGUID)->first();
 
         if(empty($checkIfExistingProject)){
-            if(DB::table('project')->insert($project)){
-                if(DB::table('projectactivity')->insert($projectActivity)){
+            if(DB::table('Project')->insert($project)){
+                if(DB::table('ProjectActivity')->insert($projectActivity)){
                     $this->saveGeoCoordinates($ProjectGUID);
                 }
                 return "Submitted";
             }
         } else {
-            DB::table('project')->where('GUID', $ProjectGUID)->update($project);
-            $deleteArea = DB::table('projectarea')->where('ProjectGUID', '=', $ProjectGUID)->get();
+            DB::table('Project')->where('GUID', $ProjectGUID)->update($project);
+            $deleteArea = DB::table('ProjectArea')->where('ProjectGUID', '=', $ProjectGUID)->get();
 
             foreach($deleteArea as $Area){
-                DB::table('projectgeocoordinates')->where('AreaGUID', '=', $Area->GUID)->delete();
-                DB::table('projectarea')->where('ProjectGUID', '=', $ProjectGUID)
+                DB::table('ProjectGeoCoordinates')->where('AreaGUID', '=', $Area->GUID)->delete();
+                DB::table('ProjectArea')->where('ProjectGUID', '=', $ProjectGUID)
                 ->where('GUID', '=', $Area->GUID)->delete();
             }
 
             $this->saveGeoCoordinates($ProjectGUID);
 
             return "Submitted";
-            // DB::table('projectactivity')->where('ProjectGUID', $ProjectGUID)->update($projectActivity);
+            // DB::table('ProjectActivity')->where('ProjectGUID', $ProjectGUID)->update($projectActivity);
         }
     }
 
@@ -784,7 +784,7 @@ class NewApplicationsController extends Controller
             $all_raw['Longitude'] = $geo_steps[5];
             $all_raw['Latitude'] = $geo_steps[4];
 
-            $last = DB::table('projectgeocoordinates')
+            $last = DB::table('ProjectGeoCoordinates')
             ->select('id')
             ->orderByRaw('ID DESC')
             ->first();
@@ -804,14 +804,14 @@ class NewApplicationsController extends Controller
                 array_push($areaArray, $data);
 
                 // insert into database project area
-                DB::table('projectarea')->insert($raw);
+                DB::table('ProjectArea')->insert($raw);
 
 
                 // array_push($saveArea, $raw);
             }
 
             // insert into database geocoordinates
-            DB::table('projectgeocoordinates')->insert($all_raw);
+            DB::table('ProjectGeoCoordinates')->insert($all_raw);
 
             // array_push($saveGeo, $all_raw);
         }
@@ -826,7 +826,7 @@ class NewApplicationsController extends Controller
 
         $ProjectActivityGUID = Session::get('ActivityGUID');
 
-        $data = DB::table('projectactivityattachmenttemp')
+        $data = DB::table('ProjectActivityAttachmentTemp')
             ->select('GUID','ActivityGUID','Description','FileName','Directory','FilePath','FileSizeInKB','CreatedBy','CreatedDate')
             ->where('ActivityGUID', '=', $ProjectActivityGUID)
             ->get();
@@ -835,7 +835,7 @@ class NewApplicationsController extends Controller
             return (array) $obj;
             })->toArray();
 
-        if(DB::table('projectactivityattachment')->insert($array)){
+        if(DB::table('ProjectActivityAttachmentTemp')->insert($array)){
             ProjectActivityAttachmentTemp::where('ActivityGUID', $ProjectActivityGUID)->delete();
             $this->ResetInputs();
         }
@@ -865,7 +865,7 @@ class NewApplicationsController extends Controller
 
         $now = new \DateTime(); 
 
-        DB::table('projectactivity')
+        DB::table('ProjectActivity')
         ->where('GUID','=', $ProjectActivityGUID)
         ->where('ProjectGUID', '=', $ProjectGUID)
         ->update([
@@ -1042,7 +1042,7 @@ class NewApplicationsController extends Controller
         // return $pdf->stream();
 
         $ProponentGUID = session::get('data')['ProponentGUID'];
-        $proponent = Proponent::where('proponent.GUID', '=', $ProponentGUID)
+        $proponent = Proponent::where('Proponent.GUID', '=', $ProponentGUID)
         ->first();
 
         $pdf = PDF::loadView('pdf.sworn_statement', compact('proponent'));
