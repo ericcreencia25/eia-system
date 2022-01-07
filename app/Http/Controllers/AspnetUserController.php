@@ -173,7 +173,7 @@ class AspnetUserController extends Controller
     {   
         $ProponentGUID = $req['ProponentGUID'];
 
-        $proponent = Proponent::where('proponent.GUID', '=', $ProponentGUID)
+        $proponent = Proponent::where('Proponent.GUID', '=', $ProponentGUID)
         ->first();
 
         return $proponent;

@@ -31,80 +31,6 @@ class EccApplicationsController extends Controller
         $UserOffice = $req['UserOffice'];
         $StatusFilter = $req['StatusFilter'];
 
-<<<<<<< HEAD
-
-        $todate = date('Y-m-d H:i:s');
-        $tomorrow = date('Y-m-d', strtotime( $todate . " +1 days"));
-
-        if($UserRole == 'Evaluator'){
-            $project = Project::select('projectactivity', 'project.GUID', '=', 'projectactivity.ProjectGUID')
-            ->select(
-                'project.Address AS Address',
-                'project.Municipality  AS Municipality', 
-                'project.Province AS Province', 
-                // 'projectactivity.Status', 
-                // 'projectactivity.Details AS Remarks', 
-                'project.ProjectName', 
-                'project.Region  AS Region', 
-                'projectactivity.RoutedTo', 
-                // 'projectactivity.RoutedFrom', 
-                'project.GUID AS ProjectGUID', 
-                'project.Stage', 
-                // 'projectactivity.CreatedDate',
-                'project.ProcTimeFrameInDays',
-                'project.TotProcDays',
-                DB::raw("(SELECT Status FROM projectactivity as pa
-                                WHERE pa.ProjectGUID = project.GUID  AND pa.RoutedToOffice = 'R07'
-                                ORDER BY ID DESC Limit 1) as Status"),
-
-                DB::raw("(SELECT RoutedToOffice FROM projectactivity as pa
-                                WHERE pa.ProjectGUID = project.GUID  AND pa.RoutedToOffice = 'R07'
-                                ORDER BY ID DESC Limit 1) as RoutedToOffice"),
-
-                DB::raw("(SELECT Remarks FROM projectactivity as pa
-                                WHERE pa.ProjectGUID = project.GUID AND pa.RoutedToOffice = 'R07'
-                                ORDER BY ID DESC Limit 1) as Remarks"),
-
-                DB::raw("(SELECT CreatedDate FROM projectactivity as pa
-                                WHERE pa.ProjectGUID = project.GUID AND pa.RoutedToOffice = 'R07'
-                                ORDER BY ID DESC Limit 1) as CreatedDate"),
-
-                DB::raw("(SELECT RoutedFrom FROM projectactivity as pa
-                                WHERE pa.ProjectGUID = project.GUID AND pa.RoutedToOffice = 'R07'
-                                ORDER BY ID DESC Limit 1) as RoutedFrom")
-            )
-            ->where('project.Region', '=', $UserOffice)
-            ->where('project.CreatedDate', '>=', '2021-01-01')
-            ->where('project.CreatedDate', '<=', $tomorrow)
-            // ->where('project.GUID', '=', '3D91AD36-A585-44A3-99E9-530C67333439')
-            ->Join('projectactivity', 'project.GUID', '=', 'projectactivity.ProjectGUID')
-            ->groupBy('project.GUID')
-            ->where('RoutedToOffice', '=', 'R07')
-            ->get();
-
-            // if($StatusFilter === 'Pending with EMB'){
-            //     $project
-            //     ->where('RoutedToOffice', '=', $UserOffice)
-            //     ->where('Status', '<>', 'Denied')
-            //     ->where('Status', '<>', 'Approved')
-            //     ->get();
-            // }else if($StatusFilter === 'Pending with Proponents') {
-            //     $project
-            //     ->where('RoutedToOffice', '=', 'Proponent')
-            //     ->where('Status', '<>', 'Denied')
-            //     ->where('Status', '<>', 'Approved')
-            //     ->get();
-            // }
-            
-        }else{
-            $project = Project::select('projectactivity', 'project.GUID', '=', 'projectactivity.ProjectGUID')
-            ->select('project.Address AS Address', 'project.Municipality  AS Municipality', 'project.Province AS Province', 'projectactivity.Status', 'projectactivity.Details AS Remarks', 'project.ProjectName', 'project.Region  AS Region', 'projectactivity.RoutedTo', 'projectactivity.RoutedFrom', 'project.GUID AS ProjectGUID', 'project.Stage', 'projectactivity.CreatedDate')
-            ->where('project.CreatedBy', '=', $UserName)
-            ->Join('projectactivity', 'project.GUID', '=', 'projectactivity.ProjectGUID')
-            ->groupBy('project.GUID')
-            ->get();
-        }
-=======
         $todate = date('Y-m-d H:i:s');
         $tomorrow = date('Y-m-d', strtotime( $todate . " +1 days"));
 
@@ -235,7 +161,6 @@ class EccApplicationsController extends Controller
         $project->groupBy('Project.GUID')
         ->orderByRaw('ProjectActivity.UpdatedDate DESC')
         ->get();
->>>>>>> e84a8a8d27eacc4590e30549e216c1222fe17fb6
 
         return DataTables::of($project)
         ->addColumn('Details', function($project) use($UserRole){
