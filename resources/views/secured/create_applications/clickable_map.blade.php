@@ -218,8 +218,7 @@
        });
 
        graphicsLayer.add(polylineGraphic);
-
->>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
+       
       /*******************************************************************
       * This click event sets generic content on the popup not tied to
       * a layer, graphic, or popupTemplate. The location of the point is
