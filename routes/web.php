@@ -76,10 +76,10 @@ Route::group(['middleware'=>'web'], function(){
 
 /// VIEW 
 
-    Route::view('default', 'secured\for_actions\default');
+    Route::view('default', 'secured.for_actions.default');
 
-    Route::view('new_document', 'secured\create_applications\application_tab');
+    Route::view('new_document', 'secured.create_applications.application_tab');
 
-    Route::view('documents', 'secured\ecc_applications\document');
+    Route::view('documents', 'secured.ecc_applications.document');
 
 });
