@@ -46,14 +46,10 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
+            'host' => env('DB_HOST', 'localhost'),
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'ECCOASDB'),
-<<<<<<< HEAD
             'username' => 'm_user',
-=======
-            'username' => 'root',
->>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
             'password' => '3mb*!svm',
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
@@ -70,14 +66,10 @@ return [
         'mysql2' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST_SECOND', '127.0.0.1'),
+            'host' => env('DB_HOST_SECOND', 'localhost'),
             'port' => env('DB_PORT_SECOND', '3306'),
             'database' => env('DB_DATABASE_SECOND', 'ECCOAS_Threshold'),
-<<<<<<< HEAD
             'username' => 'm_user',
-=======
-            'username' => 'root',
->>>>>>> e43ee20422650c4cc706fb9846875e98999d138c
             'password' => '3mb*!svm',
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
