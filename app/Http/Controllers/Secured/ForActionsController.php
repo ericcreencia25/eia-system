@@ -128,7 +128,7 @@ class ForActionsController extends Controller
     {   
         $GUID = $req['data']; 
         
-        $project = DB::table('project')
+        $project = DB::table('Project')
         ->where('Project.GUID', '=', $GUID)
         ->leftJoin('ProjectActivity', 'Project.GUID', '=', 'ProjectActivity.ProjectGUID')
         ->select(
