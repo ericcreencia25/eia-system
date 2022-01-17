@@ -149,6 +149,11 @@ function ProjectSize(ComponentGUID, Category) {
             }
           });
 
+          var next = $('#mytabs li.active').next()
+          next.length?
+          next.find('a').click():
+          $('#myTab li a')[2].click();
+
           $("#li_step_3").attr("class", "able");
           $("#step_3").attr("data-toggle", "tab");
 
