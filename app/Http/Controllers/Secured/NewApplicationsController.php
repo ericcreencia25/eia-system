@@ -90,7 +90,7 @@ class NewApplicationsController extends Controller
 
             // $details = '<input type="image" name="" id="" title="Click here to add entry" src="../img/SelectBlue.png" align="absmiddle" style="width:20px;">';
             $details = '<button class="btn btn-default btn-lg" onclick="ProjectSize('."'". $component->GUID."', ". 
-            "'". $data->Category."'".')"><img src="../img/SelectBlue.png" style="width:24px;" /></button>';
+            "'". $data->Category."'".')"><img src="../img/selectblue.png" style="width:24px;" /></button>';
             return $details;
         })
         
