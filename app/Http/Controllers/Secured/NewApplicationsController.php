@@ -58,7 +58,19 @@ class NewApplicationsController extends Controller
             return $details;
         })
         ->addColumn('SpecificType', function($component){
-            $details =  $component->ProjectSpecificType . '<br>'. $component->ProjectSpecificSubType;
+            if($component->ProjectSpecificSubType == 'NULL'){
+                $subtype = '';
+            } else {
+                $subtype = $component->ProjectSpecificSubType;
+            }
+
+            if($component->ProjectSpecificType == 'NULL'){
+                $specifictype = '';
+            } else {
+                $specifictype = $component->ProjectSpecificType;
+            }
+
+            $details =  $specifictype . '<br>'. $subtype;
             return $details;
         })
         ->addColumn('ProjectSize', function($component)  use ($ProjectSize){
@@ -77,8 +89,8 @@ class NewApplicationsController extends Controller
             ->first();
 
             // $details = '<input type="image" name="" id="" title="Click here to add entry" src="../img/SelectBlue.png" align="absmiddle" style="width:20px;">';
-            $details = '<button class="btn btn-success" onclick="ProjectSize('."'". $component->GUID."', ". 
-            "'". $data->Category."'".')">Add <i class="fa fa-fw fa-plus-circle"></i></button>';
+            $details = '<button class="btn btn-default btn-lg" onclick="ProjectSize('."'". $component->GUID."', ". 
+            "'". $data->Category."'".')"><img src="../img/SelectBlue.png" style="width:24px;" /></button>';
             return $details;
         })
         
@@ -644,7 +656,7 @@ class NewApplicationsController extends Controller
         $ProponentGUID = Session::get('data')['ProponentGUID'];
 
         ///getting region from province
-        $province = DB::table('province')
+        $province = DB::table('Province')
         ->where('Province', '=', $step_5['province'])
         ->first();
 
@@ -849,7 +861,7 @@ class NewApplicationsController extends Controller
         $ProjectGUID = $req['ProjectGUID'];
         $Remarks = $req['remarks'];
 
-        $province = DB::table('province')
+        $province = DB::table('Province')
         ->where('Province', '=', $step_5['province'])
         ->first();
 
