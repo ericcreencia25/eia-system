@@ -156,7 +156,7 @@
       });
 
       var map = new Map({
-        basemap: "topo-vector"
+        basemap: "hybrid"
       });
 
       var view = new MapView({
@@ -165,7 +165,7 @@
         center: center_location, // longitude, latitude
         // center: [center_location], // longitude, latitude
         // center:[-118.821527826096, 34.0139576938577],
-        zoom: 18
+        zoom: 14
       });
       
        view.ui.add("instruction", "bottom-left");

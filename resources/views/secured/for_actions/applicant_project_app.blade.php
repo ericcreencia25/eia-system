@@ -51,9 +51,8 @@
                         <b>Recent Activity:</b> <a  href="" style="text-decoration:none;" id="remarks"></a> 
                     </div>
 
-
                 @if($project['RoutedTo'] == Session::get('data')['UserName'])
-
+                    
                     <div id="ContentPlaceHolder1_dvRouting">
                         <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;  cursor:pointer;">RETURN THIS APPLICATION TO EMB</div>
                         <br>
@@ -101,10 +100,8 @@
                         <br>
                         <br>
                     </div>
-
                     @endif
                     <!--- END IF ELSE ---->
-                    
                     <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">Routing History
                     </div>
                     <table class="table table-bordered" id="RoutingHistoryTable">
