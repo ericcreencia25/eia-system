@@ -714,7 +714,7 @@ class NewApplicationsController extends Controller
         $projectActivity['UpdatedBy'] = $UserName;
         $projectActivity['CreatedBy'] = $UserName;
         
-        $checkIfExistingProject = DB::table('project')->where('GUID', '=', $ProjectGUID)->first();
+        $checkIfExistingProject = DB::table('Project')->where('GUID', '=', $ProjectGUID)->first();
 
         if(empty($checkIfExistingProject)){
             if(DB::table('Project')->insert($project)){
