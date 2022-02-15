@@ -17,3 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+// Route::apiResource('books', \App\Http\Controllers\Api\V1\BookController::class)->only(['index', 'show']);
+
+///you can change prefix in app/Providers/RouteServiceProvider

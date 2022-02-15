@@ -743,6 +743,14 @@ $(document).ready(function(){
                 // footer: '<a href="">Why do I have this issue?</a>',
                 width: '850px'
               });
+        } else if(UserDestination === 'OnLeaveReceiver'){
+            Swal.fire({
+                icon: 'warning',
+                title: 'Notifications!',
+                text: 'Cannot forward to receiver with on-leave status.',
+                // footer: '<a href="">Why do I have this issue?</a>',
+                width: '850px'
+            });
         } else if(ActionRequired === 'For Payment of ECC Application' && filesCheck != 'Order of Payment - Application') {
             Swal.fire({
                 icon: 'error',
@@ -1130,6 +1138,15 @@ $(document).ready(function(){
             $("#Other_attachment").removeAttr("hidden");
         }
     });
+
+    $("#user_list").on('change', function(){
+        var OnLeave = $(this).val();
+
+        if(OnLeave === 'OnLeaveReceiver'){
+            OnLeaveFunction();
+        }
+
+    })
 });
 
 function AdditionalRequirementsSession(ReqStorage)
@@ -1236,7 +1253,12 @@ function UserListsOnRegion()
         },    
         success: function(response){
             $.each(response, function(index, itemData) {
-              var option = '<option value="'+itemData['UserName']+'">' + itemData['UserName'] + ' ('+ itemData['UserRole'] + ') ' +'</option>';
+                if(itemData['OnLeaveReceiver'] == 1){
+                    var option = '<option value="OnLeaveReceiver">' + itemData['UserName'] + ' ('+ itemData['UserRole'] + ') -- On Leave -- ' +'</option>';
+                } else {
+                    var option = '<option value="'+itemData['UserName']+'">' + itemData['UserName'] + ' ('+ itemData['UserRole'] + ') ' +'</option>';
+                }
+              
               $("#user_list").append(option);
             });
         }
@@ -1370,6 +1392,16 @@ function deleteUploadedFile(ID)
                 }
             });
         }
+    });
+}
+
+function OnLeaveFunction(){
+    Swal.fire({
+        icon: 'warning',
+        title: 'Notifications!',
+        text: 'This user is on leave',
+        // footer: '<a href="">Why do I have this issue?</a>',
+        width: '850px'
     });
 }
 

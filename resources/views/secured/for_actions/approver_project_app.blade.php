@@ -176,6 +176,7 @@ var GUID = "{{$project['GUID']}}";
 var ActivityGUID = "{{$project['ActivityGUID']}}";
 var CreatedBy = "{{$project['CreatedBy']}}";
 
+
 var AdditionalRequirements = [];
 
 $(document).ready(function(){
@@ -275,9 +276,9 @@ $(document).ready(function(){
             $("#name_date").html(name_date);
 
             if(response['Status'] === 'For Denial'){
-                var button = '<button class="btn btn-warning btn-md" onclick="ProcessApplication('+"'Denied'"+', '+"'"+textProject+"'"+')">Deny Application</button>&nbsp;<button class="btn btn-default btn-md">Revert</button>';
+                var button = '<button class="btn btn-warning btn-md" onclick="ProcessApplication('+"'Denied'"+', '+"'"+textProject+"'"+')">Deny Application</button>&nbsp;<button class="btn btn-default btn-md" onclick="convertDocxToPDF()">Revert</button>';
             }else{
-                var button = '<button class="btn btn-primary btn-md" onclick="ProcessApplication('+"'Denied'"+', '+"'"+textProject+"'"+')">Approve Application</button>&nbsp;<button class="btn btn-default btn-md">Revert</button>';
+                var button = '<button class="btn btn-primary btn-md" onclick="ProcessApplication('+"'Denied'"+', '+"'"+textProject+"'"+')">Approve Application</button>&nbsp;<button class="btn btn-default btn-md"  onclick="convertDocxToPDF()">Revert</button>';
             }
             
             $("#button_approver").html(button);
@@ -425,6 +426,8 @@ function ProcessApplication(Status, text)
 {
     var UpdatedDate = "{{$project['UpdatedDate']}}";
     var Project = '<b>' + text + '</b>'; 
+    var Region = "{{$project['Region']}}";
+
     if(Status === 'Denied'){
         Swal.fire({
             title: '<small style="font-size:10pt">Click the button below to confirm the approval of the application:</small>',
@@ -453,6 +456,8 @@ function ProcessApplication(Status, text)
                             data: {
                                 ProjectGUID : GUID,
                                 Status: 'Denied',
+                                Region : Region,
+                                UpdatedDate : UpdatedDate,
                                 _token: '{{csrf_token()}}' ,
                             },
                             beforeSend: function() {
@@ -469,7 +474,7 @@ function ProcessApplication(Status, text)
                                     }).then((result) => {
                                         /* Read more about handling dismissals below */
                                         if (result.dismiss === Swal.DismissReason.timer) {
-                                            location.reload();
+                                            // location.reload();
                                         }
                                     });
                                 });
@@ -506,6 +511,8 @@ function ProcessApplication(Status, text)
                             data: {
                                 ProjectGUID : GUID,
                                 Status: 'Approved',
+                                Region : Region,
+                                UpdatedDate : UpdatedDate,
                                 _token: '{{csrf_token()}}' ,
                             },
                             beforeSend: function() {
@@ -522,7 +529,7 @@ function ProcessApplication(Status, text)
                                     }).then((result) => {
                                         /* Read more about handling dismissals below */
                                         if (result.dismiss === Swal.DismissReason.timer) {
-                                            location.reload();
+                                            // location.reload();
                                         }
                                     });
                                 });
@@ -541,6 +548,11 @@ function ProcessApplication(Status, text)
 
     ///Denial: This action will generate a Signed Denial Letter in pdf based on the latest Draft of the Denial Letter. 
 
+}
+
+function convertDocxToPDF(){
+    var GUID = "{{$project['GUID']}}";
+    window.location.href = '/convertDocxToPDF/' + GUID;
 }
 
 

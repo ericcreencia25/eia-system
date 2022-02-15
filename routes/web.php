@@ -39,6 +39,7 @@ Route::group(['middleware'=>'web'], function(){
     
 ////ECC APPLICATIONS CONTROLLER
     
+    
 
     Route::get('/index', [App\Http\Controllers\Secured\EccApplicationsController::class, 'index'])->name('index');
 
@@ -130,6 +131,12 @@ Route::group(['middleware'=>'web'], function(){
     // Route::get('/reviewer/{GUID}', [ForActionsController::class, 'reviewer'])->name('reviewer');
 
     // Route::view('reviewer', 'secured.for_actions.reviewer');
+
+    Route::get('/generate-qrcode', [ForActionsController::class, 'generateQrCode'])->name('generateQrCode');
+
+    Route::get('/verification/{GUID}', [ForActionsController::class, 'verification'])->name('verification');
+
+    Route::get('/convertDocxToPDF/{GUID}', [ForActionsController::class, 'convertDocxToPDF'])->name('convertDocxToPDF');
 
 /// ASPNET USER CONTROLLER
 
