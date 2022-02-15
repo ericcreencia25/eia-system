@@ -34,6 +34,8 @@ class NewApplicationsController extends Controller
         return view('secured.new_applications.index');
     }
 
+    
+
     public function getProjectType(Request $req)
     {
         $ComponentGUID = $req['ComponentGUID'];
@@ -41,14 +43,45 @@ class NewApplicationsController extends Controller
 
         $ProjectSize = $req['ProjectSize'];
         
-        if(empty($ComponentGUID) && empty($ProjectSize)){
-            $component = Component::where('active', '=', 1)
-            ->where('Component.ProjectType', 'LIKE', '%'. $search.'%')
+        if(empty($ComponentGUID)){
+            $component = Component::where('component.ProjectType', 'LIKE', '%'. $search.'%')
+            ->leftJoin('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
+            ->select(
+                'component.GUID as GUID',
+                'component.ProjectType as ProjectType',
+                'component.ProjectSubType as ProjectSubType',
+                'component.ProjectSpecificSubType as ProjectSpecificSubType',
+                'component.ProjectSpecificType as ProjectSpecificType',
+                'component.Parameter as Parameter',
+                'component.UnitOfMeasure as UnitOfMeasure',
+
+                'componentthreshold.Category as Category',
+                'componentthreshold.Minimum',
+                'componentthreshold.Maximum'
+            )
+
+            // ->where('componentthreshold.Category', '=', 'NECP')
+            ->where('componentthreshold.ReportType', '=', 'IEE')
             ->get();
         }
         else{
-            $component = Component::where('GUID', '=', $ComponentGUID)
-            ->where('active', '=', 1)
+            $component = Component::where('component.GUID', '=', $ComponentGUID)
+            ->leftJoin('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
+            ->select(
+                'component.GUID as GUID',
+                'component.ProjectType as ProjectType',
+                'component.ProjectSubType as ProjectSubType',
+                'component.ProjectSpecificSubType as ProjectSpecificSubType',
+                'component.ProjectSpecificType as ProjectSpecificType',
+                'component.Parameter as Parameter',
+                'component.UnitOfMeasure as UnitOfMeasure',
+
+                'componentthreshold.Category as Category',
+                'componentthreshold.Minimum',
+                'componentthreshold.Maximum'
+            )
+            // ->where('componentthreshold.Category', '=', 'NECP')
+            ->where('componentthreshold.ReportType', '=', 'IEE')
             ->get();
         }
         
@@ -58,6 +91,7 @@ class NewApplicationsController extends Controller
             return $details;
         })
         ->addColumn('SpecificType', function($component){
+            
             if($component->ProjectSpecificSubType == 'NULL'){
                 $subtype = '';
             } else {
@@ -74,24 +108,21 @@ class NewApplicationsController extends Controller
             return $details;
         })
         ->addColumn('ProjectSize', function($component)  use ($ProjectSize){
-            $data = ComponentThreshold::where('ComponentGUID', '=', $component->GUID)
-            ->first();
 
             $details = '<div class="input-group input-group-lg" >
                 <span class="input-group-addon input-sm limit" style="background-color:Silver; ">'. $component->Parameter . ' in '. $component->UnitOfMeasure. '</span>
-                <input type="number" id="input_project_size_'.$component->GUID.'"  class="form-control" value="'.$ProjectSize.'"  min="'.$data->Minimum.'" max="'.$data->Maximum.'">
+                <input type="number" id="input_project_size_'.$component->GUID.'"  class="form-control" value="'.$ProjectSize.'"  min="'.$component->Minimum.'" max="'.$component->Maximum.'">
               </div>';
+
+
             return $details;
         })
         ->addColumn('Action', function($component){
-
-            $data = ComponentThreshold::where('ComponentGUID', '=', $component->GUID)
-            ->first();
-
             // $details = '<input type="image" name="" id="" title="Click here to add entry" src="../img/SelectBlue.png" align="absmiddle" style="width:20px;">';
             $details = '<button class="btn btn-default btn-lg" onclick="ProjectSize('."'". $component->GUID."', ". 
-            "'". $data->Category."'".')"><img src="../img/selectblue.png" style="width:24px;" /></button>';
+            "'". $component->Category."'".')"><img src="../img/selectblue.png" style="width:24px;" /></button>';
             return $details;
+
         })
         
         ->rawColumns(['Category', 'SpecificType', 'ProjectSize', 'Action'])
@@ -131,35 +162,35 @@ class NewApplicationsController extends Controller
         $sess = $request->session()->get('data');
         $UserRole = $sess->UserRole;
         
-        $project = Project::where('Project.GUID', '=', $GUID)
-        ->where('Project.Stage', '=', 0 )
-        ->leftJoin('ProjectActivity', 'Project.GUID', '=', 'ProjectActivity.ProjectGUID')
-        ->leftJoin('Proponent', 'Project.ProponentGUID', '=', 'Proponent.GUID')
-        ->select('Project.Address AS Address',
-        'Project.Municipality  AS Municipality',
-        'Project.Province AS Province', 
-        'Project.ProjectSize AS ProjectSize', 
-        'Project.Address', 
-        'ProjectActivity.Status', 
-        'ProjectActivity.Details AS Remarks', 
-        'Project.ProjectName', 
-        'Project.Region AS Region', 
-        'ProjectActivity.RoutedTo', 
-        'ProjectActivity.RoutedFrom', 
-        'ProjectActivity.CreatedDate', 
-        'Project.GUID AS ProjectGUID', 
-        'Project.PreviousECCNo', 
-        'Project.Purpose', 
-        'Project.PriorTo1982', 
-        'Project.InNIPAS', 
-        'Project.Description', 
-        'Project.ComponentGUID', 
-        'Project.ZoneClassification',
-        'Project.LandAreaInSqM',
-        'Project.FootPrintAreaInSqM',
-        'Project.NoOfEmployees',
-        'Project.ProjectCost',
-        'Proponent.*')
+        $project = Project::where('project.GUID', '=', $GUID)
+        ->where('project.Stage', '=', 0 )
+        ->leftJoin('projectactivity', 'project.GUID', '=', 'projectactivity.ProjectGUID')
+        ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
+        ->select('project.Address AS Address',
+        'project.Municipality  AS Municipality',
+        'project.Province AS Province', 
+        'project.ProjectSize AS ProjectSize', 
+        'project.Address', 
+        'projectactivity.Status', 
+        'projectactivity.Details AS Remarks', 
+        'project.ProjectName', 
+        'project.Region AS Region', 
+        'projectactivity.RoutedTo', 
+        'projectactivity.RoutedFrom', 
+        'projectactivity.CreatedDate', 
+        'project.GUID AS ProjectGUID', 
+        'project.PreviousECCNo', 
+        'project.Purpose', 
+        'project.PriorTo1982', 
+        'project.InNIPAS', 
+        'project.Description', 
+        'project.ComponentGUID', 
+        'project.ZoneClassification',
+        'project.LandAreaInSqM',
+        'project.FootPrintAreaInSqM',
+        'project.NoOfEmployees',
+        'project.ProjectCost',
+        'proponent.*')
         ->first();
 
         if($UserRole == 'Evaluator'){
@@ -183,11 +214,11 @@ class NewApplicationsController extends Controller
     {   
         $municipality = $req['data'];
 
-        if(empty($ID)){
+        // if(empty($municipality)){
             $project['data'] = Municipality::all();    
-        } else {
-            $project['data'] = Municipality::where('Municipality.municipality', '=', $municipality)->get();
-        }
+        // } else {
+        //     $project['data'] = Municipality::where('municipality.municipality', '=', $municipality)->get();
+        // }
         
         return response()->json($project);
     }
@@ -197,7 +228,7 @@ class NewApplicationsController extends Controller
     {   
         $ID = $req['data'];
 
-        $project['data'] = Municipality::where('Municipality.ID', '=', $ID)->first();
+        $project['data'] = Municipality::where('municipality.ID', '=', $ID)->first();
         
         return response()->json($project);
     }
@@ -292,20 +323,20 @@ class NewApplicationsController extends Controller
         $ProjectGUID = $req['data'];
         
         $ProjectArea = ProjectArea::where('ProjectGUID', '=', $ProjectGUID)
-        ->leftJoin('ProjectGeoCoordinates', 'ProjectArea.GUID', '=', 'ProjectGeoCoordinates.AreaGUID')
+        ->leftJoin('projectgeocoordinates', 'projectarea.GUID', '=', 'projectgeocoordinates.AreaGUID')
         ->select(
-            'ProjectArea.GUID AS AreaGUID',
-            'ProjectArea.Area',
-            'ProjectArea.AreaType AS Type',
-            'ProjectGeoCoordinates.LongDeg',
-            'ProjectGeoCoordinates.LongMin',
-            'ProjectGeoCoordinates.LongSec',
-            'ProjectGeoCoordinates.LatDeg',
-            'ProjectGeoCoordinates.LatMin',
-            'ProjectGeoCoordinates.LatSec',
-            'ProjectGeoCoordinates.Longitude',
-            'ProjectGeoCoordinates.Latitude',
-            'ProjectGeoCoordinates.Sorter',
+            'projectarea.GUID AS AreaGUID',
+            'projectarea.Area',
+            'projectarea.AreaType AS Type',
+            'projectgeocoordinates.LongDeg',
+            'projectgeocoordinates.LongMin',
+            'projectgeocoordinates.LongSec',
+            'projectgeocoordinates.LatDeg',
+            'projectgeocoordinates.LatMin',
+            'projectgeocoordinates.LatSec',
+            'projectgeocoordinates.Longitude',
+            'projectgeocoordinates.Latitude',
+            'projectgeocoordinates.Sorter',
         )
         ->orderByRaw('Sorter ASC')
         ->get();
@@ -354,11 +385,11 @@ class NewApplicationsController extends Controller
         $req->session()->put('step_3', $step_3);
 
         ///4th 
-        $projectGeo = ProjectArea::where('ProjectArea.ProjectGUID', '=', $ProjectGUID)
-        ->Join('ProjectGeoCoordinates', 'ProjectArea.GUID', '=', 'ProjectGeoCoordinates.AreaGUID')
+        $projectGeo = ProjectArea::where('projectarea.ProjectGUID', '=', $ProjectGUID)
+        ->Join('projectgeocoordinates', 'projectarea.GUID', '=', 'projectgeocoordinates.AreaGUID')
         ->select(
-            'ProjectArea.*',
-            'ProjectGeoCoordinates.*'
+            'projectarea.*',
+            'projectgeocoordinates.*'
         )->get();
 
         $arrayGeo = array();
@@ -387,7 +418,7 @@ class NewApplicationsController extends Controller
 
         ///5th Step
         $ProponentGUID = session::get('data')['ProponentGUID'];
-        $proponent = Proponent::where('Proponent.GUID', '=', $ProponentGUID)
+        $proponent = Proponent::where('proponent.GUID', '=', $ProponentGUID)
         ->first();
 
         $fifth = array();
@@ -489,7 +520,7 @@ class NewApplicationsController extends Controller
         $ProjectGUID = $data['ProjectGUID'];
 
         $ProponentGUID = session::get('data')['ProponentGUID'];
-        $proponent = Proponent::where('Proponent.GUID', '=', $ProponentGUID)
+        $proponent = Proponent::where('proponent.GUID', '=', $ProponentGUID)
         ->select('MailingAddress AS proponent_address')
         ->first();
 
@@ -513,7 +544,7 @@ class NewApplicationsController extends Controller
     {
         $data = ProjectApplicationRequirements::all();
 
-        $check = DB::table('ProjectRequirement')->where('ProjectGUID', '=', $ProjectGUID)->get();
+        $check = DB::table('projectrequirement')->where('ProjectGUID', '=', $ProjectGUID)->get();
 
         if(count($check) == 0){
             $row = array();
@@ -588,7 +619,7 @@ class NewApplicationsController extends Controller
              $data['FileSizeInKB'] = $filesize;
              $data['CreatedBy'] = $UserName;
 
-             DB::table('ProjectActivityAttachmentTemp')->insert($data);
+             DB::table('projectactivityattachmenttemp')->insert($data);
          }else{
              // Response
              $rtrn['success'] = 2;
@@ -656,7 +687,7 @@ class NewApplicationsController extends Controller
         $ProponentGUID = Session::get('data')['ProponentGUID'];
 
         ///getting region from province
-        $province = DB::table('Province')
+        $province = DB::table('province')
         ->where('Province', '=', $step_5['province'])
         ->first();
 
@@ -693,11 +724,30 @@ class NewApplicationsController extends Controller
         $project['NoOfEmployees'] = $step_5['no_of_employees'];
         $project['ProjectCost'] = $step_5['total_project_cost'];
         $project['UpdatedBy'] = $UserName;
+        $project['UpdatedDate'] = date('Y-m-d H:i:s');
         $project['CreatedBy'] = $UserName;
         $project['AssociatedUser'] = $UserName;
         $project['Basis'] = "Auto";
 
         $project['Stage'] = 0;
+
+        $componentData = Component::where('component.GUID', '=', $step_2['ComponentGUID'])
+        ->leftJoin('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
+        ->select(
+            'component.IEEChecklist',
+
+            'componentthreshold.Category as Category',
+            'componentthreshold.ReportType',
+            'componentthreshold.DecisionDocumentDefault',
+            'componentthreshold.TagRef'
+        )
+        ->where('componentthreshold.Category', '=', 'NECP')
+        ->where('componentthreshold.ReportType', '=', 'IEE')
+        ->first();
+
+        $project['Category'] = 'NECP';
+        $project['ECALocation'] = 'ECA';
+        $project['Template'] = $componentData->IEEChecklist;
 
  
         $projectActivity = array();
@@ -714,29 +764,29 @@ class NewApplicationsController extends Controller
         $projectActivity['UpdatedBy'] = $UserName;
         $projectActivity['CreatedBy'] = $UserName;
         
-        $checkIfExistingProject = DB::table('Project')->where('GUID', '=', $ProjectGUID)->first();
+        $checkIfExistingProject = DB::table('project')->where('GUID', '=', $ProjectGUID)->first();
 
         if(empty($checkIfExistingProject)){
-            if(DB::table('Project')->insert($project)){
-                if(DB::table('ProjectActivity')->insert($projectActivity)){
+            if(DB::table('project')->insert($project)){
+                if(DB::table('projectactivity')->insert($projectActivity)){
                     $this->saveGeoCoordinates($ProjectGUID);
                 }
                 return "Submitted";
             }
         } else {
-            DB::table('Project')->where('GUID', $ProjectGUID)->update($project);
-            $deleteArea = DB::table('ProjectArea')->where('ProjectGUID', '=', $ProjectGUID)->get();
+            DB::table('project')->where('GUID', $ProjectGUID)->update($project);
+            $deleteArea = DB::table('projectarea')->where('ProjectGUID', '=', $ProjectGUID)->get();
 
             foreach($deleteArea as $Area){
-                DB::table('ProjectGeoCoordinates')->where('AreaGUID', '=', $Area->GUID)->delete();
-                DB::table('ProjectArea')->where('ProjectGUID', '=', $ProjectGUID)
+                DB::table('projectgeocoordinates')->where('AreaGUID', '=', $Area->GUID)->delete();
+                DB::table('projectarea')->where('ProjectGUID', '=', $ProjectGUID)
                 ->where('GUID', '=', $Area->GUID)->delete();
             }
 
             $this->saveGeoCoordinates($ProjectGUID);
 
             return "Submitted";
-            // DB::table('ProjectActivity')->where('ProjectGUID', $ProjectGUID)->update($projectActivity);
+            // DB::table('projectactivity')->where('ProjectGUID', $ProjectGUID)->update($projectActivity);
         }
     }
 
@@ -796,7 +846,7 @@ class NewApplicationsController extends Controller
             $all_raw['Longitude'] = $geo_steps[5];
             $all_raw['Latitude'] = $geo_steps[4];
 
-            $last = DB::table('ProjectGeoCoordinates')
+            $last = DB::table('projectgeocoordinates')
             ->select('id')
             ->orderByRaw('ID DESC')
             ->first();
@@ -816,14 +866,14 @@ class NewApplicationsController extends Controller
                 array_push($areaArray, $data);
 
                 // insert into database project area
-                DB::table('ProjectArea')->insert($raw);
+                DB::table('projectarea')->insert($raw);
 
 
                 // array_push($saveArea, $raw);
             }
 
             // insert into database geocoordinates
-            DB::table('ProjectGeoCoordinates')->insert($all_raw);
+            DB::table('projectgeocoordinates')->insert($all_raw);
 
             // array_push($saveGeo, $all_raw);
         }
@@ -838,7 +888,7 @@ class NewApplicationsController extends Controller
 
         $ProjectActivityGUID = Session::get('ActivityGUID');
 
-        $data = DB::table('ProjectActivityAttachmentTemp')
+        $data = DB::table('projectactivityattachmenttemp')
             ->select('GUID','ActivityGUID','Description','FileName','Directory','FilePath','FileSizeInKB','CreatedBy','CreatedDate')
             ->where('ActivityGUID', '=', $ProjectActivityGUID)
             ->get();
@@ -847,7 +897,7 @@ class NewApplicationsController extends Controller
             return (array) $obj;
             })->toArray();
 
-        if(DB::table('ProjectActivityAttachmentTemp')->insert($array)){
+        if(DB::table('projectactivityattachment')->insert($array)){
             ProjectActivityAttachmentTemp::where('ActivityGUID', $ProjectActivityGUID)->delete();
             $this->ResetInputs();
         }
@@ -861,7 +911,7 @@ class NewApplicationsController extends Controller
         $ProjectGUID = $req['ProjectGUID'];
         $Remarks = $req['remarks'];
 
-        $province = DB::table('Province')
+        $province = DB::table('province')
         ->where('Province', '=', $step_5['province'])
         ->first();
 
@@ -872,12 +922,15 @@ class NewApplicationsController extends Controller
         ->where('UserOffice', '=', $province->ProcessingOffice)
         ->where('UserRole', '=', 'Evaluator')
         ->where('InECCOAS', '=', 1)
-        ->orderByRaw('CreatedDate Desc')
+        // ->where('Designation', '=', 'casehandler')
+        ->where('DefaultRecipient', '=', 1)
+        ->orderByRaw('Screened Desc')
         ->first();
 
+        
         $now = new \DateTime(); 
 
-        DB::table('ProjectActivity')
+        DB::table('projectactivity')
         ->where('GUID','=', $ProjectActivityGUID)
         ->where('ProjectGUID', '=', $ProjectGUID)
         ->update([
@@ -897,7 +950,7 @@ class NewApplicationsController extends Controller
             'UpdatedDate' => $now->format('Y-m-d H:i:s')
         ]);
 
-        return "Submitted";
+        return $RouteTo->UserName;
     }
 
 
@@ -1000,7 +1053,7 @@ class NewApplicationsController extends Controller
         </table>';
 
         ///getting region from province
-        $province = DB::table('Province')
+        $province = DB::table('province')
         ->where('Province', '=', $step_5['province'])
         ->first();
 
@@ -1054,10 +1107,85 @@ class NewApplicationsController extends Controller
         // return $pdf->stream();
 
         $ProponentGUID = session::get('data')['ProponentGUID'];
-        $proponent = Proponent::where('Proponent.GUID', '=', $ProponentGUID)
+        $proponent = Proponent::where('proponent.GUID', '=', $ProponentGUID)
         ->first();
 
         $pdf = PDF::loadView('pdf.sworn_statement', compact('proponent'));
         return $pdf->stream('try.pdf');
+    }
+
+    public function ProjectTypeTable(Request $req)
+    {
+        $search = $req['search'];
+        
+        $component = Component::where('component.ProjectType', 'LIKE', '%'. $search.'%')
+            ->leftJoin('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
+            ->select('component.*', 'componentthreshold.*')
+            ->orderByRaw('componentthreshold.Ranking ASC')
+            ->get();
+
+        return DataTables::of($component)
+        
+        ->addColumn('Action', function($component){
+            if($component->ReportType == 'IEE'){
+                $title = 'Initial Environment Examination';
+            }else if($component->ReportType == 'EIS'){
+                $title = 'Environmental Impact Statement';
+            }else{
+                $title = 'Certificates of Non-Coverage';
+            }
+
+            if($component->ReportType == 'IEE'){
+                $details = '<button title="'.$title.'" class="btn btn-default btn-block btn-sm" onclick="LinkProject('."'". $component->ComponentGUID."', "."'". $component->Category."', "."'". $component->ReportType."'".')">'.$component->ReportType.'</button>';
+            }else{
+
+                $details = '<button title="'.$title.'" class="btn btn-default btn-block btn-sm" onclick="LinkProject('."'". $component->ComponentGUID."', "."'". $component->Category."', "."'". $component->ReportType."'".')" disabled>'.$component->ReportType.'</button>';
+            }
+            
+            return $details;
+
+        })
+        ->addColumn('SpecificType', function($component){
+
+            if($component->ProjectSpecificSubType == 'NULL'){
+                $subtype = '';
+            } else {
+                $subtype = $component->ProjectSpecificSubType;
+            }
+
+            if($component->ProjectSpecificType == 'NULL'){
+                $specifictype = '';
+            } else {
+                $specifictype = $component->ProjectSpecificType;
+            }
+
+            $details =  $specifictype . '<br>'. $subtype;
+            
+            return $details;
+
+        })
+        
+        ->rawColumns(['Action', 'SpecificType'])
+        ->make(true);
+
+        // This type of project and its size falls under the Environmentally Critical Projects (ECPs). The ECC Online Application System covers only the Non-Environmentally Critical Projects (NECPs). For ECP Project, please coordinate with EMB Central Office - Environmnetal Impact Assessment and Management Division.
+    }
+
+    public function LinkProjectType(Request $req)
+    {
+        $ComponentGUID = $req['ComponentGUID'];
+        $input_size = $req['input_size'];
+        $second = $req['second'];
+
+        $all = ['input_size'=> '', 'ComponentGUID'=>$ComponentGUID, 'second'=>'N/A'];
+
+        $req->session()->put('step_2', $all);
+
+        $NewGUID = Uuid::generate()->string;
+        $GUID = Str::upper($NewGUID);
+
+        return $GUID;
+
+        // Session::pull('input');
     }
 }

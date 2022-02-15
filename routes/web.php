@@ -38,6 +38,8 @@ Route::group(['middleware'=>'web'], function(){
     $GUID = Uuid::generate()->string;
     
 ////ECC APPLICATIONS CONTROLLER
+    
+
     Route::get('/index', [App\Http\Controllers\Secured\EccApplicationsController::class, 'index'])->name('index');
 
     Route::get('/index', [App\Http\Controllers\Secured\EccApplicationsController::class, 'index'])->name('index'); 
@@ -48,6 +50,14 @@ Route::group(['middleware'=>'web'], function(){
     Route::post('/getECCApplications', [EccApplicationsController::class, 'getECCApplications'])->name('get.ecc.applications');
 
     Route::post('/getECCApplicationsCaseHandler', [EccApplicationsController::class, 'getECCApplicationsCaseHandler'])->name('get.ecc.applications.casehandler');
+
+    Route::post('/getUnderProcessPerStatus', [EccApplicationsController::class, 'getUnderProcessPerStatus'])->name('getUnderProcessPerStatus');
+
+    Route::post('/getUnderProcessECCApplication', [EccApplicationsController::class, 'getUnderProcessECCApplication'])->name('getUnderProcessECCApplication');
+
+    Route::post('/getApplicationsDecided', [EccApplicationsController::class, 'getApplicationsDecided'])->name('getApplicationsDecided');
+
+    Route::get('/ECCDashboard', [EccApplicationsController::class, 'ECCDashboard'])->name('ECCDashboard');
 
 
 //// FOR ACTIONS CONTROLLER
@@ -83,6 +93,8 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::post('/SaveAppReq', [ForActionsController::class, 'SaveAppReq'])->name('SaveAppReq');
 
+    Route::post('/SaveAppReqApprover', [ForActionsController::class, 'SaveAppReqApprover'])->name('SaveAppReqApprover');
+
     Route::post('/EndorseApplication', [ForActionsController::class, 'EndorseApplication'])->name('EndorseApplication');
 
     Route::post('/addNewActivityGUID', [ForActionsController::class, 'addNewActivityGUID'])->name('addNewActivityGUID');
@@ -95,11 +107,35 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::post('/ReturnApplication', [ForActionsController::class, 'ReturnApplication'])->name('ReturnApplication');
 
+    Route::get('/dynamic_pdf/EvaluationReport/{GUID}', [ForActionsController::class, 'generateEvaluationReport'])->name('generateEvaluationReport');
+
+    Route::get('/dynamic_pdf/OrderOfPayment/{GUID}', [ForActionsController::class, 'generateOrderOfPayment'])->name('generateOrderOfPayment');
+
+    Route::get('/dynamic_pdf/DraftCerticate/{GUID}', [ForActionsController::class, 'generateDraftCerticate'])->name('generateDraftCerticate');
+
+    Route::post('acceptApplication', [ForActionsController::class, 'acceptApplication'])->name('acceptApplication');
+
+    Route::get('/dynamic_pdf/DraftDenialLetter/{GUID}', [ForActionsController::class, 'generateDenialLetter'])->name('generateDenialLetter');
+
+    Route::post('/getActionRequired', [ForActionsController::class, 'getActionRequired'])->name('getActionRequired');
+
+    Route::post('/deleteTempAttachment', [ForActionsController::class, 'deleteTempAttachment'])->name('deleteTempAttachment');
+
+    Route::post('/reviewerPDF', [ForActionsController::class, 'reviewerPDF'])->name('reviewerPDF');
+
+    Route::post('/decideApplication', [ForActionsController::class, 'decideApplication'])->name('decideApplication');
+
+    Route::get('/reviewer/{GUID}', [ForActionsController::class, 'reviewer'])->name('reviewer');
+
+    // Route::get('/reviewer/{GUID}', [ForActionsController::class, 'reviewer'])->name('reviewer');
+
+    // Route::view('reviewer', 'secured.for_actions.reviewer');
+
 /// ASPNET USER CONTROLLER
 
     Route::get('/login/{GUID}', [AspnetUserController::class, 'login']); 
 
-    Route::post('/login-user', [AspnetUserController::class, 'loginUser'])->name('login-user'); 
+    Route::post('/login-user', [AspnetUserController::class, 'loginUser'])->name('login-user');
 
     Route::get('/logout', [AspnetUserController::class, 'logoutUser']); 
 
@@ -114,6 +150,8 @@ Route::group(['middleware'=>'web'], function(){
 
 
 /// NEW APPLICANT CONTROLLER
+    Route::match(['get','post'], '/ProjectTypeTable', [NewApplicationsController::class, 'ProjectTypeTable'])->name('ProjectTypeTable');
+
 
     Route::get('/getGeoTable', [NewApplicationsController::class, 'getGeoTable'])->name('getGeoTable');
 
@@ -162,19 +200,22 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::get('/dynamic_pdf/SwornStatement', [NewApplicationsController::class, 'SwornStatement'])->name('SwornStatement');
 
+    Route::post('/LinkProjectType', [NewApplicationsController::class, 'LinkProjectType'])->name('LinkProjectType');
+
 /// VIEW 
 
     Route::view('default', 'secured.for_actions.default');
-
     Route::view('map', 'secured.create_applications.map');
+
+    Route::view('search_project_type', 'secured.create_applications.search_project_type');
+
+    Route::view('reviewer', 'secured.for_actions.reviewer');
+
+    // Route::view('ECCDashboard', 'secured.ecc_applications.dashboard');
 
     // Route::view('new_document', 'secured\create_applications\new_application_tab');
 
     Route::view('documents', 'secured.ecc_applications.document');
     Route::view('{GUID}/map', 'secured.create_applications.clickable_map');
-
-    Route::view('new_document', 'secured.create_applications.application_tab');
-
-    Route::view('documents', 'secured.ecc_applications.document');
 
 });

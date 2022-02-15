@@ -106,7 +106,15 @@ $(document).ready(function(){
           _token: '{{csrf_token()}}' ,
         },
         success: function(response){
-          toastr.error("You need to select the purpose of the application and other information.");
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Notifications!',
+            text: 'You need to select the purpose of the application and other information.',
+            // footer: '<a href="">Why do I have this issue?</a>',
+            width: '850px'
+          });
+
           $("#step_1").css({"background-color":"#dd4b39", "color": "#ffffff"});
         }
       });
@@ -129,9 +137,21 @@ $(document).ready(function(){
           _token: '{{csrf_token()}}' ,
         },
         success: function(response){
-          toastr.success('Saved!');
+          Swal.fire({
+            icon: 'success',
+            title: 'Step 1 is already saved in the session.',
+            showConfirmButton: false,
+            timer: 1500,
+            width: '800px'
+          });
+
         }
       });
+
+      var next = $('#mytabs li.active').next()
+          next.length?
+          next.find('a').click():
+          $('#myTab li a')[1].click();
     }
   });
 

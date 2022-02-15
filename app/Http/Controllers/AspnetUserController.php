@@ -39,9 +39,10 @@ class AspnetUserController extends Controller
 
     public function loginUser(Request $req)
     {
-        $user = AspnetUser::on('mysql')->where('aspnet_Users.UserName', '=', $req->username)
-        ->where('aspnet_Membership.Password', '=', $req->password )
-        ->leftJoin('aspnet_Membership', 'aspnet_Users.UserId', '=', 'aspnet_Membership.UserId')
+        $user = AspnetUser::on('mysql')->where('aspnet_users.UserName', '=', $req->username)
+        ->where('aspnet_membership.Password', '=', $req->password )
+        // ->where('aspnet_users.InECCOAS', '=', 1)
+        ->leftJoin('aspnet_membership', 'aspnet_users.UserId', '=', 'aspnet_membership.UserId')
         ->first();
             
         $now = new \DateTime(); 
@@ -50,14 +51,14 @@ class AspnetUserController extends Controller
         if($user){
             $req->session()->put('data', $user);
 
-            DB::table('aspnet_Users')
+            DB::table('aspnet_users')
               ->where('UserId','=', $user->UserId)
               ->where('UserName', '=', $user->UserName)
               ->update([
                 'LastActivityDate' => $now->format('Y-m-d H:i:s')
             ]);
 
-            DB::table('aspnet_Membership')
+            DB::table('aspnet_membership')
               ->where('UserId','=', $user->UserId)
               ->update([
                 'LastLoginDate' => $now->format('Y-m-d H:i:s')
@@ -73,7 +74,10 @@ class AspnetUserController extends Controller
             
         }else{
 
-             return redirect('login')->with('msg', 'You have entered invalid credentials');
+            $NewGUID = Uuid::generate()->string;
+            $GUID = Str::upper($NewGUID);
+
+            return redirect('login/'.$GUID)->with('msg', 'You have entered invalid credentials');
         }
     }
 
@@ -96,34 +100,35 @@ class AspnetUserController extends Controller
         $tomorrow = date('Y-m-d', strtotime( $todate . " +1 days"));
 
         $projects = Project::select(
-            'Project.Address AS Address', 
-            'Project.Municipality  AS Municipality', 
-            'Project.Province AS Province', 
-            'Project.Stage', 
-            'Project.ProjectName', 
-            'Project.Region AS Region', 
-            'Project.GUID AS ProjectGUID', 
+            'project.Address AS Address', 
+            'project.Municipality  AS Municipality', 
+            'project.Province AS Province', 
+            'project.Stage', 
+            'project.ProjectName', 
+            'project.Region AS Region', 
+            'project.GUID AS ProjectGUID', 
+            'project.UpdatedDate AS UpdatedDate', 
 
-            'ProjectActivity.Status', 
-            'ProjectActivity.Details AS Remarks', 
-            'ProjectActivity.GUID AS ActivityGUID', 
-            'ProjectActivity.RoutedTo', 
-            'ProjectActivity.RoutedFrom', 
-            'ProjectActivity.CreatedDate'
+            'projectactivity.Status', 
+            'projectactivity.Details AS Remarks', 
+            'projectactivity.GUID AS ActivityGUID', 
+            'projectactivity.RoutedTo', 
+            'projectactivity.RoutedFrom', 
+            'projectactivity.CreatedDate'
         )
-        ->Join('ProjectActivity', function ($join) {
-            $join->on('Project.GUID', '=', 'ProjectActivity.ProjectGUID');
+        ->Join('projectactivity', function ($join) {
+            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
 
-            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 
-                join Project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
+                join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
         })
-
-        ->where('ProjectActivity.Status', '<>', "For Screening")
-        ->where('ProjectActivity.RoutedTo', '=', $UserName)
-        ->where('Project.CreatedBy', '=', $UserName)
-        ->where('Project.UpdatedDate', '>=', '2019-01-01')
-        ->where('Project.UpdatedDate', '<=', $tomorrow)
-        ->groupBy('Project.GUID')
+        ->where('projectactivity.Status', '<>', "For Screening")
+        ->where('projectactivity.RoutedTo', '=', $UserName)
+        ->where('project.CreatedBy', '=', $UserName)
+        ->where('project.UpdatedDate', '>=', '2019-01-01')
+        ->where('project.UpdatedDate', '<=', $tomorrow)
+        ->orderBy('project.UpdatedDate', 'DESC')
+        ->groupBy('project.GUID')
         ->get();
 
         $project = $projects;
@@ -152,7 +157,7 @@ class AspnetUserController extends Controller
         })
         ->addColumn('Remarks', function($project){
 
-            $date = date("F j, Y g:i a", strtotime($project->CreatedDate));
+            $date = date("F j, Y g:i a", strtotime($project->UpdatedDate));
             $details = '<small>'. $project->Remarks.' - <i>'.$project->RoutedFrom .' on '. $date .'</i></small>';
             return $details;
         })
@@ -173,9 +178,10 @@ class AspnetUserController extends Controller
     {   
         $ProponentGUID = $req['ProponentGUID'];
 
-        $proponent = Proponent::where('Proponent.GUID', '=', $ProponentGUID)
+        $proponent = Proponent::where('proponent.GUID', '=', $ProponentGUID)
         ->first();
 
         return $proponent;
     }
+
 }

@@ -32,20 +32,21 @@
             </td>
             <td>
               <select name="" id="geo_format" style="width:130px;">
-                <option value="0">Decimal</option>
-                <option selected="selected" value="1">Deg-Min-Sec</option>
+                <option selected="selected" value="0">Decimal</option>
+                <option value="1">Deg-Min-Sec</option>
               </select>
             </td>
             <td style="padding-left:30px;">Geo-Coordinate</td>
             <td>
               <input type="text" placeholder="__°___'___.____&quot;" id="deg_lat" name="deg_lat" onkeypress="lat(this.value)" maxlength="16">
 
-              <input type="text" name="deci_lat" id="deci_lat" placeholder="__.__________" maxlength="16" onkeypress="decimalLat(this.value)">
+              <input type="text" name="deci_lat" id="deci_lat" class="form-control" data-inputmask="'mask': '99.999999'" data-mask>
+
             </td>
             <td>
               <input type="text" placeholder="___°___'___.____&quot;" id="deg_long" name="deg_long" onkeypress="long(this.value)" maxlength="16">
 
-              <input type="text" name="deci_long" id="deci_long" placeholder="___.__________" maxlength="16" onkeypress="decimalLong(this.value)">
+              <input type="text" name="deci_long" id="deci_long" class="form-control" data-inputmask="'mask': '999.999999'" data-mask>
             </td>
             <td>
               <input type="submit" name="" class="btn btn-block btn-flat btn-success" value="Add Point " id="add_point" title="Click to add point">
@@ -86,8 +87,10 @@
   var NewGUID=arr[2];
 
   $(document).ready(function() {
-    $("#deci_lat").hide();
-    $("#deci_long").hide();
+    $('[data-mask]').inputmask();
+
+    $("#deg_lat").hide();
+    $("#deg_long").hide();
 
     ///Geocoordinates type
     $('#geo_format').on('change', function() {
@@ -262,10 +265,20 @@
           _token: '{{csrf_token()}}' ,
         },
         success: function(response){
-          toastr.success('Saved! ');
+          Swal.fire({
+            icon: 'success',
+            title: 'Step 4 is already saved in the session.',
+            showConfirmButton: false,
+            timer: 1500,
+            width: '850px'
+          });
           $("#step_4").css({"background-color":"#3c8dbc", "color": "#ffffff"});
         }
       });
+      var next = $('#mytabs li.active').next()
+          next.length?
+          next.find('a').click():
+          $('#myTab li a')[4].click();
     } else {
       $.ajax({
         url: "{{route('FourthStep')}}",
@@ -276,7 +289,14 @@
           _token: '{{csrf_token()}}' ,
         },
         success: function(response){
-          toastr.error("ERROR");
+          Swal.fire({
+            icon: 'error',
+            title: 'Notifications!',
+            text: 'Something went wrong while saving your GeoCoordinates!',
+            // footer: '<a href="">Why do I have this issue?</a>',
+            width: '850px'
+          });
+
           $("#step_4").css({"background-color":"#dd4b39", "color": "#ffffff"});
         }
       });
@@ -294,14 +314,14 @@ function addSelectedArea(Area){
   
   if(confirm(message)){
     $.ajax({
-          url: "{{route('createNewGUID')}}",
-          success: function(response){
-            $("#selected_area").append('<option value='+ Area + '__' + response  +' >' +counter+'</option>');
-          }
-        });
-    }else{
-        return false;
-    }
+      url: "{{route('createNewGUID')}}",
+      success: function(response){
+        $("#selected_area").append('<option value='+ Area + '__' + response  +' >' +counter+'</option>');
+      }
+    });
+  }else{
+    return false;
+  }
 }
 
 
@@ -406,7 +426,5 @@ function MapView()
 {
   window.location.origin
   window.open(window.location.origin + "/" +NewGUID + "/map");
-  // window.location.href='/map';
-  // $("#map-modal").modal("show");
 }
 </script>

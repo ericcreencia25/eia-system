@@ -1,5 +1,5 @@
-@if(session('data')['UserRole'] == 'Evaluator')
-  @include('secured.for_actions.case-handler')  
+@if(session('data')['UserRole'] == 'Applicant')
+  @include('secured.for_actions.index')   
 @else
-  @include('secured.for_actions.index')  
+  @include('secured.for_actions.case-handler') 
 @endif

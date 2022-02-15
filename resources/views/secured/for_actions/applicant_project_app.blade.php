@@ -66,6 +66,14 @@
                                 <td style="width:50%;">
                                     <select id='activitiyAttachments' name='activitiyAttachments'>
                                     </select>
+
+                                    <!-- <select class="form-control" id="Attachments">
+                                        @foreach($attachments as $attach)
+                                        <option value="{{$attach->Description}}">
+                                            {{$attach->Description}}
+                                        </option> 
+                                        @endforeach
+                                    </select> -->
                                 </td>
                                 <td style="vertical-align:top;">
                                     <input type="file" style="border-width:0px;border-style:None;font-size:Medium;width:98%;" id="InputFile"> 
@@ -330,7 +338,13 @@ $(document).ready(function(){
                 }
             });
         }else{
-            toastr.warning("Please select a file.");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Please select a file.',
+                showConfirmButton: false,
+                timer: 1300,
+                width: '850px'
+            });
         }
     });
 
@@ -352,38 +366,68 @@ $(document).ready(function(){
         var Remarks = $("#Remarks").val();
 
         if(Remarks === ''){
-            toastr.error('You need to add remarks.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Notifications!',
+                text: 'Remarks can not be empty',
+                // footer: '<a href="">Why do I have this issue?</a>',
+                width: '850px'
+              });
         }else{
-            if(confirm("Return this application to EMB Regional Office?")){
-                $.ajax({
-                    url: "{{route('ReturnApplication')}}",
-                    type: 'POST',
-                    data: {
-                        UpdatedDate : UpdatedDate,
-                        ProjectGUID : GUID,
-                        ActivityGUID : ActivityGUID,
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Return this application to EMB Regional Office?",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{route('ReturnApplication')}}",
+                        type: 'POST',
+                        data: {
+                            UpdatedDate : UpdatedDate,
+                            ProjectGUID : GUID,
+                            ActivityGUID : ActivityGUID,
 
-                        RoutedToOffice : RoutedToOffice,
-                        RoutedTo : RoutedTo,
-                        RoutedFromOffice : RoutedFromOffice,
-                        RoutedFrom : RoutedFrom, 
+                            RoutedToOffice : RoutedToOffice,
+                            RoutedTo : RoutedTo,
+                            RoutedFromOffice : RoutedFromOffice,
+                            RoutedFrom : RoutedFrom, 
 
-                        Remarks : Remarks,
-                        NewActivityGUID : NewActivityGUID,
+                            Remarks : Remarks,
+                            NewActivityGUID : NewActivityGUID,
 
-                        attachedDocuments : attachedDocuments,
+                            attachedDocuments : attachedDocuments,
 
-                        Status : Status,
+                            Status : Status,
 
-                        _token: '{{csrf_token()}}',
-                    },    
-                    success: function(response){
-                        window.location.href='/default';
-                    }
-                });
-            }else{
-                return false;
-            }
+                            _token: '{{csrf_token()}}',
+                        },  
+                        beforeSend: function() {
+                            $('#overlay').show();
+                        },  
+                        success: function(response){
+                            $('#overlay').fadeOut(2000, () => {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: "This application was successfully endorsed!",
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                    width: '850px'
+                                }).then((result) => {
+                                    /* Read more about handling dismissals below */
+                                    if (result.dismiss === Swal.DismissReason.timer) {
+                                        window.location.href='/default';
+                                    }
+                                });
+                            });
+                        }
+                    });
+                }
+            });
         }
         
     });

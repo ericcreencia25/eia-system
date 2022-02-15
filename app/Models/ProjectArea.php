@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectArea extends Model
 {   
-    protected $table = 'ProjectArea';
+    protected $table = 'projectarea';
     use HasFactory;
 
     protected $fillable = [

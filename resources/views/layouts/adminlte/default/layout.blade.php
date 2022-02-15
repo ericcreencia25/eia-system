@@ -43,6 +43,10 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+
+  <link rel="stylesheet" href="../../adminlte/dist/css/sweet-alert-2.css">
+
+  <link rel="stylesheet" href="../../adminlte/dist/css/overlay-success.css">
 </head>
 <!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
 <body class="hold-transition skin-blue layout-top-nav">
@@ -61,7 +65,7 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
           <ul class="nav navbar-nav">
-            @if(session('data')['UserRole'] == 'Evaluator')
+            @if(session('data')['UserRole'] != 'Applicant')
               <li><a href="{{ url("default") }}">For Action <span class="sr-only">(current)</span></a></li>
               <li><a href="{{ url("documents") }}">ECC Applications</a></li>
               <form class="navbar-form navbar-left" role="search">
@@ -69,7 +73,7 @@
                   <input type="text" class="form-control" id="navbar-search-input" placeholder="Search Applications">
                 </div>
               </form>
-              <li><a href="">Load ECC Dashboard</a></li>
+              <li><a href="{{ url("ECCDashboard") }}">Load ECC Dashboard</a></li>
               <li><a href="">Go to CNC Online</a></li>
               @else
               <li><a href="{{ url("default") }}">For Action <span class="sr-only">(current)</span></a></li>
@@ -143,6 +147,11 @@
 <!-- FastClick -->
 <script src="../../adminlte/bower_components/fastclick/lib/fastclick.js"></script>
 
+<!-- InputMask -->
+<script src="../../adminlte/plugins/input-mask/jquery.inputmask.js"></script>
+<script src="../../adminlte/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+<script src="../../adminlte/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+
 
 <!-- jvectormap  -->
 <script src="../../adminlte/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
@@ -163,6 +172,8 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
+<!---sweetalert2--->
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
 

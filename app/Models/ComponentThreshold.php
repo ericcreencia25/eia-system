@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ComponentThreshold extends Model
 {
     protected $connection = 'mysql2';
-    protected $table = 'ComponentThreshold';
+    protected $table = 'componentthreshold';
     use HasFactory;
 
     protected $fillable = [

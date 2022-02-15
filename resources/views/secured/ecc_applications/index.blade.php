@@ -31,7 +31,8 @@
                 <table class="table table-bordered" id="ECCApplicationsTable" style="width: 100%;  display: table; table-layout: fixed;">
                   <thead>
                       <th style="width: 50%">Details</th>
-                      <th style="width: 50%">Status</th>
+                      <th style="width: 30%">Status</th>
+                      <th style="width: 20%"></th>
                   </thead>
                   <tbody></tbody>
                 </table> 
@@ -80,6 +81,7 @@ var UserRole = "{{session('data')['UserRole']}}";
       columns: [
       {data: 'Details', name: 'Details'},
       {data: 'Status', name: 'Status'},
+      {data: 'Action', name: 'Action'},
       ]
     })
 

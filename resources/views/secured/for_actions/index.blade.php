@@ -71,6 +71,7 @@ $(document).ready(function(){
   $('#ForActionTable').DataTable({
     processing:true,
     info:true,
+    ordering: false,
     ajax: {
       "url": "{{route('get.users.list')}}",
       "type": "POST",

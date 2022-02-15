@@ -29,6 +29,7 @@ class CustomAuth
             return redirect('welcome');
         }
 
+
         return $next($request);
     }
 }

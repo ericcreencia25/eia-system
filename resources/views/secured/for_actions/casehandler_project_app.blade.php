@@ -10,6 +10,9 @@
     </section> -->
 @stop
 
+<style>
+    #pointer {cursor: pointer;}
+</style>
 @section('content')
 <div class="content-wrapper">
     <!-- Main content -->
@@ -115,16 +118,27 @@
                                     </tr>
                                     </tfoot>
                             </table>
+                        <div>
+                            <span id="accepted">
+                                @if($project['AcceptedBy'] != NULL)
+                                This application had been accepted by {{$project['AcceptedBy']}} on {{date("m/d/Y h:i:s A", strtotime($project['AcceptedDate']))}}
+                                @endif
+                            </span>
+                        </div>
+                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_evaluation_report">Generate Evaluation Report</button>
 
-                            <button type="button" class="btn btn-default btn-flat" style="width: 200px">Generate Evaluation Report</button>
+                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_order_of_payment">Generate Order of Payment</button>
 
-                            <button type="button" class="btn btn-default btn-flat" style="width: 200px">Generate Order of Payment</button>
+                            @if($project['AcceptedBy'] == NULL && $project['AcceptedDate'] == NULL)
+                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" onclick="acceptApplication()">Accept Application</button>
+                            @else
+                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" onclick="acceptApplication()" disabled>Accept Application</button>
 
-                            <button type="button" class="btn btn-default btn-flat" style="width: 200px">Accept Application</button>
+                            @endif
 
-                            <button type="button" class="btn btn-default btn-flat" style="width: 200px">Draft Certificate</button>
+                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_draft_certificate">Draft Certificate</button>
 
-                            <button type="button" class="btn btn-default btn-flat" style="width: 200px">Draft Denial Letter</button>
+                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_denial_letter">Draft Denial Letter</button>
                             
 
                             <!--Endorse Application -->
@@ -143,12 +157,12 @@
                          <table cellspacing="0" cellpadding="5" width="100%">
                             <tbody><tr>
                                 <td style="width:600px;">
-                                    <select class="form-control" id="Documents">
-                                        <option value="Evaluation Report">Evaluation Report</option>
-                                        <option value="Inspection Report">Inspection Report</option>
-                                        <option value="Draft ECC">Draft ECC</option>
-                                        <option value="Draft Denial Letter">Draft Denial Letter</option>
-                                        <option value="Others, specify">Others, specify</option>    
+                                    <select class="form-control" id="Attachments">
+                                        @foreach($attachments as $attach)
+                                        <option value="{{$attach->Description}}">
+                                            {{$attach->Description}}
+                                        </option> 
+                                        @endforeach
                                     </select>
                                 </td>
                                 <td style="width: 10px"></td>
@@ -159,8 +173,14 @@
                                     <button type="button" class="btn btn-default btn-sm" name="submit" id="Uploads"><img src="../../img/upload.png" style="width:15px;" /></button>
                                 </td>
                             </tr>
-                            <tr>
-                                <td style="width:600px;"><p class="help-block" id="UploadedFile">Uploaded file here: </p></td>
+                            <tr id="Other_attachment" hidden="hidden">
+                                <td>
+                                    <input type="text" class="form-control" id="Others">
+                                </td>
+                            </tr>
+                            </tr>
+                            <tr id="UploadedFile">
+                                
                             </tr>
                         </tbody></table>
                         <br>
@@ -186,7 +206,7 @@
                                             <div class="col-md-5">
                                                 <select class="form-control" id="user_list">
                                                     <option value="{{$project['CreatedBy']}}">
-                                                        {{$project['CreatedBy']}}
+                                                        {{$project['CreatedBy']}} (Applicant)
                                                     </option>
                                                 </select>
                                             </div>
@@ -198,7 +218,7 @@
                                         <div class="col-md-12">
                                             <div class="col-md-2">Action Required</div>
                                             <div class="col-md-10">
-                                                <select class="form-control" id="user_office">
+                                                <select class="form-control" id="ActionRequired">
                                                     <option value="For Submission of Basic Requirements"> For Submission of Basic Requirements</option>
                                                     <option value="For Submission of Additional Information">For Submission of Additional Information</option>
                                                     <option value="For Clarification of Information">For Clarification of Information</option>
@@ -361,6 +381,11 @@
                     </div>
                 </div>
             </div>
+            <div id="overlay" style="display:none;">
+                <div class="spinner"></div>
+                <br/>
+                <h3>Please wait while saving your data...</h3>
+            </div>
 
 <!-- /.modal -->
 @stop
@@ -401,6 +426,11 @@ $(document).ready(function(){
     var ProponentName = "{{$project['ProponentName']}}";
     var check = "{{ Session::has('NewActivityGUID') ? Session::get('NewActivityGUID') : ''}}";
 
+    var AcceptedBy = "{{ $project['AcceptedBy']}}";
+    var AcceptedDate = "{{ $project['AcceptedDate']}}";
+
+    console.log(AcceptedBy);
+ 
     
     $.ajax({
         url: "{{route('getUploadedFile')}}",
@@ -410,14 +440,20 @@ $(document).ready(function(){
           _token: '{{csrf_token()}}' ,
         },
         success: function(response){
-            if(response.length > 0){
+            $("#Uploads").removeAttr("disabled");
+            if(response != ''){
                 var url=window.location.origin;
                 var filepath = response['FilePath'];
                 var link = url + '/' + filepath;
 
-                var details = 'Uploaded file here: <a href="'+ link +'" target="_blank">'+  response['Description']  +'</a>';
+                var details = '<td style="width:50%;"><p class="help-block">Uploaded file here: <br> <a href="'+ link +'" target="_blank" id="filesCheck">'+  response['Description']  +'</a>( ' + response['FileSizeInKB'] + ' ) </p></td>';
+                details += '<td style="width: 10px"></td>';
+                details += '<td></td>';
+                details += '<td style="width: 80px;"><button type="button" class="btn btn-default btn-sm" onclick="deleteUploadedFile('+"'"+response['ID']+"'"+')"><img src="../../img/trashbin.jpg" style="width:15px;" /></button></td>';
+
 
                 $("#UploadedFile").html(details);
+                $("#Uploads").attr('disabled', 'disabled');
 
             }
         }
@@ -625,6 +661,23 @@ $(document).ready(function(){
         }
     });
 
+    $("#user_list").on('change', function() {
+        var selected_user = $(this).val().toLowerCase();
+
+        $.ajax({
+            url: "{{route('getActionRequired')}}",
+            type: 'POST',
+            data: {
+                selected_user : selected_user,
+                _token: '{{csrf_token()}}',
+            },
+            success: function(result){
+                $("#ActionRequired").html(result);
+            }
+        });
+    });
+
+
 
     $("#SaveAppReq").on('click', function() {
         var Required = $('#Required').is(':checked'); 
@@ -642,11 +695,25 @@ $(document).ready(function(){
                 PRID : PRID,
                 ProjectGUID : GUID,
                 _token: '{{csrf_token()}}',
-            },    
+            },
+            beforeSend: function() {
+                $('#overlay').show();
+            },
             success: function(response){
-
-                location.reload();
-
+                $('#overlay').fadeOut(2000, () => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Saved',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        width: '800px'
+                    }).then((result) => {
+                        /* Read more about handling dismissals below */
+                        if (result.dismiss === Swal.DismissReason.timer) {
+                            location.reload();
+                        }
+                    });
+                });
             }
         });
     });
@@ -656,42 +723,203 @@ $(document).ready(function(){
         var UpdatedDate = "{{$project['UpdatedDate']}}";
         var Destination = $("#destination").val();
         var UserDestination = $("#user_list").val();
-        var ActionRequired = $("#user_office").val();
+        var ActionRequired = $("#ActionRequired option:selected").val();
         var Remarks = $("#RoutingRemarks").val();
         var NewActivityGUID = "{{Session::get('NewActivityGUID')}}";
-
+        
         var IncludeAttachment = $('#IncludeAttachment').is(':checked'); 
-
+        
+        ///undefined
+        var filesCheck = $('#filesCheck').text();
 
         var stored = localStorage.getItem("ReqStorage");
         stored = JSON.parse(stored || '[]');
-        ReqStorage.concat(stored);
         localStorage.setItem("ReqStorage", JSON.stringify(ReqStorage));
-
-        if(confirm("You want to endorse this application?")){
-            $.ajax({
-            url: "{{route('EndorseApplication')}}",
-            type: 'POST',
-            data: {
-                UpdatedDate : UpdatedDate,
-                ProjectGUID : GUID,
-                ActivityGUID : ActivityGUID,
-                Destination : Destination,
-                UserDestination : UserDestination,
-                ActionRequired : ActionRequired,
-                Remarks : Remarks,
-                NewActivityGUID : NewActivityGUID,
-                IncludeAttachment : IncludeAttachment,
-                AdditionalRequirements : stored,
-                _token: '{{csrf_token()}}',
-            },    
-            success: function(response){
-                window.location.href='/default';
+        if(Remarks == ''){
+            Swal.fire({
+                icon: 'error',
+                title: 'Notifications!',
+                text: 'Remarks can not be empty',
+                // footer: '<a href="">Why do I have this issue?</a>',
+                width: '850px'
+              });
+        } else if(ActionRequired === 'For Payment of ECC Application' && filesCheck != 'Order of Payment - Application') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Notifications!',
+                text: 'You need to attach the Order of Payment - Application',
+                // footer: '<a href="">Why do I have this issue?</a>',
+                width: '850px'
+              });
+        } else if(ActionRequired === 'For Recommendation' && AcceptedBy == '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Notifications!',
+                text: 'The application must be accepted first before you can route for recommendation/approval.',
+                // footer: '<a href="">Why do I have this issue?</a>',
+                width: '850px'
+              });
+        } else if(ActionRequired === 'For Recommendation' && filesCheck != 'Draft ECC') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Notifications!',
+                text: 'You need to attach the draft ECC or Draft denied letter for this project when forwarding for recommendation.',
+                // footer: '<a href="">Why do I have this issue?</a>',
+                width: '850px'
+              });
+        } else if(ActionRequired === 'For Recommendation' && filesCheck != 'Draft Denial Letter') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Notifications!',
+                text: 'You need to attach the draft ECC or Draft denied letter for this project when forwarding for recommendation.',
+                // footer: '<a href="">Why do I have this issue?</a>',
+                width: '850px'
+              });
+        } else if(ActionRequired === 'For Approval' && AcceptedBy === '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Notifications!',
+                text: 'The application must be accepted first before it can be routed for recommendation/approval.',
+                // footer: '<a href="">Why do I have this issue?</a>',
+                width: '850px'
+              });
+        } else if(ActionRequired === 'For Denial' && AcceptedBy === '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Notifications!',
+                text: 'The application must be accepted first before it can be routed for recommendation/approval.',
+                // footer: '<a href="">Why do I have this issue?</a>',
+                width: '850px'
+              });
+        } else if(ActionRequired === 'For Approval' && filesCheck != 'Draft ECC') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Notifications!',
+                text: "The draft ECC is required. Click the 'Draft Certificate' button above to generate from the template.",
+                // footer: '<a href="">Why do I have this issue?</a>',
+                width: '850px'
+              });
+        } else if(ActionRequired === 'For Denial' && filesCheck != 'Draft Denial Letter') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Notifications!',
+                text: "The draft denied letter is required. Click the 'Draft Denial Letter' button above to generate from the template.",
+                // footer: '<a href="">Why do I have this issue?</a>',
+                width: '850px'
+              });
+        } else {
+            if(IncludeAttachment === true){
+                if(filesCheck != ''){
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You want to endorse this application?",
+                        icon: 'info',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "{{route('EndorseApplication')}}",
+                                type: 'POST',
+                                data: {
+                                    UpdatedDate : UpdatedDate,
+                                    ProjectGUID : GUID,
+                                    ActivityGUID : ActivityGUID,
+                                    Destination : Destination,
+                                    UserDestination : UserDestination,
+                                    ActionRequired : ActionRequired,
+                                    Remarks : Remarks,
+                                    NewActivityGUID : NewActivityGUID,
+                                    IncludeAttachment : IncludeAttachment,
+                                    AdditionalRequirements : stored,
+                                    _token: '{{csrf_token()}}',
+                                },  
+                                beforeSend: function() {
+                                    $('#overlay').show();
+                                },  
+                                success: function(response){
+                                    $('#overlay').fadeOut(2000, () => {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: "This application was successfully endorsed!",
+                                            showConfirmButton: false,
+                                            timer: 1500,
+                                            width: '850px'
+                                        }).then((result) => {
+                                            /* Read more about handling dismissals below */
+                                            if (result.dismiss === Swal.DismissReason.timer) {
+                                                window.location.href='/default';
+                                            }
+                                        });
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }else{
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Notifications!',
+                        text: 'File is empty',
+                        // footer: '<a href="">Why do I have this issue?</a>',
+                        width: '850px'
+                      });
+                }
+            }else{
+                Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You want to endorse this application?",
+                        icon: 'info',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "{{route('EndorseApplication')}}",
+                                type: 'POST',
+                                data: {
+                                    UpdatedDate : UpdatedDate,
+                                    ProjectGUID : GUID,
+                                    ActivityGUID : ActivityGUID,
+                                    Destination : Destination,
+                                    UserDestination : UserDestination,
+                                    ActionRequired : ActionRequired,
+                                    Remarks : Remarks,
+                                    NewActivityGUID : NewActivityGUID,
+                                    IncludeAttachment : IncludeAttachment,
+                                    AdditionalRequirements : stored,
+                                    _token: '{{csrf_token()}}',
+                                },  
+                                beforeSend: function() {
+                                    $('#overlay').show();
+                                },  
+                                success: function(response){
+                                    $('#overlay').fadeOut(2000, () => {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: "This application was successfully endorsed!",
+                                            showConfirmButton: false,
+                                            timer: 1500,
+                                            width: '850px'
+                                        }).then((result) => {
+                                            /* Read more about handling dismissals below */
+                                            if (result.dismiss === Swal.DismissReason.timer) {
+                                                window.location.href='/default';
+                                            }
+                                        });
+                                    });
+                                }
+                            });
+                        }
+                    });
             }
-        });
-        }else{
-            return false;
+            
         }
+        
     });
 
     $("#AddRequirements").on('click', function() {
@@ -729,14 +957,16 @@ $(document).ready(function(){
     });
 
     $("#Uploads").on('click', function() {
-        var Documents = $("#Documents").val();
+        var Documents = $("#Attachments").val();
         var files = $("#InputFile")[0].files;
+        var OthersAttachment = $("#Others").val();
 
         if(files.length > 0){
             var fd = new FormData();
 
             // Append data 
             fd.append('Documents', Documents);
+            fd.append('OthersAttachment', OthersAttachment);
             fd.append('file',files[0]);
             fd.append('_token','{{csrf_token()}}');
 
@@ -752,19 +982,154 @@ $(document).ready(function(){
                 processData: false,
                 dataType: 'json',
                 success: function(response){
-                    toastr.success(response['message']);
-                    location.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: response['message'],
+                        showConfirmButton: false,
+                        timer: 1500,
+                        width: '850px'
+                    }).then((result) => {
+                        /* Read more about handling dismissals below */
+                        if (result.dismiss === Swal.DismissReason.timer) {
+                            // location.reload();
+                        }
+                    });
                 },
                 error: function(response){
                     console.log("error : " + JSON.stringify(response) );
                 }
             });
         }else{
-            toastr.warning("Please select a file.");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Please select a file.',
+                showConfirmButton: false,
+                timer: 1300,
+                width: '850px'
+            });
+        }
+    });
+
+    $("#generate_evaluation_report").on('click', function() {
+        var url = '/dynamic_pdf/EvaluationReport/' + GUID;
+
+        Swal.fire({
+          // title: 'Are you sure?',
+          text: "Do you want to generate a report based on the evaluation of the above requirements? The generated report will be open in another tab.",
+          icon: 'info',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Okay'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.open(url,'_blank');
+
+            Swal.fire(
+              // '|Downloaded!|',
+              'Your file has been opened.',
+              'success'
+            )
+          }
+        });
+    });
+
+    $("#generate_order_of_payment").on('click', function() {
+        var url = '/dynamic_pdf/OrderOfPayment/' + GUID;
+        
+        Swal.fire({
+          // title: 'Are you sure?',
+          text: "Order of Payment for ECC Application was generated successfully and was added to the attachments below. Please make sure you've reviewed/updated the amount in the Order of Payment to correspond to the fee/s appropriate for this application. See EMB Manual of Fees for reference.",
+          icon: 'info',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Okay'
+        }).then((result) => {
+          if (result.isConfirmed) {
+
+            window.open(url,'_blank');
+
+            Swal.fire(
+              // '|Downloaded!|',
+              'Your file has been opened.',
+              'success'
+            )
+          }
+        });
+    });
+
+    $("#generate_draft_certificate").on('click', function() {
+        if(AcceptedDate == '' && AcceptedBy == ''){
+            Swal.fire({
+                icon: 'warning',
+                title: 'You need to accept the application before drafting an ECC.',
+                showConfirmButton: false,
+                timer: 1300,
+                width: '850px'
+            });
+        }else{
+            Swal.fire({
+              // title: 'Are you sure?',
+              text: "Do you want to generate a draft ECC for this application? The generated draft document  will be in docx format for editing purposes and will be downloaded automatically. Please make sure you have word editor installed in your machine.",
+              icon: 'info',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Okay'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = '/dynamic_pdf/DraftCerticate/' + GUID;
+
+                Swal.fire(
+                  // '|Downloaded!|',
+                  'Your file has been downloaded.',
+                  'success'
+                )
+              }
+            });
+        }
+    });
+
+    $("#generate_denial_letter").on('click', function() {
+        if(AcceptedDate == '' && AcceptedBy == ''){
+            Swal.fire({
+                icon: 'warning',
+                title: 'You need to accept the application before drafting an ECC.',
+                showConfirmButton: false,
+                timer: 1300,
+                width: '850px'
+            });
+        }else{
+            Swal.fire({
+              // title: 'Are you sure?',
+              text: "Do you want to generate a draft denial letter for this application? The generated draft document will be in docx format for editing purposes and will be downloaded automatically. Please make sure you have word editor installed in your machine.",
+              icon: 'info',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Okay'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = '/dynamic_pdf/DraftDenialLetter/' + GUID;
+
+                Swal.fire(
+                  // '|Downloaded!|',
+                  'Your file has been downloaded.',
+                  'success'
+                )
+              }
+            });
+
         }
     });
 
 
+    $("#Attachments").on('change', function() {
+        if($(this).val() == 'Others, specify'){
+            $("#Other_attachment").removeAttr("hidden");
+        }
+    });
 });
 
 function AdditionalRequirementsSession(ReqStorage)
@@ -871,7 +1236,7 @@ function UserListsOnRegion()
         },    
         success: function(response){
             $.each(response, function(index, itemData) {
-              var option = '<option value="'+itemData['UserName']+'">' + itemData['UserName'] + '</option>';
+              var option = '<option value="'+itemData['UserName']+'">' + itemData['UserName'] + ' ('+ itemData['UserRole'] + ') ' +'</option>';
               $("#user_list").append(option);
             });
         }
@@ -922,4 +1287,92 @@ function modalEvaluation(ProjectGUID, ID, Description)
     
 }
 
+function acceptApplication()
+{
+    Swal.fire({
+        // title: 'Are you sure?',
+        text: "By clicking OK, you confirm that the submitted application and required documents (INCLUDING ECC APPLICATION FEE) were screened and found complete and accepted for processing.",
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Okay'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "{{route('acceptApplication')}}",
+                type: 'POST',
+                data: {
+                    ProjectGUID : GUID,
+                    _token: '{{csrf_token()}}' ,
+                },
+                beforeSend: function() {
+                    $('#overlay').show();
+                },  
+                success: function(response){
+                    $('#overlay').fadeOut(2000, () => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: "This application was accepted!",
+                            showConfirmButton: false,
+                            timer: 1500,
+                            width: '850px'
+                        }).then((result) => {
+                            /* Read more about handling dismissals below */
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                location.reload();
+                            }
+                        });
+                    });
+                }
+            });
+        }
+    });
+}
+
+function deleteUploadedFile(ID)
+{
+    Swal.fire({
+        // title: 'Are you sure?',
+        text: "Are you sure you want to delete this file?",
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Okay'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "{{route('deleteTempAttachment')}}",
+                type: 'POST',
+                data: {
+                    ID : ID,
+                    _token: '{{csrf_token()}}' ,
+                },
+                beforeSend: function() {
+                    $('#overlay').show();
+                },  
+                success: function(response){
+                    $('#overlay').fadeOut(2000, () => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: "Deleted!",
+                            showConfirmButton: false,
+                            timer: 1500,
+                            width: '850px'
+                        }).then((result) => {
+                            /* Read more about handling dismissals below */
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                location.reload();
+                            }
+                        });
+                    });
+                }
+            });
+        }
+    });
+}
+
+
+///By clicking OK, you confirm that the submitted application and required documents (INCLUDING ECC APPLICATION FEE) were screened and found complete and accepted for processing.
 </script>

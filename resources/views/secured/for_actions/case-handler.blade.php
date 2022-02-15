@@ -99,7 +99,7 @@ $(document).ready(function(){
     destroy : true,
     processing:true,
     info:true,
-    order: false,
+    ordering: false,
     ajax: {
       "url": "{{route('getCaseHandlerForActionsTable')}}",
       "type": "POST",

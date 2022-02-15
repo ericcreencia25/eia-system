@@ -10,6 +10,9 @@ use App\Models\ProjectActivityAttachment;
 use App\Models\ProjectActivityAttachmentTemp;
 use App\Models\ProjectActivity;
 use App\Models\ProjectRequirements;
+use App\Models\Attachment;
+use App\Models\ActionRequired;
+use App\Models\ActionRequiredPerson;
 use App\Models\AspnetUser;
 use Session;
 use Yajra\DataTables\DataTables;
@@ -18,6 +21,10 @@ use Illuminate\Support\Facades\DB;
 use Webpatser\Uuid\Uuid;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str; 
+use PhpOffice\PhpWord\TemplateProcessor;
+use File;
+use PDF;
+
 
 class ForActionsController extends Controller
 {
@@ -28,46 +35,103 @@ class ForActionsController extends Controller
 
     public function project_app($GUID, $ActivityGUID)
     {   
-        $project = Project::where('Project.GUID', '=', $GUID)
-        // ->where('Project.Stage', '>', 0 )
-        ->Join('ProjectActivity', function ($join) {
-            $join->on('Project.GUID', '=', 'ProjectActivity.ProjectGUID');
-            // $join->on('ProjectActivity.CreateDate','>=', DB::raw("'2012-05-01'"));
+        $project = Project::where('project.GUID', '=', $GUID)
+        // ->where('project.Stage', '>', 0 )
+        ->Join('projectactivity', function ($join) {
+            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+            // $join->on('projectactivity.CreateDate','>=', DB::raw("'2012-05-01'"));
 
-            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 
-                join Project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
+                join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
         })
-        ->leftJoin('Proponent', 'Project.ProponentGUID', '=', 'Proponent.GUID')
+        ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
         ->select(
-            'Project.Purpose',
-            'Project.Address AS Address', 
-            'Project.Municipality  AS Municipality', 
-            'Project.Province AS Province', 
-            'Project.Address', 
-            'Project.CreatedBy AS CreatedBy', 
-            'Project.GUID AS GUID', 
-            'Project.PreviousECCNo',
-            'Proponent.ProponentName',
-            'Project.ProjectName', 
-            'Project.Region  AS Region', 
+            'project.Purpose',
+            'project.Address AS Address', 
+            'project.Municipality  AS Municipality', 
+            'project.Province AS Province', 
+            'project.Address', 
+            'project.CreatedBy AS CreatedBy', 
+            'project.GUID AS GUID', 
+            'project.PreviousECCNo',
+            'proponent.ProponentName',
+            'project.ProjectName', 
+            'project.Region  AS Region', 
+            'project.AcceptedBy',
+            'project.AcceptedDate',
 
-            'ProjectActivity.RoutedTo', 
-            'ProjectActivity.RoutedFrom', 
+            'projectactivity.RoutedTo', 
+            'projectactivity.RoutedFrom', 
 
-            'ProjectActivity.RoutedToOffice', 
-            'ProjectActivity.RoutedFromOffice', 
+            'projectactivity.RoutedToOffice', 
+            'projectactivity.RoutedFromOffice', 
 
-            'ProjectActivity.CreatedDate', 
-            'ProjectActivity.Status', 
-            'ProjectActivity.Details AS Remarks', 
-            'ProjectActivity.GUID AS ActivityGUID',
-            'ProjectActivity.FromDate AS FromDate',
-            'ProjectActivity.UpdatedDate AS UpdatedDate',
+            'projectactivity.CreatedDate', 
+            'projectactivity.Status', 
+            'projectactivity.Details AS Remarks', 
+            'projectactivity.GUID AS ActivityGUID',
+            'projectactivity.FromDate AS FromDate',
+            'projectactivity.UpdatedDate AS UpdatedDate',
             
         )
         ->first();
 
-        return view('secured.for_actions.project_app', compact('project'));
+        $UserRole = Session::get('data')['UserRole'];
+
+        $attachments = Attachment::where('UserRole', '=', $UserRole)
+        ->orderByRaw('Sorter ASC')
+        ->get();
+
+        return view('secured.for_actions.project_app', compact('project', 'attachments'));
+    }
+
+    public function reviewer($GUID)
+    {   
+        $project = Project::where('project.GUID', '=', $GUID)
+        ->Join('projectactivity', function ($join) {
+            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+
+            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
+                join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+        })
+        ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
+        ->select(
+            'project.Purpose',
+            'project.Address AS Address', 
+            'project.Municipality  AS Municipality', 
+            'project.Province AS Province', 
+            'project.Address', 
+            'project.CreatedBy AS CreatedBy', 
+            'project.GUID AS GUID', 
+            'project.PreviousECCNo',
+            'proponent.ProponentName',
+            'project.ProjectName', 
+            'project.Region  AS Region', 
+            'project.AcceptedBy',
+            'project.AcceptedDate',
+
+            'projectactivity.RoutedTo', 
+            'projectactivity.RoutedFrom', 
+
+            'projectactivity.RoutedToOffice', 
+            'projectactivity.RoutedFromOffice', 
+
+            'projectactivity.CreatedDate', 
+            'projectactivity.Status', 
+            'projectactivity.Details AS Remarks', 
+            'projectactivity.GUID AS ActivityGUID',
+            'projectactivity.FromDate AS FromDate',
+            'projectactivity.UpdatedDate AS UpdatedDate',
+            
+        )
+        ->first();
+
+        $projectrequirements = ProjectRequirements::where('ProjectGUID', '=', $GUID)
+        ->select('Description', 'Compliant', 'Required', 'Remarks')
+        ->get();
+
+
+        return view('secured.for_actions.reviewer', compact('project', 'projectrequirements'));
     }
 
     public function project()
@@ -79,27 +143,27 @@ class ForActionsController extends Controller
     {   
         $GUID = $req['data']; 
         
-        $project = DB::table('Project')
-        ->where('Project.GUID', '=', $GUID)
-        ->leftJoin('ProjectActivity', 'Project.GUID', '=', 'ProjectActivity.ProjectGUID')
-        ->select('Project.Address AS Address', 
-            'Project.Municipality  AS Municipality', 
-            'Project.Province AS Province', 
-            'Project.Address', 
-            'ProjectActivity.Status',
-            'ProjectActivity.Details AS Remarks', 
-            'Project.ProjectName', 
-            'Project.Region  AS Region', 
-            'ProjectActivity.RoutedTo', 
-            'ProjectActivity.RoutedFrom', 
-            'ProjectActivity.CreatedDate', 
-            'Project.GUID AS GUID', 
-            'ProjectActivity.RoutedToOffice',
-            'ProjectActivity.UpdatedDate', 
-            'ProjectActivity.GUID AS ActivityGUID', 
-            'ProjectActivity.CreatedBy AS CreatedBy' 
+        $project = DB::table('project')
+        ->where('project.GUID', '=', $GUID)
+        ->leftJoin('projectactivity', 'project.GUID', '=', 'projectactivity.ProjectGUID')
+        ->select('project.Address AS Address', 
+            'project.Municipality  AS Municipality', 
+            'project.Province AS Province', 
+            'project.Address', 
+            'projectactivity.Status',
+            'projectactivity.Details AS Remarks', 
+            'project.ProjectName', 
+            'project.Region  AS Region', 
+            'projectactivity.RoutedTo', 
+            'projectactivity.RoutedFrom', 
+            'projectactivity.CreatedDate', 
+            'project.GUID AS GUID', 
+            'projectactivity.RoutedToOffice',
+            'projectactivity.UpdatedDate', 
+            'projectactivity.GUID AS ActivityGUID', 
+            'projectactivity.CreatedBy AS CreatedBy' 
         )
-        ->orderByRaw('ProjectActivity.UpdatedDate DESC')
+        ->orderByRaw('projectactivity.UpdatedDate DESC')
         ->get();
 
         return DataTables::of($project)
@@ -128,22 +192,22 @@ class ForActionsController extends Controller
     {   
         $GUID = $req['data']; 
         
-        $project = DB::table('Project')
-        ->where('Project.GUID', '=', $GUID)
-        ->leftJoin('ProjectActivity', 'Project.GUID', '=', 'ProjectActivity.ProjectGUID')
+        $project = DB::table('project')
+        ->where('project.GUID', '=', $GUID)
+        ->leftJoin('projectactivity', 'project.GUID', '=', 'projectactivity.ProjectGUID')
         ->select(
-            'ProjectActivity.Status', 
-            'ProjectActivity.RoutedTo', 
-            'ProjectActivity.RoutedFrom',
-            'ProjectActivity.RoutedToOffice', 
-            'ProjectActivity.UpdatedDate',  
-            'ProjectActivity.GUID AS ActivityGUID', 
-            'ProjectActivity.CreatedBy AS CreatedBy', 
-            'ProjectActivity.RoutedFromOffice', 
-            'ProjectActivity.TotAccumulatedDays',
-            'ProjectActivity.Details AS Remarks', 
+            'projectactivity.Status', 
+            'projectactivity.RoutedTo', 
+            'projectactivity.RoutedFrom',
+            'projectactivity.RoutedToOffice', 
+            'projectactivity.UpdatedDate',  
+            'projectactivity.GUID AS ActivityGUID', 
+            'projectactivity.CreatedBy AS CreatedBy', 
+            'projectactivity.RoutedFromOffice', 
+            'projectactivity.TotAccumulatedDays',
+            'projectactivity.Details AS Remarks', 
         )
-        ->orderByRaw('ProjectActivity.UpdatedDate DESC')
+        ->orderByRaw('projectactivity.UpdatedDate DESC')
         ->get();
 
         return DataTables::of($project)
@@ -225,43 +289,82 @@ class ForActionsController extends Controller
         $todate = date('Y-m-d H:i:s');
         $tomorrow = date('Y-m-d', strtotime( $todate . " +1 days"));
 
-        $projects = Project::select(
-            'Project.Address AS Address',
-            'Project.Municipality  AS Municipality', 
-            'Project.Province AS Province', 
-            'ProjectActivity.Status', 
-            'ProjectActivity.Details AS Remarks', 
-            'Project.ProjectName', 
-            'Project.Region  AS Region', 
-            'ProjectActivity.RoutedTo', 
-            'ProjectActivity.RoutedFrom', 
-            'Project.GUID AS ProjectGUID', 
-            'Project.Stage', 
-            'ProjectActivity.CreatedDate',
-            'Project.ProcTimeFrameInDays',
-            'Project.TotProcDays',
-            'Project.TotProcDays',
-            'ProjectActivity.GUID AS ActivityGUID',
-            'ProjectActivity.Status',
-            'ProjectActivity.UpdatedDate'
-        )
-        ->Join('ProjectActivity', function ($join) {
-            $join->on('Project.GUID', '=', 'ProjectActivity.ProjectGUID');
-            // $join->on('ProjectActivity.CreateDate','>=', DB::raw("'2012-05-01'"));
+        if($UserRole === 'Approving'){
+            $projects = Project::select(
+                'project.Address AS Address',
+                'project.Municipality  AS Municipality', 
+                'project.Province AS Province', 
+                'projectactivity.Status', 
+                'projectactivity.Details AS Remarks', 
+                'project.ProjectName', 
+                'project.Region  AS Region', 
+                'projectactivity.RoutedTo', 
+                'projectactivity.RoutedFrom', 
+                'project.GUID AS ProjectGUID', 
+                'project.Stage', 
+                'projectactivity.CreatedDate',
+                'project.ProcTimeFrameInDays',
+                'project.TotProcDays',
+                'project.TotProcDays',
+                'projectactivity.GUID AS ActivityGUID',
+                'projectactivity.Status',
+                'projectactivity.UpdatedDate'
+            )
+            ->Join('projectactivity', function ($join) {
+                $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+                // $join->on('projectactivity.CreateDate','>=', DB::raw("'2012-05-01'"));
 
-            $join->whereRaw('ProjectActivity.ID IN (select MAX(a2.ID) from ProjectActivity as a2 
-                join Project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
-        })
-        ->where('Project.Region', '=', $UserOffice)
-        // ->where('Project.UpdatedDate', '>=', $StartDate)
-        // ->where('Project.UpdatedDate', '<=', $EndDate)
-        ->where('ProjectActivity.RoutedTo', '<=', $UserName)
-        ->where('ProjectActivity.RoutedToOffice', '<=', $UserOffice)
-        // ->orderByRaw('CreatedDate DESC')
-        ->whereNotIn('Status', array('Approved', 'Denied'))
-        ->groupBy('Project.GUID')
-        ->orderByRaw('Project.CreatedDate DESC')
-        ->get();
+                $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
+                    join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+            })
+            ->where('project.Region', '=', $UserOffice)
+            // ->where('project.UpdatedDate', '>=', $StartDate)
+            // ->where('project.UpdatedDate', '<=', $EndDate)
+            ->where('projectactivity.RoutedTo', '=', $UserName)
+            ->where('projectactivity.RoutedToOffice', '=', $UserOffice)
+            ->whereIn('Status', array('For Approval', 'For Denial'))
+            ->groupBy('project.GUID')
+            ->orderByRaw('project.UpdatedDate DESC')
+            ->get();
+
+        } else {
+            $projects = Project::select(
+                'project.Address AS Address',
+                'project.Municipality  AS Municipality', 
+                'project.Province AS Province', 
+                'projectactivity.Status', 
+                'projectactivity.Details AS Remarks', 
+                'project.ProjectName', 
+                'project.Region  AS Region', 
+                'projectactivity.RoutedTo', 
+                'projectactivity.RoutedFrom', 
+                'project.GUID AS ProjectGUID', 
+                'project.Stage', 
+                'projectactivity.CreatedDate',
+                'project.ProcTimeFrameInDays',
+                'project.TotProcDays',
+                'project.TotProcDays',
+                'projectactivity.GUID AS ActivityGUID',
+                'projectactivity.Status',
+                'projectactivity.UpdatedDate'
+            )
+            ->Join('projectactivity', function ($join) {
+                $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+                // $join->on('projectactivity.CreateDate','>=', DB::raw("'2012-05-01'"));
+
+                $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
+                    join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+            })
+            ->where('project.Region', '=', $UserOffice)
+            // ->where('project.UpdatedDate', '>=', $StartDate)
+            // ->where('project.UpdatedDate', '<=', $EndDate)
+            ->where('projectactivity.RoutedTo', '=', $UserName)
+            ->where('projectactivity.RoutedToOffice', '=', $UserOffice)
+            ->whereNotIn('Status', array('Approved', 'Denied'))
+            ->groupBy('project.GUID')
+            ->orderByRaw('project.UpdatedDate DESC')
+            ->get();
+        }
 
         // $project = collect([]);
         // $projects->each(function($proj) use ($project, $UserName){
@@ -293,7 +396,7 @@ class ForActionsController extends Controller
             return $details;
         })
         ->addColumn('Remarks', function($project){
-            // $projectactivity = ProjectActivity::on('mysql')->where('ProjectActivity.ProjectGUID', '=', $project->ProjectGUID)
+            // $projectactivity = ProjectActivity::on('mysql')->where('projectactivity.ProjectGUID', '=', $project->ProjectGUID)
             // ->orderByRaw('ID Desc')
             // ->first();
 
@@ -302,7 +405,7 @@ class ForActionsController extends Controller
             return $details;
         })
         ->addColumn('IncurredDate', function($project){
-            //  $projectactivity = ProjectActivity::on('mysql')->where('ProjectActivity.ProjectGUID', '=', $project->ProjectGUID)
+            //  $projectactivity = ProjectActivity::on('mysql')->where('projectactivity.ProjectGUID', '=', $project->ProjectGUID)
             // ->orderByRaw('ID Desc')
             // ->first();
 
@@ -392,7 +495,7 @@ class ForActionsController extends Controller
 
         $project = AspnetUser::where('UserOffice', '=', $UserOffice)
         ->where('InECCOAS', 1)
-        ->whereIn('UserRole', array('Evaluator', 'Reviewer'))
+        // ->whereIn('UserRole', array('Evaluator', 'Reviewer'))
         ->orderByRaw("UserName ASC")
         ->get();
 
@@ -445,8 +548,8 @@ class ForActionsController extends Controller
         $CreatedBy = $req['CreatedBy'];
 
         $Account = AspnetUser::where('UserName', '=', $CreatedBy)
-        ->leftJoin('aspnet_Membership', 'aspnet_Users.UserId', '=', 'aspnet_Membership.UserId')
-        ->select('aspnet_Users.*', 'aspnet_Membership.*')
+        ->leftJoin('aspnet_membership', 'aspnet_users.UserId', '=', 'aspnet_membership.UserId')
+        ->select('aspnet_users.*', 'aspnet_membership.*')
         ->first();
 
         return $Account;
@@ -503,29 +606,29 @@ class ForActionsController extends Controller
         $ProjectGUID = $req['ProjectGUID']; 
         $Description = $req['Description']; 
 
-        $project = ProjectRequirements::where('ProjectRequirement.ProjectGUID', '=', $ProjectGUID)
-        ->where('ProjectRequirement.ID', '=', $ID)
-        ->where('ProjectRequirement.Description', '=', $Description)
-        ->Join('ProjectActivity', function($join)
+        $project = ProjectRequirements::where('projectrequirement.ProjectGUID', '=', $ProjectGUID)
+        ->where('projectrequirement.ID', '=', $ID)
+        ->where('projectrequirement.Description', '=', $Description)
+        ->Join('projectactivity', function($join)
         {
-            $join->on('ProjectRequirement.ProjectGUID', '=', 'ProjectActivity.ProjectGUID');
+            $join->on('projectrequirement.ProjectGUID', '=', 'projectactivity.ProjectGUID');
         })
-        ->Join('ProjectActivityAttachment', function($join)
+        ->Join('projectactivityattachment', function($join)
         {
-            $join->on('ProjectActivityAttachment.ActivityGUID', '=', 'ProjectActivity.GUID');
-            $join->on('ProjectActivityAttachment.Description', '=', 'ProjectRequirement.Description');
+            $join->on('projectactivityattachment.ActivityGUID', '=', 'projectactivity.GUID');
+            $join->on('projectactivityattachment.Description', '=', 'projectrequirement.Description');
         })
         ->select(
-            'ProjectRequirement.Description', 
-            'ProjectRequirement.Remarks', 
-            'ProjectRequirement.Required',
-            'ProjectRequirement.Compliant',  
-            'ProjectRequirement.ID as PRID',
-            'ProjectActivity.GUID', 
-            'ProjectActivityAttachment.ActivityGUID',
-            'ProjectActivityAttachment.FileName',
-            'ProjectActivityAttachment.FilePath',
-            'ProjectActivityAttachment.Directory',
+            'projectrequirement.Description', 
+            'projectrequirement.Remarks', 
+            'projectrequirement.Required',
+            'projectrequirement.Compliant',  
+            'projectrequirement.ID as PRID',
+            'projectactivity.GUID', 
+            'projectactivityattachment.ActivityGUID',
+            'projectactivityattachment.FileName',
+            'projectactivityattachment.FilePath',
+            'projectactivityattachment.Directory',
 
         )
         ->first();
@@ -558,11 +661,40 @@ class ForActionsController extends Controller
 
         $now = new \DateTime(); 
 
-        DB::table('ProjectRequirement')
+        DB::table('projectrequirement')
         ->where('ProjectGUID','=', $ProjectGUID)
         ->where('ID', '=', $PRID)
         ->update([
             'Required' => $Required,
+            'Compliant' => $Compliant,
+            'Remarks' => $Remarks,
+            'UpdatedDate' => $now->format('Y-m-d H:i:s')
+        ]);
+
+        return "Success";
+    }
+
+    public function SaveAppReqApprover(Request $req)
+    {   
+        $Remarks = $req['Remarks'];
+
+        $Compliant = $req['Compliant'];
+
+        if($Compliant === "true"){
+            $Compliant = 1;
+        } else {
+            $Compliant = 0;
+        }
+
+        $PRID = $req['PRID'];
+        $ProjectGUID = $req['ProjectGUID'];
+
+        $now = new \DateTime(); 
+
+        DB::table('projectrequirement')
+        ->where('ProjectGUID','=', $ProjectGUID)
+        ->where('ID', '=', $PRID)
+        ->update([
             'Compliant' => $Compliant,
             'Remarks' => $Remarks,
             'UpdatedDate' => $now->format('Y-m-d H:i:s')
@@ -581,7 +713,7 @@ class ForActionsController extends Controller
         $UserDestination = $req['UserDestination'];
         $ActionRequired = $req['ActionRequired'];
         $Remarks = $req['Remarks'];
-        $NewActivityGUID = $req['NewActivityGUID'];
+        $NewActivityGUID = Session::get('NewActivityGUID');
 
         $IncludeAttachment = $req['IncludeAttachment'];
 
@@ -613,22 +745,66 @@ class ForActionsController extends Controller
         $projectActivity['TotElapsedDays'] = $dateDiff;
 
         if(DB::table('projectactivity')->insert($projectActivity)){
+            $now = new \DateTime(); 
+
+            if($ActionRequired == 'For Evaluation'){
+                DB::table('project')
+                ->where('GUID','=', $ProjectGUID)
+                ->update([
+                    'Stage' => 1,
+                    'UpdatedBy' => $UserName,
+                    'UpdatedDate' => $now->format('Y-m-d H:i:s')
+                ]);
+            }else if($ActionRequired == 'For Review'){
+                DB::table('project')
+                ->where('GUID','=', $ProjectGUID)
+                ->update([
+                    'Stage' => 2,
+                    'UpdatedBy' => $UserName,
+                    'UpdatedDate' => $now->format('Y-m-d H:i:s')
+                ]);
+            }else if($ActionRequired == 'For Recommendation'){
+                DB::table('project')
+                ->where('GUID','=', $ProjectGUID)
+                ->update([
+                    'Stage' => 3,
+                    'UpdatedBy' => $UserName,
+                    'UpdatedDate' => $now->format('Y-m-d H:i:s')
+                ]);
+            }else if($ActionRequired == 'For Approval' || $ActionRequired == 'For Denial'){
+                DB::table('project')
+                ->where('GUID','=', $ProjectGUID)
+                ->update([
+                    'Stage' => 4,
+                    'UpdatedBy' => $UserName,
+                    'UpdatedDate' => $now->format('Y-m-d H:i:s')
+                ]);
+            }else if($ActionRequired == 'Approved' || $ActionRequired == 'Denied'){
+                DB::table('project')
+                ->where('GUID','=', $ProjectGUID)
+                ->update([
+                    'Stage' => 5,
+                    'UpdatedBy' => $UserName,
+                    'UpdatedDate' => $now->format('Y-m-d H:i:s')
+                ]);
+            }
+
             $AdditionalRequirements = $req['AdditionalRequirements'];
 
             if($AdditionalRequirements != null){
                 foreach ($AdditionalRequirements as $key => $value) {
-                    $ProjectRequirement = array();
-                    $ProjectRequirement['ProjectGUID'] = $ProjectGUID;
-                    $ProjectRequirement['Description'] = $value['description']; 
-                    $ProjectRequirement['Required'] = 0;
-                    $ProjectRequirement['Compliant'] = 0; 
-                    DB::table('ProjectRequirement')->insert($ProjectRequirement);
+                    $projectrequirement = array();
+                    $projectrequirement['ProjectGUID'] = $ProjectGUID;
+                    $projectrequirement['Description'] = $value['description']; 
+                    $projectrequirement['Required'] = 0;
+                    $projectrequirement['Compliant'] = 0; 
+                    DB::table('projectrequirement')->insert($projectrequirement);
                 }
             }
 
             if($IncludeAttachment === "true"){
 
-                $data = DB::table('ProjectActivityAttachmenttemp')
+                $data = DB::table('projectactivityattachmenttemp')
                     ->select('GUID','ActivityGUID','Description','FileName','Directory','FilePath','FileSizeInKB','CreatedBy','CreatedDate')
                     ->where('ActivityGUID', '=', $NewActivityGUID)
                     ->get();
@@ -638,10 +814,9 @@ class ForActionsController extends Controller
                     })->toArray();
 
 
-                if(DB::table('ProjectActivityAttachment')->insert($array)){
+                if(DB::table('projectactivityattachment')->insert($array)){
                     ProjectActivityAttachmentTemp::where('ActivityGUID', $NewActivityGUID)->delete();
                 }
-                
             }
 
         }
@@ -694,8 +869,10 @@ class ForActionsController extends Controller
         $projectActivity['TotElapsedDays'] = $dateDiff;
 
 
-        if(DB::table('ProjectActivity')->insert($projectActivity)){
-            DB::table('ProjectActivityAttachment')->insert($attachedDocuments);
+        if(DB::table('projectactivity')->insert($projectActivity)){
+            if($attachedDocuments != '' ){
+                DB::table('projectactivityattachment')->insert($attachedDocuments);
+            }
         }
 
     }
@@ -719,13 +896,18 @@ class ForActionsController extends Controller
         $ActivityGUID = Session::get('NewActivityGUID');
         $NewActivityGUID = Str::upper($ActivityGUID);
 
-        $description = $request['Documents'];
+
+        if($request['Documents'] == 'Others, specify'){
+            $description = $request['OthersAttachment'];
+        }else{
+            $description = $request['Documents'];
+        }
 
         $data = array();
         $rtrn = array();
 
         $validator = Validator::make($request->all(), [
-            'file' => 'required|mimes:png,jpg,jpeg,csv,txt,pdf|max:2048'
+            'file' => 'required|mimes:docx,jpg,jpeg,csv,txt,pdf|max:2048'
         ]);
 
       if ($validator->fails()) {
@@ -771,7 +953,9 @@ class ForActionsController extends Controller
              $data['FileSizeInKB'] = round($filesize, 3);
              $data['CreatedBy'] = $UserName;
 
-             DB::table('ProjectActivityAttachmenttemp')->insert($data);
+
+
+             DB::table('projectactivityattachmenttemp')->insert($data);
          }else{
              // Response
              $rtrn['success'] = 2;
@@ -842,7 +1026,7 @@ class ForActionsController extends Controller
              $data['FileSizeInKB'] = round($filesize, 3);
              $data['CreatedBy'] = $UserName;
 
-             // DB::table('ProjectActivityAttachmenttemp')->insert($data);
+             // DB::table('projectactivityattachmenttemp')->insert($data);
              return response()->json($data);
          }else{
              // Response
@@ -859,12 +1043,518 @@ class ForActionsController extends Controller
         $ActivityGUID = Session::get('NewActivityGUID');
         $ProjectGUID = $req['ProjectGUID'];
 
-
-        $project = ProjectActivityAttachmentTemp::where('ActivityGUID', '=', $ActivityGUID)
-        ->select('FilePath', 'Description')
+        $project = ProjectActivityAttachmentTemp::where('ActivityGUID', '=', Str::upper($ActivityGUID))
+        ->select('FilePath', 'Description', 'FileSizeInKB', 'ID')
         ->first();
         
         return $project;
     }
-    
+
+    public function generateEvaluationReport($GUID)
+    {
+        $ProjectGUID = $GUID;
+        $project = ProjectRequirements::orderByRaw('ID ASC')
+        // ->where('required', '=', 1)
+        ->where('ProjectGUID', '=', $ProjectGUID)
+        ->get();
+
+        $todate = date('m/d/Y H:i:s A');
+
+        $pdf = PDF::loadView('pdf.evaluation_report', compact('project', 'todate'));
+        $pdf->output();
+
+        return $pdf->download('Evaluation Report.pdf');
+    }
+
+    public function generateOrderOfPayment($GUID)
+    {
+
+        $MaxOOP = Project::max('OrderOfPayment');
+
+        $BankRefNo = str_replace("-","E",$GUID);
+
+        $now = new \DateTime(); 
+
+        $selectOrderOfPayment = Project::where('project.GUID', '=', $GUID)
+        ->select('OrderOfPayment')
+        ->first();
+
+        if($selectOrderOfPayment->OrderOfPayment === null){
+            $updateOOP = DB::table('project')
+            ->where('GUID','=', $GUID)
+            ->update([
+                'OrderOfPayment' => $MaxOOP + 1,
+                'BankRefNo' => $BankRefNo
+            ]);
+        }
+
+        $project = Project::where('project.GUID', '=', $GUID)
+            // ->where('project.Stage', '>', 0 )
+            ->Join('projectactivity', function ($join) {
+                $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+
+                $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+            })
+            ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
+            ->select(
+                'project.Purpose',
+                'project.Address AS Address', 
+                'project.Municipality  AS Municipality', 
+                'project.Province AS Province', 
+                'project.Address', 
+                'project.CreatedBy AS CreatedBy', 
+                'project.GUID AS GUID', 
+                'project.PreviousECCNo',
+                'proponent.ProponentName',
+                'project.ProjectName', 
+                'project.Region  AS Region', 
+                'project.OrderOfPayment',
+
+                'projectactivity.RoutedTo', 
+                'projectactivity.RoutedFrom', 
+
+                'projectactivity.RoutedToOffice', 
+                'projectactivity.RoutedFromOffice', 
+
+                'projectactivity.CreatedDate', 
+                'projectactivity.Status', 
+                'projectactivity.Details AS Remarks', 
+                'projectactivity.GUID AS ActivityGUID',
+                'projectactivity.FromDate AS FromDate',
+                'projectactivity.UpdatedDate AS UpdatedDate',
+                
+            )
+            ->first();
+
+
+            $todate = date('m/d/Y H:i:s A');
+            $Date = date('m/d/Y');
+
+            $pdf = PDF::loadView('pdf.order_of_payment', compact('project', 'todate', 'Date'));
+            return $pdf->download('Order of Payment - Application.pdf');
+        
+    }
+
+    public function generateDraftCerticate($GUID)
+    {
+        $project = Project::where('project.GUID', '=', $GUID)
+        ->Join('projectactivity', function ($join) {
+            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+
+            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+        })
+        ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
+        ->leftJoin('aspnet_users', 'proponent.GUID', '=', 'aspnet_users.ProponentGUID')
+        ->Join('region', 'region.Region', '=', 'project.Region')
+        ->select(
+            'project.Purpose',
+            'project.Address AS Address', 
+            'project.Municipality  AS Municipality', 
+            'project.Province AS Province',  
+            'project.CreatedBy AS CreatedBy', 
+            'project.GUID AS GUID', 
+            'project.PreviousECCNo',
+            'proponent.ProponentName',
+            'project.ProjectName', 
+            'project.Region  AS Region', 
+            'project.LandAreaInSqM',
+            'project.Representative as Representative',
+
+            'projectactivity.RoutedTo', 
+            'projectactivity.RoutedFrom', 
+
+            'projectactivity.RoutedToOffice', 
+            'projectactivity.RoutedFromOffice', 
+
+            'projectactivity.CreatedDate', 
+            'projectactivity.Status', 
+            'projectactivity.Details AS Remarks', 
+            'projectactivity.GUID AS ActivityGUID',
+            'projectactivity.FromDate AS FromDate',
+            'projectactivity.UpdatedDate AS UpdatedDate',
+            'aspnet_users.*',
+            'proponent.*',
+
+            'region.Address as EMBAddress',
+            'region.TelephoneNo as EMBTelephoneNo',
+            'region.EmailAddress as EMBEmailAddress',
+            'region.WebSite as EMBWebSite',
+            'region.Director as Director',
+            'region.EIAChief as EIAChief',
+            'region.EIAChiefSignature',
+            'region.DirectorSignature',
+            'region.Designation as DirectorDesignation'
+        )
+        ->first();
+
+        $templateProcessor = new TemplateProcessor('word-template/ECC.docx');
+
+        $templateProcessor->setValue('projectname', $project->ProjectName);
+        $templateProcessor->setValue('proponentname', $project->ProponentName);
+        $templateProcessor->setValue('representativedesignation', $project->Designation);
+        $templateProcessor->setValue('proponentaddress', $project->MailingAddress);
+        $templateProcessor->setValue('projectaddress', $project->Address);
+        $templateProcessor->setValue('projectdescription', $project->Description);
+
+        $templateProcessor->setValue('UserName', $project->CreatedBy);
+        $templateProcessor->setValue('region', $project->Region);
+        $templateProcessor->setValue('projectarea', $project->LandAreaInSqM . " square meters ");
+        $templateProcessor->setValue('province', $project->Province);
+        $templateProcessor->setValue('municipality ', $project->Municipality);
+        $templateProcessor->setValue('representative', $project->Representative);
+
+        $templateProcessor->setValue('embaddress', $project->EMBAddress);
+        $templateProcessor->setValue('embtelephoneno', $project->EMBTelephoneNo);
+        $templateProcessor->setValue('emailaddress', $project->EMBEmailAddress);
+        $templateProcessor->setValue('website', $project->EMBWebSite);
+
+        if(Str::lower($project->EIAChief != $project->Director)){
+            $templateProcessor->setValue('eiachief', $project->EIAChief);
+        } else {
+            $templateProcessor->setValue('eiachief', '');
+        }
+        
+
+        $templateProcessor->setValue('approver', $project->Director);
+        $templateProcessor->setValue('approverdesignation', $project->DirectorDesignation);
+
+
+        $str = $project->DirectorSignature;
+
+        $Signature = explode("/",$str);
+        $image = 'signatures/' . $Signature[3];
+
+        $templateProcessor->setImageValue('sign', array('path' => $image, 'width' => 160, 'height' => 125, 'ratio' => true));
+
+        $templateProcessor->setValue('dategenerated', date("F j, Y"));
+
+        $str1 = $project->EIAChiefSignature;
+        $Signature1 = explode("/",$str1);
+        $image1 = 'signatures/' . $Signature1[3];
+
+        $templateProcessor->setImageValue('eiachiefsign', array('path' => $image1, 'width' => 160, 'height' => 125, 'ratio' => true));
+
+        $filename = 'Draft ECC';
+        $templateProcessor->saveAs($filename . '.docx');
+        return response()->download($filename . '.docx')->deleteFileAftersend(true);
+    }
+
+    public function generateDenialLetter($GUID)
+    {
+        $project = Project::where('project.GUID', '=', $GUID)
+        ->Join('projectactivity', function ($join) {
+            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+
+            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+        })
+        ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
+        ->leftJoin('aspnet_users', 'proponent.GUID', '=', 'aspnet_users.ProponentGUID')
+        ->Join('region', 'region.Region', '=', 'project.Region')
+        ->select(
+            'project.Purpose',
+            'project.Address AS Address', 
+            'project.Municipality  AS Municipality', 
+            'project.Province AS Province',  
+            'project.CreatedBy AS CreatedBy', 
+            'project.GUID AS GUID', 
+            'project.PreviousECCNo',
+            'proponent.ProponentName',
+            'project.ProjectName', 
+            'project.Region  AS Region', 
+            'project.LandAreaInSqM',
+            'project.Representative as Representative',
+
+            'projectactivity.RoutedTo', 
+            'projectactivity.RoutedFrom', 
+
+            'projectactivity.RoutedToOffice', 
+            'projectactivity.RoutedFromOffice', 
+
+            'projectactivity.CreatedDate', 
+            'projectactivity.Status', 
+            'projectactivity.Details AS Remarks', 
+            'projectactivity.GUID AS ActivityGUID',
+            'projectactivity.FromDate AS FromDate',
+            'projectactivity.UpdatedDate AS UpdatedDate',
+            'aspnet_users.*',
+            'proponent.*',
+
+            'region.Address as EMBAddress',
+            'region.TelephoneNo as EMBTelephoneNo',
+            'region.EmailAddress as EMBEmailAddress',
+            'region.WebSite as EMBWebSite',
+            'region.Director as Director',
+            'region.EIAChief as EIAChief',
+            'region.EIAChiefSignature',
+            'region.DirectorSignature',
+            'region.Designation as DirectorDesignation'
+        )
+        ->first();
+
+        $templateProcessor = new TemplateProcessor('word-template/Denial.docx');
+
+        $templateProcessor->setValue('projectname', $project->ProjectName);
+        $templateProcessor->setValue('proponentname', $project->ProponentName);
+        $templateProcessor->setValue('representativedesignation', $project->Designation);
+        $templateProcessor->setValue('proponentaddress', $project->MailingAddress);
+        $templateProcessor->setValue('projectaddress', $project->Address);
+        $templateProcessor->setValue('projectdescription', $project->Description);
+
+        $templateProcessor->setValue('UserName', $project->CreatedBy);
+        $templateProcessor->setValue('region', $project->Region);
+        $templateProcessor->setValue('projectarea', $project->LandAreaInSqM . " square meters ");
+        $templateProcessor->setValue('province', $project->Province);
+        $templateProcessor->setValue('municipality ', $project->Municipality);
+        $templateProcessor->setValue('representative', $project->Representative);
+
+        $templateProcessor->setValue('embaddress', $project->EMBAddress);
+        $templateProcessor->setValue('embtelephoneno', $project->EMBTelephoneNo);
+        $templateProcessor->setValue('emailaddress', $project->EMBEmailAddress);
+        $templateProcessor->setValue('website', $project->EMBWebSite);
+
+        if(Str::lower($project->EIAChief != $project->Director)){
+            $templateProcessor->setValue('eiachief', $project->EIAChief);
+        } else {
+            $templateProcessor->setValue('eiachief', '');
+        }
+        
+
+        
+
+        $templateProcessor->setValue('approver', $project->Director);
+        $templateProcessor->setValue('approverdesignation', $project->DirectorDesignation);
+
+
+        $str = $project->EIAChiefSignature;
+
+        $Signature = explode("/",$str);
+        $image = 'signatures/' . $Signature[3];
+
+        $templateProcessor->setImageValue('sign', array('path' => $image, 'width' => 160, 'height' => 125, 'ratio' => true));
+
+        $templateProcessor->setValue('dategenerated', date("F j, Y"));
+
+
+        $filename = 'Draft Denial Letter';
+        $templateProcessor->saveAs($filename . '.docx');
+        return response()->download($filename . '.docx')->deleteFileAftersend(true);
+    }
+
+
+    public function acceptApplication(Request $req)
+    {
+        $ProjectGUID = $req['ProjectGUID'];
+        $UserName = Session::get('data')['UserName'];
+        $todate = date('Y-m-d H:i:s');
+
+        DB::table('project')
+        ->where('GUID','=', $ProjectGUID)
+        ->update([
+            'AcceptedBy' => $UserName,
+            'AcceptedDate' => $todate
+        ]);
+
+        return "Success";
+    }
+
+    public function getActionRequired(Request $req)
+    {
+        $UserName = $req['selected_user'];
+
+        $actionrequiredperson = ActionRequiredPerson::where('UserName', '=', $UserName)
+        ->where('Active', 1)
+        ->get();   
+
+        $array = [];
+        foreach ($actionrequiredperson as $key => $arp) {
+            $data = [];
+            $data = '<option value="'.$arp['Action'].'"> '.$arp['Action'].'</option>';
+
+            $array[] = $data;
+        }
+
+        return $array;
+
+    }
+
+    public function deleteTempAttachment(Request $req)
+    {
+        $ID = $req['ID'];
+        $ActivityGUID = Str::upper(Session::get('NewActivityGUID'));
+
+        ProjectActivityAttachmentTemp::where('ActivityGUID', $ActivityGUID)
+        ->where('ID', $ID)
+        ->delete();
+
+        return "Success";
+    }
+
+    public function decideApplication(Request $req)
+    {
+        $UpdatedDate = $req['UpdatedDate'];
+        $ProjectGUID = $req['ProjectGUID'];
+        $ActivityGUID = $req['ActivityGUID'];
+        $Destination = $req['Destination'];
+        $UserDestination = $req['UserDestination'];
+        $ActionRequired = $req['ActionRequired'];
+        $Remarks = $req['Remarks'];
+        $NewActivityGUID = Session::get('NewActivityGUID');
+
+        $IncludeAttachment = $req['IncludeAttachment'];
+
+        $UserName = Session::get('data')['UserName'];
+        $UserOffice = Session::get('data')['UserOffice'];
+
+        $start_date = $UpdatedDate;
+        $end_date = date('Y-m-d');
+
+        $dateDiff = $this->Count_Days_Without_Weekends($start_date, $end_date);
+
+        $NewGUID = Uuid::generate()->string;
+
+        $projectActivity = array();
+        $projectActivity['GUID'] = Str::upper($NewActivityGUID);
+        $projectActivity['ProjectGUID'] = $ProjectGUID;
+        $projectActivity['Status'] = $ActionRequired;
+        $projectActivity['Details'] = $Remarks;
+        $projectActivity['RoutedFrom'] = $UserName;
+        $projectActivity['RoutedFromOffice'] = $UserOffice;
+        $projectActivity['RoutedTo'] = $UserDestination;
+        $projectActivity['RoutedToOffice'] = $Destination;
+        $projectActivity['Routing'] = 1;
+        $projectActivity['Remarks'] = '';
+        $projectActivity['UpdatedBy'] = $UserName;
+        $projectActivity['CreatedBy'] = $UserName;
+        $projectActivity['FromDate'] = $UpdatedDate;
+        $projectActivity['TotWorkDays'] = $dateDiff;
+        $projectActivity['TotElapsedDays'] = $dateDiff;
+
+        if(DB::table('projectactivity')->insert($projectActivity)){
+            $now = new \DateTime(); 
+
+            if($ActionRequired == 'For Evaluation'){
+                DB::table('project')
+                ->where('GUID','=', $ProjectGUID)
+                ->update([
+                    'Stage' => 1,
+                    'UpdatedBy' => $UserName,
+                    'UpdatedDate' => $now->format('Y-m-d H:i:s')
+                ]);
+            }else if($ActionRequired == 'For Review'){
+                DB::table('project')
+                ->where('GUID','=', $ProjectGUID)
+                ->update([
+                    'Stage' => 2,
+                    'UpdatedBy' => $UserName,
+                    'UpdatedDate' => $now->format('Y-m-d H:i:s')
+                ]);
+            }else if($ActionRequired == 'For Recommendation'){
+                DB::table('project')
+                ->where('GUID','=', $ProjectGUID)
+                ->update([
+                    'Stage' => 3,
+                    'UpdatedBy' => $UserName,
+                    'UpdatedDate' => $now->format('Y-m-d H:i:s')
+                ]);
+            }else if($ActionRequired == 'For Approval' || $ActionRequired == 'For Denial'){
+                DB::table('project')
+                ->where('GUID','=', $ProjectGUID)
+                ->update([
+                    'Stage' => 4,
+                    'UpdatedBy' => $UserName,
+                    'UpdatedDate' => $now->format('Y-m-d H:i:s')
+                ]);
+            }else if($ActionRequired == 'Approved' || $ActionRequired == 'Denied'){
+                DB::table('project')
+                ->where('GUID','=', $ProjectGUID)
+                ->update([
+                    'Stage' => 5,
+                    'UpdatedBy' => $UserName,
+                    'UpdatedDate' => $now->format('Y-m-d H:i:s')
+                ]);
+            }
+
+            $AdditionalRequirements = $req['AdditionalRequirements'];
+
+            if($AdditionalRequirements != null){
+                foreach ($AdditionalRequirements as $key => $value) {
+                    $projectrequirement = array();
+                    $projectrequirement['ProjectGUID'] = $ProjectGUID;
+                    $projectrequirement['Description'] = $value['description']; 
+                    $projectrequirement['Required'] = 0;
+                    $projectrequirement['Compliant'] = 0; 
+                    DB::table('projectrequirement')->insert($projectrequirement);
+                }
+            }
+
+            if($IncludeAttachment === "true"){
+
+                $data = DB::table('projectactivityattachmenttemp')
+                    ->select('GUID','ActivityGUID','Description','FileName','Directory','FilePath','FileSizeInKB','CreatedBy','CreatedDate')
+                    ->where('ActivityGUID', '=', $NewActivityGUID)
+                    ->get();
+
+                $array = $data->map(function($obj){
+                    return (array) $obj;
+                    })->toArray();
+
+
+                if(DB::table('projectactivityattachment')->insert($array)){
+                    ProjectActivityAttachmentTemp::where('ActivityGUID', $NewActivityGUID)->delete();
+                }
+            }
+
+        }
+
+    }
+
+
+    public function reviewerPDF(Request $req)
+    {
+        $ProjectGUID = $req['ProjectGUID'];
+        $Description = $req['Description'];
+
+        $Requirements = ProjectActivity::where('projectactivity.ProjectGUID', '=', $ProjectGUID)
+        ->Join('projectactivityattachment', function ($join) {
+            $join->on('projectactivity.GUID', '=', 'projectactivityattachment.ActivityGUID');
+
+            // $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
+            //     join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+        })
+        ->leftJoin('projectrequirement', function ($join) {
+            $join->on('projectactivity.ProjectGUID', '=', 'projectrequirement.ProjectGUID');
+            $join->on('projectactivityattachment.Description', '=', 'projectrequirement.Description');
+            // $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
+            //     join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+        })
+        ->where('projectactivityattachment.Description', '=', $Description)
+        ->select(
+            'projectactivityattachment.Description',
+            'projectactivityattachment.FileName',
+            'projectactivityattachment.Directory',
+            'projectactivityattachment.FilePath',
+            'projectactivityattachment.FileSizeInKB',
+            'projectactivityattachment.CreatedBy',
+            'projectactivityattachment.CreatedDate',
+            'projectactivityattachment.ActivityGUID',
+            'projectactivityattachment.GUID',
+            'projectrequirement.Compliant',
+            'projectrequirement.ID AS PRID',
+            'projectrequirement.Remarks AS Remarks'
+        )
+        ->first();
+
+        $PDF = url($Requirements->FilePath);
+
+        $returnArray['FilePath'] = $PDF;
+        $returnArray['Compliant'] = $Requirements->Compliant;
+        $returnArray['Description'] = $Requirements->Description;
+        $returnArray['PRID'] = $Requirements->PRID;
+        $returnArray['Remarks'] = $Requirements->Remarks;
+        
+        
+
+        return $returnArray;
+
+    }
 }

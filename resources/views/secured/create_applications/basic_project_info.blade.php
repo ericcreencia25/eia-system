@@ -27,11 +27,11 @@ div.col-md-6 {
         Proponent Name
         <input type="text" class="form-control" placeholder="" id="proponent_name" disabled>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
         Landline No.
         <input type="text" class="form-control" placeholder="" id="landline_no">
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
         Fax No
         <input type="text" class="form-control" placeholder="" id="fax_no">
       </div>
@@ -57,11 +57,11 @@ div.col-md-6 {
           <option>District Engineer</option>
         </select>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
         Mobile No.
         <input type="text" class="form-control" placeholder="" id="mobile_number">
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
         Email Address
         <input type="text" class="form-control" placeholder="" id="email_address">
       </div>
@@ -75,16 +75,16 @@ div.col-md-6 {
         Project Name
         <input type="text" class="form-control" placeholder="" id="project_name" required>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
         Project Location: Specific Address
         <input type="text" class="form-control" placeholder="" id="project_location">
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
         Municipality
         <select class="form-control select2" id='municipality' name='municipality' style="width: 100%;">
         </select>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6" >
         Total Project Land Area (sq. m.)
         <input type="text" class="form-control" placeholder="" id="project_landarea">
       </div>
@@ -99,12 +99,12 @@ div.col-md-6 {
         Mailing Address
         <input type="text" class="form-control" placeholder="" id="mailing_address">
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
         Province
         <select class="form-control" id="province" name="province">
         </select>
       </div>
-      <div class="col-md-6  mb-3">
+      <div class="col-md-6  mb-3" style="padding-top: 10px; padding-bottom: 10px;">
         Zone Classification (i.e. industrial, residential)
         <input type="text" class="form-control" placeholder="" id="zone_classification">
       </div>
@@ -118,6 +118,13 @@ div.col-md-6 {
       </div>
     </div>
   </div>
+
+  <div class="col-md-12" style="padding-top: 30px;">
+    <div class="col-md-6">
+        Establishment Name
+        <input type="text" class="form-control" placeholder="" id="">
+      </div>
+  </div>
 </div>
 
 
@@ -127,6 +134,7 @@ div.col-md-6 {
     $('.select2').select2();
 
     var municipality_check = "{{ Session::has('step_5') ? Session::get('step_5')['municipality'] : '' }}";
+    console.log(municipality_check);
     var url=window.location.pathname;
     var arr=url.split('/');
     var NewGUID=arr[2];
@@ -150,8 +158,14 @@ div.col-md-6 {
               var Municipality = response['data'][i].Municipality;
               var Province = response['data'][i].Province;
 
-              var option = "<option value='"+ID+"'>"+Municipality+"</option>";
-              var option1 = "<option value='"+ID+"'>"+Province+"</option>";
+              if(Municipality === municipality_check){
+                var option = "<option value='"+ID+"' selected>"+Municipality+"</option>";
+                var option1 = "<option value='"+ID+"' selected>"+Province+"</option>";
+              }else{
+                var option = "<option value='"+ID+"'>"+Municipality+"</option>";
+                var option1 = "<option value='"+ID+"'>"+Province+"</option>";
+              }
+              
               
               $("#province").append(option1);
               $("#municipality").append(option); 
@@ -262,7 +276,15 @@ div.col-md-6 {
           _token: '{{csrf_token()}}' ,
         },
         success: function(response){
-          toastr.error('You need to completely fill-up the proponent and project information.');
+          Swal.fire({
+            icon: 'error',
+            title: 'Notifications!',
+            text: 'You need to completely fill-up the proponent and project information.',
+            // footer: '<a href="">Why do I have this issue?</a>',
+            width: '850px'
+          });
+
+
           $("#step_5").css({"background-color":"#dd4b39", "color": "#ffffff"});
         }
       });
@@ -299,11 +321,22 @@ div.col-md-6 {
           _token: '{{csrf_token()}}' ,
         },
         success: function(response){
-          toastr.success('Saved');
+          Swal.fire({
+            icon: 'success',
+            title: 'Step 5 is already saved in the session.',
+            showConfirmButton: false,
+            timer: 1500,
+            width: '850px'
+          });
           $("#step_5").css({"background-color":"#3c8dbc", "color": "#ffffff"});
           // location.reload();
         }
       });
+
+      var next = $('#mytabs li.active').next()
+          next.length?
+          next.find('a').click():
+          $('#myTab li a')[5].click();
 
       $("#step_6").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 

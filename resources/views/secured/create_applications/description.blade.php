@@ -28,10 +28,22 @@ $(document).ready(function(){
           _token: '{{csrf_token()}}' ,
         },
         success: function(response){
-          toastr.success('Saved! ');
+          Swal.fire({
+            icon: 'success',
+            title: 'Step 3 is already saved in the session.',
+            showConfirmButton: false,
+            timer: 1500,
+            width: '850px'
+          });
+
           $("#step_3").css({"background-color":"#3c8dbc", "color": "#ffffff"});
         }
       });
+
+      var next = $('#mytabs li.active').next()
+          next.length?
+          next.find('a').click():
+          $('#myTab li a')[3].click();
 
       $("#li_step_4").attr("class", "able");
       $("#step_4").attr("data-toggle", "tab");
@@ -45,7 +57,14 @@ $(document).ready(function(){
           _token: '{{csrf_token()}}' ,
         },
         success: function(response){
-          toastr.error("You need to provide the description of the proposed project.");
+          Swal.fire({
+            icon: 'error',
+            title: 'Notifications!',
+            text: 'You need to provide the description of the proposed project.',
+            // footer: '<a href="">Why do I have this issue?</a>',
+            width: '850px'
+          });
+
           $("#step_3").css({"background-color":"#dd4b39", "color": "#ffffff"});
         }
       });

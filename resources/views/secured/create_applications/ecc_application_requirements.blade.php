@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="../../adminlte/dist/css/overlay-success.css">
 <div class="box-body">
     <div>
         <button type="button" class="btn btn-primary pull-right" id="check_step_7">Confirm <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
@@ -15,6 +16,12 @@
             <tbody></tbody>
         </table>
     </div>
+</div>
+
+<div id="overlay" style="display:none;">
+    <div class="spinner"></div>
+    <br/>
+    <h3>Please wait while saving your data...</h3>
 </div>
 
 <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
@@ -76,10 +83,21 @@
             if(error_message.length == 0){
                 $("#li_step_8").attr("class", "able");
                 $("#step_8").attr("data-toggle", "tab");
-
-                toastr.success("Proceed to last step.");
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Proceed to last step.',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    width: '850px'
+                });
             } else {
-                toastr.error("You need to attach the electronic copy of the requirements.");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Notifications!',
+                    text: 'You need to attach the electronic copy of the requirements.',
+                    // footer: '<a href="">Why do I have this issue?</a>',
+                    width: '850px'
+                  });
             }
         });
     });
@@ -114,16 +132,37 @@
                 contentType: false,
                 processData: false,
                 dataType: 'json',
+                beforeSend: function() {
+                    $('#overlay').show();
+                },
                 success: function(response){
-                    toastr.success(response['message']);
-                    location.reload();
+                    $('#overlay').delay(2000).fadeOut();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: response['message'],
+                        showConfirmButton: false,
+                        timer: 1500,
+                        width: '850px'
+                    }).then((result) => {
+                      /* Read more about handling dismissals below */
+                      if (result.dismiss === Swal.DismissReason.timer) {
+                        location.reload();
+                      }
+                    });
                 },
                 error: function(response){
                     console.log("error : " + JSON.stringify(response) );
                 }
             });
         }else{
-            toastr.warning("Please select a file.");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Please select a file.',
+                showConfirmButton: false,
+                timer: 1300,
+                width: '850px'
+            });
         }
     }
 
@@ -145,7 +184,13 @@
                 processData: false,
                 dataType: 'json',
                 success: function(response){
-                    toastr.success(response['message']);
+                    Swal.fire({
+                        icon: 'success',
+                        title: response['message'],
+                        showConfirmButton: false,
+                        timer: 1500,
+                        width: '850px'
+                    });
                     location.reload();
                 },
                 error: function(response){
@@ -154,7 +199,13 @@
             });
         }
         else{
-            toastr.error("Nope! ");
+           Swal.fire({
+            icon: 'error',
+            title: 'Notifications!',
+            text: 'Something went wrong while uploading your files!',
+            // footer: '<a href="">Why do I have this issue?</a>',
+            width: '850px'
+          });
             // return false;
         }
         

@@ -18,7 +18,7 @@ span.limit {
               <input type="text" name="search" class="form-control" placeholder="Type in here the project keyword..." id="search_project_type">
 
               <div class="input-group-btn">
-                <button type="button" name="submit" class="btn btn-primary btn-flat" id="submit_project_type"><i class="fa fa-search"></i>
+                <button type="button" name="submit" class="btn btn-primary" style="width: 50px; height: 35px" id="submit_project_type"><i class="fa fa-search"></i>
                 </button>
               </div>
             </div>
@@ -49,11 +49,17 @@ $(document).ready(function(){
   var ComponentGUID_check = "{{ Session::has('step_2') ? session::get('step_2')['ComponentGUID'] : '' }}";
   var input_size_check = "{{ Session::has('step_2') ? session::get('step_2')['input_size'] : '' }}";
 
-  if(ComponentGUID_check != '' && input_size_check != ''){
+  if(ComponentGUID_check != ''){
     $('#projectType').DataTable({
       processing:true,
-      info:true,
-      searching: false,
+            info:true,
+            searching: false,
+            ordering: false,
+            bPaginate: false,
+            bLengthChange: false,
+            bFilter: true,
+            bInfo: false,
+            bAutoWidth: false,
       ajax: {
             "url": "{{route('getProjectType')}}",
             "type": "POST",
@@ -126,14 +132,18 @@ function ProjectSize(ComponentGUID, Category) {
     var max= $(id).attr("max");
 
     if(Category == 'ECP'){
-      toastr.warning('This type of project and its size falls under the Environmentally Critical Projects (ECPs). The ECC Online Application System covers only the Non-Environmentally Critical Projects (NECPs). For ECP Project, please coordinate with EMB Central Office - Environmnetal Impact Assessment and Management Division.');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Notifications!',
+        text: 'This type of project and its size falls under the Environmentally Critical Projects (ECPs). The ECC Online Application System covers only the Non-Environmentally Critical Projects (NECPs). For ECP Project, please coordinate with EMB Central Office - Environmnetal Impact Assessment and Management Division.',
+            // footer: '<a href="">Why do I have this issue?</a>',
+          width: '850px'
+        });
     } else {
       if(input_size != ''){
-        if(input_size < min || input_size > max)
+        if(inRange(input_size, min, max))
         {
-          toastr.error('Your value is out of range');
-        } else {
-            $.ajax({
+          $.ajax({
             url: "{{route('SecondStep')}}",
             type: 'POST',
             data: {
@@ -144,7 +154,13 @@ function ProjectSize(ComponentGUID, Category) {
             },
             success: function(response)
             {
-              toastr.success('Already saved! ');
+              Swal.fire({
+                icon: 'success',
+                title: 'Step 2 is already saved in the session.',
+                showConfirmButton: false,
+                timer: 1500,
+                width: '850px'
+              });
               $("#step_2").css({"background-color":"#3c8dbc", "color": "#ffffff"});
             }
           });
@@ -156,10 +172,9 @@ function ProjectSize(ComponentGUID, Category) {
 
           $("#li_step_3").attr("class", "able");
           $("#step_3").attr("data-toggle", "tab");
-
+        } else {
+          Swal.fire('Your value is out of range');
         }
-        
-        
       }else{
       
         $.ajax({
@@ -173,11 +188,22 @@ function ProjectSize(ComponentGUID, Category) {
           },
           success: function(response)
           {
-            toastr.error('Proposed Project Size accepts numeric value only.');
+            Swal.fire({
+              icon: 'error',
+              title: 'Notifications!',
+              text: 'Proposed Project Size accepts numeric value only.',
+              // footer: '<a href="">Why do I have this issue?</a>',
+              width: '850px'
+            });
+
             $("#step_2").css({"background-color":"#dd4b39", "color": "#ffffff"});
           }
         });
       }
     }
   }
+
+function inRange(x, min, max) {
+    return ((x-min)*(x-max) <= 0);
+}
 </script>

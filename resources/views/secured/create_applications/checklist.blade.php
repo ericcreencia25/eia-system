@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="../../adminlte/dist/css/overlay-success.css">
 <div class="box-body">
     <div>
         <button type="button" class="btn btn-primary pull-right" id="save_entry">Save Entry<i class="fa fa-fw fa-save"></i></button>
@@ -30,6 +31,11 @@
         </tbody>
     </table>
 </div>
+<div id="overlay" style="display:none;">
+    <div class="spinner"></div>
+    <br/>
+    <h3>Please wait while saving your data...</h3>
+</div>
 <script>
     $(document).ready(function(){
         var url=window.location.pathname;
@@ -37,6 +43,8 @@
         var NewGUID=arr[2];
 
         $("#save_entry").on('click', function(){
+            // $('#overlay').fadeIn().delay(2000).fadeOut();
+
             $.ajax({
                 url: "{{route('SaveNewApplication')}}",
                 type: 'POST',
@@ -44,10 +52,27 @@
                     ProjectGUID : NewGUID,
                     _token: '{{csrf_token()}}',
                 },
+                beforeSend: function() {
+                    $('#overlay').show();
+                },
                 success: function(response)
-                {
-                    toastr.success('Saved Entry! ');
-                    location.reload();  
+                {   
+
+                    $('#overlay').fadeOut(2000, () => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Your application has been saved!.',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            width: '850px'
+                        }).then((result) => {
+                            /* Read more about handling dismissals below */
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                location.reload();
+                            }
+                        });
+                    });
+                    // $('#overlay').delay(2000).fadeOut();
                 }
             });
 

@@ -96,11 +96,10 @@
       var number = '';
     }
 
-
     ///check if there's already an input in session
     var step4_check = "{{ Session::has('step_4_status') ? Session::get('step_4_status') : 'N/A' }}";
 
-    if(step4_check == 1){
+    if(description != '' && number != ''){
       $.ajax({
         url: "{{route('getGeoTable')}}",
         type: 'GET',
@@ -138,7 +137,31 @@
         }
       });
     }else{
-      center_location.push(120.9826, 14.5353);
+
+      $.ajax({
+        url: "{{route('selectedArea')}}",
+        type: 'POST',
+        data: {
+          ProjectGUID : NewGUID,
+          _token: '{{csrf_token()}}' ,
+        },
+        success: function(response){
+          $.each(response['data'], function(index, value ) {
+            //now you can access properties using dot notation
+            var Area = value['Area'];
+            var AreaType = value['AreaType'];
+            var GUID = value['GUID'];
+
+            if(Area == number){
+              $("#selected_area").append('<option value="'+ AreaType + '__' + GUID  +'" selected="selected">' +Area+'</option>');
+            } else {
+              $("#selected_area").append('<option value="'+ AreaType + '__' + GUID  +'">' +Area+'</option>');
+            }
+          });
+        }
+      });
+
+      center_location.push(121.045145, 14.656689);
     }
 
     require([
@@ -156,7 +179,7 @@
       });
 
       var map = new Map({
-        basemap: "hybrid"
+        basemap: "streets"
       });
 
       var view = new MapView({
@@ -165,7 +188,7 @@
         center: center_location, // longitude, latitude
         // center: [center_location], // longitude, latitude
         // center:[-118.821527826096, 34.0139576938577],
-        zoom: 14
+        zoom: 17
       });
       
        view.ui.add("instruction", "bottom-left");
@@ -337,5 +360,23 @@
     });
 
   });
+
+  ///append area in dropdown
+function addSelectedArea(Area){
+  var counts = $('#selected_area option').length;
+  var counter = counts + 1;
+  var message = "Add a " + Area + "?";
+  
+  if(confirm(message)){
+    $.ajax({
+      url: "{{route('createNewGUID')}}",
+      success: function(response){
+        $("#selected_area").append('<option value='+ Area + '__' + response  +' >' +counter+'</option>');
+      }
+    });
+  }else{
+    return false;
+  }
+}
 </script>
 </html>‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍‍
