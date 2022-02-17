@@ -6,6 +6,7 @@ use App\Http\Controllers\Secured\EccApplicationsController;
 use App\Http\Controllers\Secured\ForActionsController;
 use App\Http\Controllers\Secured\NewApplicationsController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ApiController;
 
 use Webpatser\Uuid\Uuid;
 
@@ -30,6 +31,8 @@ use Webpatser\Uuid\Uuid;
 
 Route::get('/welcome', [AspnetUserController::class, 'index']); 
 
+Route::view('georisk', 'georisk');
+
 
 
 // Auth::routes();
@@ -37,6 +40,11 @@ Route::get('/welcome', [AspnetUserController::class, 'index']);
 Route::group(['middleware'=>'web'], function(){
     $GUID = Uuid::generate()->string;
     
+
+    Route::post('/tokenGeneration', [ApiController::class, 'tokenGeneration'])->name('tokenGeneration');
+
+    Route::post('/hazardAssessmentGeneration', [ApiController::class, 'hazardAssessmentGeneration'])->name('hazardAssessmentGeneration');
+
 ////ECC APPLICATIONS CONTROLLER
     
     
@@ -112,11 +120,11 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::get('/dynamic_pdf/OrderOfPayment/{GUID}', [ForActionsController::class, 'generateOrderOfPayment'])->name('generateOrderOfPayment');
 
-    Route::get('/dynamic_pdf/DraftCerticate/{GUID}', [ForActionsController::class, 'generateDraftCerticate'])->name('generateDraftCerticate');
+    Route::get('/dynamic_pdf/DraftCerticate/{GUID}/{ActivityGUID}', [ForActionsController::class, 'generateDraftCerticate'])->name('generateDraftCerticate');
 
     Route::post('acceptApplication', [ForActionsController::class, 'acceptApplication'])->name('acceptApplication');
 
-    Route::get('/dynamic_pdf/DraftDenialLetter/{GUID}', [ForActionsController::class, 'generateDenialLetter'])->name('generateDenialLetter');
+    Route::get('/dynamic_pdf/DraftDenialLetter/{GUID}/{ActivityGUID}', [ForActionsController::class, 'generateDenialLetter'])->name('generateDenialLetter');
 
     Route::post('/getActionRequired', [ForActionsController::class, 'getActionRequired'])->name('getActionRequired');
 

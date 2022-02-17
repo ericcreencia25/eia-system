@@ -146,7 +146,7 @@
                                 <b>Recent Activity/Comments:</b> <a  href="" style="text-decoration:none;" id="remarks"></a> <span id="name_date"></span>
                             </div>
                             <!---IF ELSE --->
-                            @if($project['RoutedTo'] == Session::get('data')['UserName'])
+                            @if(strtolower($project['RoutedTo']) == strtolower(Session::get('data')['UserName']))
                             <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">ENDORSE APPLICATION
                             </div>
                             
@@ -440,7 +440,7 @@ $(document).ready(function(){
           _token: '{{csrf_token()}}' ,
         },
         success: function(response){
-            $("#Uploads").removeAttr("disabled");
+            $("#Uploads").removeAttr("disabled"); 
             if(response != ''){
                 var url=window.location.origin;
                 var filepath = response['FilePath'];
@@ -999,7 +999,7 @@ $(document).ready(function(){
                     }).then((result) => {
                         /* Read more about handling dismissals below */
                         if (result.dismiss === Swal.DismissReason.timer) {
-                            // location.reload();
+                            location.reload();
                         }
                     });
                 },
@@ -1068,68 +1068,99 @@ $(document).ready(function(){
     });
 
     $("#generate_draft_certificate").on('click', function() {
-        if(AcceptedDate == '' && AcceptedBy == ''){
-            Swal.fire({
-                icon: 'warning',
-                title: 'You need to accept the application before drafting an ECC.',
-                showConfirmButton: false,
-                timer: 1300,
-                width: '850px'
-            });
-        }else{
-            Swal.fire({
-              // title: 'Are you sure?',
-              text: "Do you want to generate a draft ECC for this application? The generated draft document  will be in docx format for editing purposes and will be downloaded automatically. Please make sure you have word editor installed in your machine.",
-              icon: 'info',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Okay'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                window.location.href = '/dynamic_pdf/DraftCerticate/' + GUID;
+        var filesCheck = $('#filesCheck').text();
 
-                Swal.fire(
-                  // '|Downloaded!|',
-                  'Your file has been downloaded.',
-                  'success'
-                )
-              }
-            });
+        if(filesCheck != ''){
+            Swal.fire({
+                    icon: 'info',
+                    title: 'You need to delete the file first.',
+                    showConfirmButton: false,
+                    timer: 1300,
+                    width: '850px'
+                });
+
+            
+        } else {
+            if(AcceptedDate == '' && AcceptedBy == ''){
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'You need to accept the application before drafting an ECC.',
+                    showConfirmButton: false,
+                    timer: 1300,
+                    width: '850px'
+                });
+            }else{
+                Swal.fire({
+                  // title: 'Are you sure?',
+                  text: "Do you want to generate a draft ECC for this application? The generated draft document  will be in docx format for editing purposes and will be downloaded automatically. Please make sure you have word editor installed in your machine.",
+                  icon: 'info',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Okay'
+                }).then((result) => {
+                  if (result.isConfirmed) {
+
+                    window.location.href = '/dynamic_pdf/DraftCerticate/' + GUID + '/' + ActivityGUID;
+
+                    Swal.fire(
+                      // '|Downloaded!|',
+                      'Your file has been downloaded.',
+                      'success'
+                    )
+                  }
+                });
+            }
         }
+        
     });
 
     $("#generate_denial_letter").on('click', function() {
-        if(AcceptedDate == '' && AcceptedBy == ''){
-            Swal.fire({
-                icon: 'warning',
-                title: 'You need to accept the application before drafting an ECC.',
-                showConfirmButton: false,
-                timer: 1300,
-                width: '850px'
-            });
-        }else{
-            Swal.fire({
-              // title: 'Are you sure?',
-              text: "Do you want to generate a draft denial letter for this application? The generated draft document will be in docx format for editing purposes and will be downloaded automatically. Please make sure you have word editor installed in your machine.",
-              icon: 'info',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Okay'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                window.location.href = '/dynamic_pdf/DraftDenialLetter/' + GUID;
+        var filesCheck = $('#filesCheck').text();
 
-                Swal.fire(
-                  // '|Downloaded!|',
-                  'Your file has been downloaded.',
-                  'success'
-                )
-              }
-            });
+        if(filesCheck != ''){
+            Swal.fire({
+                    icon: 'info',
+                    title: 'You need to delete the file first.',
+                    showConfirmButton: false,
+                    timer: 1300,
+                    width: '850px'
+                });
 
+            
+        } else {
+            if(AcceptedDate == '' && AcceptedBy == ''){
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'You need to accept the application before drafting an ECC.',
+                    showConfirmButton: false,
+                    timer: 1300,
+                    width: '850px'
+                });
+            }else{
+                Swal.fire({
+                  // title: 'Are you sure?',
+                  text: "Do you want to generate a draft denial letter for this application? The generated draft document will be in docx format for editing purposes and will be downloaded automatically. Please make sure you have word editor installed in your machine.",
+                  icon: 'info',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Okay'
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    window.location.href = '/dynamic_pdf/DraftDenialLetter/' + GUID + '/' + ActivityGUID;
+
+
+                    Swal.fire(
+                      // '|Downloaded!|',
+                      'Your file has been downloaded.',
+                      'success'
+                    )
+                  }
+                });
+            }
         }
+        
     });
 
 

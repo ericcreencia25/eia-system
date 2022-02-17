@@ -278,7 +278,7 @@ $(document).ready(function(){
             if(response['Status'] === 'For Denial'){
                 var button = '<button class="btn btn-warning btn-md" onclick="ProcessApplication('+"'Denied'"+', '+"'"+textProject+"'"+')">Deny Application</button>&nbsp;<button class="btn btn-default btn-md" onclick="convertDocxToPDF()">Revert</button>';
             }else{
-                var button = '<button class="btn btn-primary btn-md" onclick="ProcessApplication('+"'Denied'"+', '+"'"+textProject+"'"+')">Approve Application</button>&nbsp;<button class="btn btn-default btn-md"  onclick="convertDocxToPDF()">Revert</button>';
+                var button = '<button class="btn btn-primary btn-md" onclick="ProcessApplication('+"'Approved'"+', '+"'"+textProject+"'"+')">Approve Application</button>&nbsp;<button class="btn btn-default btn-md"  onclick="convertDocxToPDF()">Revert</button>';
             }
             
             $("#button_approver").html(button);
