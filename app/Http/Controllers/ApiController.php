@@ -17,6 +17,7 @@ use App\Http\Controllers\View;
 use Illuminate\Support\Facades\Http;
 
 use Illuminate\Support\Str;
+use Mapper;
 
 class ApiController extends Controller
 {
@@ -55,6 +56,12 @@ class ApiController extends Controller
 
     }
 
+    public function georisk()
+    {
+
+        return view('georisk');
+    }
+
     public function hazardAssessmentGeneration(Request $req)
     {
         $longitude = $req['longitude'];
@@ -72,6 +79,8 @@ class ApiController extends Controller
 
         // 'longitude' => '120.982155',
         //     'latitude' => '14.535067',
+
+
 
         return json_decode($response, TRUE);
         

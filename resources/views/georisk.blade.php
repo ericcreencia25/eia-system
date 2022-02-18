@@ -119,9 +119,16 @@
                         <label>Longitude: </label><input class="form-control mr-1" id="longitude">
                         <button class="btn btn-success" id="Check_button">Check</button>
                         <button class="btn btn-danger" id="Clear_button">Clear</button>
+                        <button class="btn btn-info" onclick="clickMe()">Map View</button>
                       </div>
                     </center>
                   </div>
+
+                  <!-- <div class="col-md-12" hidden='hidden' id="googlemap_div">
+                    <div>
+                      <iframe id="googlemap"  width="1000" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                  </div> -->
                   <br/>
                   <!---Active Fault--->
                   <div class="col-md-12">
@@ -139,6 +146,7 @@
                         </div>
                         <!-- /.box-header -->
                         <div class="box-body" style="">
+
                           <div id="coordinates">The body of the box</div>
                         </div>
                         <!-- /.box-body -->
@@ -977,7 +985,7 @@
           console.log(response);
           Swal.hideLoading();
 
-          putData(response)
+          putData(response);
         }
       });
     });
@@ -1169,5 +1177,29 @@ function putData(response)
   $("#secondaryRoadNetwork").html(secondaryRoadNetwork);
   $("#coordinates").html(coordinates);
   $("#location").html(location);
+
+  clickMe();
+}
+
+function clickMe()
+{
+
+  var latitude = $("#latitude").val();
+  var longitude = $("#longitude").val();
+  var coords = latitude + "," + longitude;
+  
+  var url = 'https://maps.google.com/maps?q='+ coords +'&z=18&ie=UTF8&iwloc=&output=embed';
+  var iframe = '<iframe id="googlemap"  src="'+url+'"width="1000" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>';
+
+  Swal.fire({
+  // title: '<strong>HTML <u>example</u></strong>',
+  // icon: 'info',
+  html: iframe,
+  showCloseButton: true,
+  showCancelButton: false,
+  focusConfirm: false,
+  showConfirmButton: false,
+  width: 1100,
+})
 }
 </script>

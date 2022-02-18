@@ -31,7 +31,7 @@ use Webpatser\Uuid\Uuid;
 
 Route::get('/welcome', [AspnetUserController::class, 'index']); 
 
-Route::view('georisk', 'georisk');
+// Route::view('forTesting/HazardHunterPH', 'georisk');
 
 
 
@@ -39,7 +39,7 @@ Route::view('georisk', 'georisk');
 
 Route::group(['middleware'=>'web'], function(){
     $GUID = Uuid::generate()->string;
-    
+    Route::get('/forTesting/HazardHunterPH', [ApiController::class, 'georisk'])->name('georisk');
 
     Route::post('/tokenGeneration', [ApiController::class, 'tokenGeneration'])->name('tokenGeneration');
 
