@@ -472,7 +472,7 @@ class ForActionsController extends Controller
         return DataTables::of($project)
         ->addColumn('Details', function($project){
 
-            $details = '<a href="">' . $project->Description . '</a>';
+            $details = '<a href="'.url($project->FilePath).'">' . $project->Description . '</a>';
 
             return $details;
         })
@@ -1286,6 +1286,11 @@ class ForActionsController extends Controller
         
     }
 
+    public function default()
+    {
+        return view('secured.for_actions.default');
+    }
+
     public function generateDenialLetter($GUID, $ActivityGUID)
     {
         $project = Project::where('project.GUID', '=', $GUID)
@@ -1522,6 +1527,8 @@ class ForActionsController extends Controller
         if($ProjectUpdate){
             DB::table('projectactivity')->insert($projectActivity);
         }
+
+        return redirect()->route('convertDocxToPDF', ['GUID' => $ProjectGUID]);
         // if(){
         //    
 
@@ -1556,7 +1563,6 @@ class ForActionsController extends Controller
         //     }
 
         // }
-
     }
 
 
@@ -1716,10 +1722,14 @@ class ForActionsController extends Controller
         $templateProcessor->setValue('approver', $project->Director);
         $templateProcessor->setValue('approverdesignation', $project->DirectorDesignation);
 
-        $QRCode = \QrCode::size(250)->format('png')
-        ->generate('http://ecconline.emb.gov.ph:8080/welcome', public_path('qr-code/' . $GUID .'.png'));
+        // $QRCodeLink = 'http://ecconline.emb.gov.ph:8080/verification/' . $GUID;
 
-        $QrCodePath = 'qr-code/566C6120-5314-11EC-9D31-FB2FD1A4ECD8.png';
+        $QRCodeLink = url('/verification/' . $GUID);
+
+        $QRCode = \QrCode::size(250)->format('png')
+        ->generate($QRCodeLink, public_path('qr-code/' . $GUID .'.png'));
+
+        $QrCodePath = 'qr-code/'.$GUID.'.png';
 
         $templateProcessor->setImageValue('qrcode', array('path' => $QrCodePath, 'width' => 64, 'height' => 125, 'ratio' => true));
 
@@ -1765,18 +1775,17 @@ class ForActionsController extends Controller
             $templateProcessor->setComplexBlock('html#' . ($i+1), $containers[$i]);
         }
 
+        if ( file_exists($urlSave) ) {
+            unlink($urlSave);
+        }
+
         // save final document
-        // $templateProcessor->saveAs($urlSave);
+        $templateProcessor->saveAs($urlSave);
 
 
          // $file = file_get_contents($urlSave);
 
-
-        // if ( file_exists($urlSave) ) {
-        //     unlink($urlSave);
-        // }
-
-        // ConvertApi::setApiSecret('oIwYrAjcSsermjaL');
+         // ConvertApi::setApiSecret('oIwYrAjcSsermjaL');
 
         // # Example of saving Word docx to PDF and to PNG
         // # https://www.convertapi.com/docx-to-pdf
@@ -1787,8 +1796,9 @@ class ForActionsController extends Controller
         // # Use upload IO wrapper to upload file only once to the API
         // $upload = new \ConvertApi\FileUpload(public_path('attachments/SignedECC/'.$GUID.'.docx'));
 
+        // $urlSavePDF = public_path('attachments/SignedECC/'.$GUID.'.pdf');
         // $result = ConvertApi::convert('pdf', ['File' => $upload]);
-        // $savedFiles = $result->saveFiles(public_path('attachments/new-result.pdf'));
+        // $savedFiles = $result->saveFiles($urlSavePDF);
 
         // echo "The PDF saved to:\n";
         // print_r($savedFiles);
@@ -1803,13 +1813,11 @@ class ForActionsController extends Controller
         // $now = new \DateTime(); 
 
         // $templateProcessor = new TemplateProcessor('attachments/ECC/Draft ECC.docx');
-
-        // $filename = 'Draft ECC';
-        // $urlSave = public_path('attachments/SignedECC/' . $GUID . '.docx');
-        // $templateProcessor->saveAs($urlSave);
         
         // return response()->download(public_path('attachments/SignedECC/' . $NewActivityGUID . '.docx'), $NewActivityGUID . '.docx');
 
+        ///urlSave 
+        ///urlSavePDF
         $file = pathinfo($urlSave);
 
         $filesize = filesize($urlSave) * 0.001;
@@ -1838,7 +1846,16 @@ class ForActionsController extends Controller
         $data['FileSizeInKB'] = round($filesize, 3);
         $data['CreatedBy'] = $UserName;
 
-        DB::table('projectactivityattachmenttemp')->insert($data);
+        DB::table('projectactivityattachment')->insert($data);
+
+        return redirect()->route('default');
+    }
+
+    public function verification($GUID)
+    {
+        $project = Project::where('project.GUID', '=', $GUID)
+        ->first();
+        return view('secured.verification', compact('project'));
     }
 }
 

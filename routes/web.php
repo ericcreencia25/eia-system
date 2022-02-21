@@ -146,6 +146,10 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::get('/convertDocxToPDF/{GUID}', [ForActionsController::class, 'convertDocxToPDF'])->name('convertDocxToPDF');
 
+    Route::get('/default', [ForActionsController::class, 'default'])->name('default');
+
+    Route::get('/secured/verification/{GUID}', [ForActionsController::class, 'verification'])->name('verification');
+
 /// ASPNET USER CONTROLLER
 
     Route::get('/login/{GUID}', [AspnetUserController::class, 'login']); 
@@ -219,7 +223,7 @@ Route::group(['middleware'=>'web'], function(){
 
 /// VIEW 
 
-    Route::view('default', 'secured.for_actions.default');
+    // Route::view('default', 'secured.for_actions.default');
     Route::view('map', 'secured.create_applications.map');
 
     Route::view('search_project_type', 'secured.create_applications.search_project_type');

@@ -360,7 +360,21 @@ class NewApplicationsController extends Controller
 
     public function new_document($GUID)
     {
-        return view('secured.create_applications.application_tab');
+        $UserRole = Session::get('data')['UserRole'];
+        $UserName = Session::get('data')['UserName'];
+
+        $project = Project::where('GUID', '=', $GUID)->first();
+        
+
+        if($UserRole != 'Applicant'){
+            return redirect()->route('default');
+        } else {
+            if($project->CreatedBy == $UserName ){
+                return view('secured.create_applications.application_tab');  
+            } else {
+                return redirect()->route('default');
+            }
+        }
     }
 
     public function putExistingDataInSession(Request $req)

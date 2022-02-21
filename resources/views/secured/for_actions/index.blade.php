@@ -112,8 +112,6 @@ $(document).ready(function(){
         success: function(response){
           document.location = href + result;
         }
-      });
-
-    
+      }); 
   }
 </script>

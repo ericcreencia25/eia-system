@@ -125,68 +125,78 @@
                                 @endif
                             </span>
                         </div>
-                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_evaluation_report">Generate Evaluation Report</button>
 
-                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_order_of_payment">Generate Order of Payment</button>
 
-                            @if($project['AcceptedBy'] == NULL && $project['AcceptedDate'] == NULL)
-                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" onclick="acceptApplication()">Accept Application</button>
-                            @else
-                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" onclick="acceptApplication()" disabled>Accept Application</button>
+                        <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_evaluation_report">Generate Evaluation Report</button>
 
-                            @endif
 
-                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_draft_certificate">Draft Certificate</button>
+                        <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_order_of_payment">Generate Order of Payment</button>
 
-                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_denial_letter">Draft Denial Letter</button>
-                            
+                        @if($project['AcceptedBy'] == NULL && $project['AcceptedDate'] == NULL)
+                        <button type="button" class="btn btn-default btn-flat" style="width: 200px" onclick="acceptApplication()">Accept Application</button>
 
-                            <!--Endorse Application -->
-                            <div style="padding-top:20px; padding-bottom:20px;">
-                                <b>Recent Activity/Comments:</b> <a  href="" style="text-decoration:none;" id="remarks"></a> <span id="name_date"></span>
-                            </div>
-                            <!---IF ELSE --->
-                            @if(strtolower($project['RoutedTo']) == strtolower(Session::get('data')['UserName']))
-                            <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">ENDORSE APPLICATION
-                            </div>
-                            
-                            <b>1. Attach the required documents</b><div style="padding-bottom:10px; padding-top:10px;"><span style="font-size:smaller;">Select from the list or specify the description of the document and browse to locate the electronic copy. Click the upload icon to attach the file. Size of the file should be no larger than   <span id="" style="color:Red;font-weight:bold;">10</span>&nbsp;
-                             <span><strong>MEGABYTES in PDF format</strong></span>.
-                         </span></div>
-                     </div>
-                         <table cellspacing="0" cellpadding="5" width="100%">
-                            <tbody><tr>
-                                <td style="width:600px;">
-                                    <select class="form-control" id="Attachments">
-                                        @foreach($attachments as $attach)
-                                        <option value="{{$attach->Description}}">
-                                            {{$attach->Description}}
-                                        </option> 
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td style="width: 10px"></td>
-                                <td style="vertical-align:top;width:500px;">
-                                    <input type="file" style="border-width:0px;border-style:None;font-size:Medium;" id="InputFile"> 
-                                </td>
-                                <td style="width:80px; vertical-align:top;">
-                                    <button type="button" class="btn btn-default btn-sm" name="submit" id="Uploads"><img src="../../img/upload.png" style="width:15px;" /></button>
-                                </td>
-                            </tr>
-                            <tr id="Other_attachment" hidden="hidden">
-                                <td>
-                                    <input type="text" class="form-control" id="Others">
-                                </td>
-                            </tr>
+                        @else
+                        <button type="button" class="btn btn-default btn-flat" style="width: 200px" onclick="acceptApplication()" disabled>Accept Application</button>
+                        @endif
+
+                        <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_draft_certificate">Draft Certificate</button>
+
+                        <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_denial_letter">Draft Denial Letter</button>
+
+                        <!--Endorse Application -->
+                        <div style="padding-top:20px; padding-bottom:20px;">
+                            <b>Recent Activity/Comments:</b> 
+                            <a  href="" style="text-decoration:none;" id="remarks"></a> 
+                            <span id="name_date"></span>
+                        </div>
+                        <!---IF ELSE --->
+                        @if(strtolower($project['RoutedTo']) == strtolower(Session::get('data')['UserName']))
+                        <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">ENDORSE APPLICATION
+                        </div>
+                        <b>1. Attach the required documents</b>
+                        <div style="padding-bottom:10px; padding-top:10px;">
+                            <span style="font-size:smaller;">Select from the list or specify the description of the document and browse to locate the electronic copy. Click the upload icon to attach the file. Size of the file should be no larger than 
+                                <span id="" style="color:Red;font-weight:bold;">10</span>&nbsp; <span><strong>MEGABYTES in PDF format</strong></span>.
+                            </span></div>
+                        </div>
+                        <table cellspacing="0" cellpadding="5" width="100%">
+                            <tbody>
+                                <tr>
+                                    <td style="width:600px;">
+                                        <select class="form-control" id="Attachments">
+                                            @foreach($attachments as $attach)
+                                            <option value="{{$attach->Description}}">
+                                                {{$attach->Description}}
+                                            </option> 
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td style="width: 10px"></td>
+                                    <td style="vertical-align:top;width:500px;">
+                                        <input type="file" style="border-width:0px;border-style:None;font-size:Medium;" id="InputFile"> 
+                                    </td>
+                                    <td style="width:80px; vertical-align:top;">
+                                        <button type="button" class="btn btn-default btn-sm" name="submit" id="Uploads">
+                                            <img src="../../img/upload.png" style="width:15px;" />
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr id="Other_attachment" hidden="hidden">
+                                    <td>
+                                        <input type="text" class="form-control" id="Others">
+                                    </td>
+                                </tr>
                             </tr>
                             <tr id="UploadedFile">
-                                
                             </tr>
                         </tbody></table>
                         <br>
                         <br>
-                        <b>2. Routing</b><div style="padding-bottom:10px; padding-top:10px;"><span style="font-size:smaller;">Select the destination, action required and provide the remarks.
-                        </span></div>
+                        <b> 2. Routing </b>
+                        <div style="padding-bottom:10px; padding-top:10px;">
+                            <span style="font-size:smaller;">Select the destination, action required and provide the remarks.
+                            </span>
+                        </div>
                         <table style="width:100%; vertical-align:top;" cellpadding="0" cellspacing="0" class="tablecs">
                             <tbody>
                                 <tr>
@@ -375,7 +385,6 @@
                                     <button class="btn btn-primary" style="width: 10%" id="SaveAppReq">Save</button>
                                     <button class="btn btn-default" style="width: 10%">Cancel</button>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -1254,7 +1263,7 @@ function getlistOfAttachments(CreatedBy, ActivityGUID)
             "url": "{{route('getListOfAttachments')}}",
             "type": "POST",
             "data" : {
-                CreatedBy : CreatedBy,
+                CreatedBy : CreatedBy,q
                 ActivityGUID : ActivityGUID,
                 _token: '{{csrf_token()}}',
             }

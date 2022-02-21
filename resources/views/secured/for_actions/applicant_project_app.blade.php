@@ -63,8 +63,8 @@
                      </div>
                          <table cellspacing="0" cellpadding="5" width="100%">
                             <tbody><tr>
-                                <td style="width:50%;">
-                                    <select id='activitiyAttachments' name='activitiyAttachments'>
+                                <td style="width:600px;">
+                                    <select class='form-control' id='activitiyAttachments' name='activitiyAttachments'>
                                     </select>
 
                                     <!-- <select class="form-control" id="Attachments">
@@ -75,10 +75,10 @@
                                         @endforeach
                                     </select> -->
                                 </td>
-                                <td style="vertical-align:top;">
+                                <td style="vertical-align:top;width:500px;">
                                     <input type="file" style="border-width:0px;border-style:None;font-size:Medium;width:98%;" id="InputFile"> 
                                 </td>
-                                <td style="width:2%; text-align:right; vertical-align:top;">
+                                <td style="width:80px; vertical-align:top;">
                                     <button type="button" class="btn btn-default btn-sm" name="submit" id="Uploads"><img src="../../img/upload.png" style="width:15px;" /></button>
                                 </td>
                             </tr>
@@ -274,6 +274,11 @@ $(document).ready(function(){
 
                    $("#activitiyAttachments").append(option); 
                 }
+             } else {
+                var option = "<option> </option>";
+
+                $("#activitiyAttachments").append(option); 
+
              }
         }
     });

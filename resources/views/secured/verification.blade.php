@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Home Page</title>
+  <title>VERIFIED</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -26,13 +26,49 @@
 <!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
 <body class="hold-transition skin-blue layout-top-nav">
 <div class="wrapper">
+<style>
+  body {
+    text-align: center;
+    /*padding: 40px 0;*/
+    background: #EBF0F5;
+  }
+
+  h1 {
+    color: #88B04B;
+    font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
+    font-weight: 900;
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+
+  p {
+    color: #404F5E;
+    font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
+    font-size:20px;
+    margin: 0;
+  }
+
+  i {
+    color: #9ABC66;
+    font-size: 100px;
+    line-height: 200px;
+    margin-left:-15px;
+  }
+
+  .card {
+    background: white;
+    padding: 60px;
+    border-radius: 4px;
+    box-shadow: 0 2px 3px #C8D0D8;
+    display: inline-block;
+    margin: 0 auto;
+  }
+</style>
 
 
-  
-
-  <header class="main-header">
-    <nav class="navbar navbar-static-top">
-      <div class="container">
+<header class="main-header">
+  <nav class="navbar navbar-static-top">
+    <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
             <i class="fa fa-bars"></i>
@@ -66,32 +102,18 @@
   <div class="content-wrapper">
     <section class="content container-fluid">
       <div class="box">
-            <!-- /.box-header -->
-            <div class="box-body">
-              <div class="row">
-                <div class="col-md-12">
-                  <p class="text-center">
-                    <strong></strong>
-                  </p>
-                  <center>
-                    <img class="img-responsive" src="../../img/denr.png" alt="Photo" width="175" height="178">
-                    <h2 style="font-size:20pt; font-weight:bold;">ECC Online Application System</h2>
-                    <p style="font-size:16pt;">Environmental Impact Assessment & Management Division
-                    <p style="font-size:16pt;">Environmental Management Bureau<br />
-                    <button type="button" class="btn btn-primary btn-sm" 
-                    onclick="window.location='{{ url("login/$GUID") }}' ">Continue</button><br />
-                  </center>
-                  <div style="padding:15px; background-color:WhiteSmoke; border:Solid 1px Gray; font-size:small;">
-                    NOTE:
-                    <br />
-                     For security purposes, make sure that you've loaded this page from emb website (https://emb.gov.ph). You can also verify authenticity of the site by clicking the <a> SSL Secure GlobalSign logo </a>located on the next page. The Organization Name of the SSL Cerficate Information should be Environmental Management Bureau (EMB). For further clarification, you may reach us using the above contact information.
-                  </div>
-                  <br />
-                  <h4><a>Download Users' Guide</a></h4>
-                </div>
-              </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <div class="card">
+            <div style="border-radius:200px; height:200px; width:200px; background: #F8FAF5; margin:0 auto;">
+              <i class="checkmark">✓</i>
             </div>
+            <h1>Verified! </h1> 
+            <p>Project: {{$project->ProjectName}} <br/> Location: {{$project->Address}}, {{$project->Municipality}}, {{$project->Region}} <br/><a href="{{url('attachments/SignedECC/' . $project->GUID) . '.docx'}}" style="font-size:16pt;">VIEW CERTIFICATE<a/>
+            </p>
           </div>
+        </div>
+      </div>
     </section>
   </div>
 

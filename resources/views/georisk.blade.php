@@ -1183,23 +1183,20 @@ function putData(response)
 
 function clickMe()
 {
-
   var latitude = $("#latitude").val();
   var longitude = $("#longitude").val();
   var coords = latitude + "," + longitude;
-  
+
   var url = 'https://maps.google.com/maps?q='+ coords +'&z=18&ie=UTF8&iwloc=&output=embed';
   var iframe = '<iframe id="googlemap"  src="'+url+'"width="1000" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>';
 
   Swal.fire({
-  // title: '<strong>HTML <u>example</u></strong>',
-  // icon: 'info',
-  html: iframe,
-  showCloseButton: true,
-  showCancelButton: false,
-  focusConfirm: false,
-  showConfirmButton: false,
-  width: 1100,
-})
+    html: iframe,
+    showCloseButton: true,
+    showCancelButton: false,
+    focusConfirm: false,
+    showConfirmButton: false,
+    width: 1100,
+  })
 }
 </script>
