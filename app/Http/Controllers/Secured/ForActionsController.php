@@ -1850,13 +1850,6 @@ class ForActionsController extends Controller
 
         return redirect()->route('default');
     }
-
-    public function verification($GUID)
-    {
-        $project = Project::where('project.GUID', '=', $GUID)
-        ->first();
-        return view('secured.verification', compact('project'));
-    }
 }
 
 

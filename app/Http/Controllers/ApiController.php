@@ -80,7 +80,7 @@ class ApiController extends Controller
         // 'longitude' => '120.982155',
         //     'latitude' => '14.535067',
 
-        return json_decode($response, TRUE);\
+        return json_decode($response, TRUE);
     }
 
     

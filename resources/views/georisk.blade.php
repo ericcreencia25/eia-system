@@ -131,7 +131,7 @@
                   </div> -->
                   <br/>
                   <!---Active Fault--->
-                  <div class="col-md-12">
+                  <div class="col-md-12" style="padding-top: 30px">
                     <!---coordinates--->
                     <div class="col-md-3">
                       <div class="box box-default box-solid collapsed-box">

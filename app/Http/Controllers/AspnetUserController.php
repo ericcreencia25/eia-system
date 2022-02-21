@@ -184,4 +184,17 @@ class AspnetUserController extends Controller
         return $proponent;
     }
 
+    public function verification($GUID)
+    {
+        $project = Project::where('project.GUID', '=', $GUID)
+        ->where('project.Stage', '=' , 5)
+        ->first();
+
+        if($project){
+            return view('secured.verification', compact('project'));
+        } else {
+            return redirect('/welcome');
+        }
+    }
+
 }
