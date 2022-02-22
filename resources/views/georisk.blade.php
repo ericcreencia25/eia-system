@@ -908,7 +908,7 @@
 
   $(document).ready(function(){
     $('[data-mask]').inputmask();
-    
+
     var data = localStorage.getItem("ReqStorage");
     var ReqStorage = data ? JSON.parse(data) : [];
     $('[data-mask]').inputmask();
@@ -954,42 +954,52 @@
       var latitude = $("#latitude").val();
       var longitude = $("#longitude").val();
 
-      var req = {
-        'latitude': latitude,
-        'longitude': longitude,
-      };
-
-      ReqStorage.push(req);
-      localStorage.setItem("ReqStorage", JSON.stringify(ReqStorage));  
-
-      // location.reload();
-
-      $.ajax({
-        url: "{{route('hazardAssessmentGeneration')}}",
-        type: 'POST',
-        data: {
-          latitude : latitude,
-          longitude : longitude,
-          _token: '{{csrf_token()}}',
-        },
-        beforeSend: function() {
-          // Swal.showLoading();
-          Swal.fire({
-            title: 'Please wait while fetching data from the database!',
-            html: 'Press OK, when it done.',
-            timerProgressBar: true,
-            didOpen: () => {
-              Swal.showLoading();
-            },
+      if(latitude === '' || longitude === '' ){
+        Swal.fire({
+            icon: 'error',
+            title: 'Either latitude or longitude is empy',
+            showConfirmButton: false,
+            timer: 1500,
+            width: '850px'
           });
-        },
-        success: function(response){
-          console.log(response);
-          Swal.hideLoading();
+      } else {
+        var req = {
+          'latitude': latitude,
+          'longitude': longitude,
+        };
 
-          putData(response);
-        }
-      });
+        ReqStorage.push(req);
+        localStorage.setItem("ReqStorage", JSON.stringify(ReqStorage));  
+
+        // location.reload();
+
+        $.ajax({
+          url: "{{route('hazardAssessmentGeneration')}}",
+          type: 'POST',
+          data: {
+            latitude : latitude,
+            longitude : longitude,
+            _token: '{{csrf_token()}}',
+          },
+          beforeSend: function() {
+            // Swal.showLoading();
+            Swal.fire({
+              title: 'Please wait while fetching data from the database!',
+              html: 'Press OK, when it done.',
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading();
+              },
+            });
+          },
+          success: function(response){
+            console.log(response);
+            Swal.hideLoading();
+
+            putData(response);
+          }
+        });
+      }
     });
 
     $("#Clear_button").on('click', function() {
