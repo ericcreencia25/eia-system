@@ -115,8 +115,8 @@
                   <div class="col-md-12">
                     <center>
                       <div class="form-inline">
-                        <label>Latitude: </label><input class="form-control mr-1" id="latitude">
-                        <label>Longitude: </label><input class="form-control mr-1" id="longitude">
+                        <label>Latitude: </label><input class="form-control mr-1" id="latitude" data-inputmask="'mask': '99.999999'" data-mask>
+                        <label>Longitude: </label><input class="form-control mr-1" id="longitude" data-inputmask="'mask': '999.999999'" data-mask>
                         <button class="btn btn-success" id="Check_button">Check</button>
                         <button class="btn btn-danger" id="Clear_button">Clear</button>
                         <button class="btn btn-info" onclick="clickMe()">Map View</button>
@@ -907,6 +907,8 @@
 <script>
 
   $(document).ready(function(){
+    $('[data-mask]').inputmask();
+    
     var data = localStorage.getItem("ReqStorage");
     var ReqStorage = data ? JSON.parse(data) : [];
     $('[data-mask]').inputmask();
