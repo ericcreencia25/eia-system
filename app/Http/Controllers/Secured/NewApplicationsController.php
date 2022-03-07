@@ -122,6 +122,7 @@ class NewApplicationsController extends Controller
                 'componentthreshold.Minimum',
                 'componentthreshold.Maximum',
                 'componentthreshold.ReportType as ReportType',
+                'componentthreshold.GUID as componentthresholdGUID',
             )
             // ->where('componentthreshold.Category', '=', 'NECP')
             // ->where('componentthreshold.ReportType', '=', 'IEE')
@@ -161,7 +162,7 @@ class NewApplicationsController extends Controller
 
             $details = '<div class="input-group input-group-lg col-md-12" ">
                 
-                <input type="number" id="input_project_size_'.$component->GUID.'"  class="form-control" value="'.$ProjectSize.'"  min="'.$component->Minimum.'" max="'.$component->Maximum.'" style="height: 70px">
+                <input type="number" id="input_project_size_'.$component->componentthresholdGUID.'"  class="form-control" value="'.$ProjectSize.'"  min="'.$component->Minimum.'" max="'.$component->Maximum.'" style="height: 70px">
               </div>';
 
 
@@ -173,12 +174,12 @@ class NewApplicationsController extends Controller
             // "'". $component->Category."'".')"><img src="../img/selectblue.png" style="width:24px;" /></button>';
 
             if($component->ReportType === 'EIS'){
-                $details = '<button type="button" class="btn btn-block btn-success btn-sm" style="margin-top: 20px" onclick="ProjectSize(\''.$component->GUID.'\', \''.$component->GUID.'\', \''.$component->ReportType.'\')" disabled>Apply Permit</button>';
+                $details = '<button type="button" class="btn btn-block btn-success btn-sm" style="margin-top: 20px" onclick="ProjectSize(\''.$component->componentthresholdGUID.'\', \''.$component->GUID.'\', \''.$component->ReportType.'\')" disabled>Apply Permit</button>';
 
             }else if($component->ReportType === 'IEE'){
-                $details = '<button type="button" class="btn btn-block btn-primary btn-sm" style="margin-top: 20px" onclick="ProjectSize(\''.$component->GUID.'\', \''.$component->GUID.'\', \''.$component->ReportType.'\')">Apply Permit</button>';
+                $details = '<button type="button" class="btn btn-block btn-primary btn-sm" style="margin-top: 20px" onclick="ProjectSize(\''.$component->componentthresholdGUID.'\', \''.$component->GUID.'\', \''.$component->ReportType.'\')">Apply Permit</button>';
             }else if($component->ReportType === 'CNC Application'){
-                $details = '<button type="button" class="btn btn-block btn-warning btn-sm" style="margin-top: 20px" onclick="ProjectSize(\''.$component->GUID.'\', \''.$component->GUID.'\', \''.$component->ReportType.'\')" disabled>Apply Permit</button>';
+                $details = '<button type="button" class="btn btn-block btn-warning btn-sm" style="margin-top: 20px" onclick="ProjectSize(\''.$component->componentthresholdGUID.'\', \''.$component->GUID.'\', \''.$component->ReportType.'\')" disabled>Apply Permit</button>';
             }
             
 
