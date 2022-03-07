@@ -14,6 +14,11 @@ use App\Models\Attachment;
 use App\Models\ActionRequired;
 use App\Models\ActionRequiredPerson;
 use App\Models\AspnetUser;
+use App\Models\Holidays;
+use App\Models\Holidays_;
+use App\Models\HolidaysNational;
+use App\Models\Region;
+
 use Session;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +44,7 @@ class ForActionsController extends Controller
 
     public function project_app($GUID, $ActivityGUID)
     {   
+
         $project = Project::where('project.GUID', '=', $GUID)
         // ->where('project.Stage', '>', 0 )
         ->Join('projectactivity', function ($join) {
@@ -81,12 +87,18 @@ class ForActionsController extends Controller
         ->first();
 
         $UserRole = Session::get('data')['UserRole'];
+        $UserName = Session::get('data')['UserName'];
 
         $attachments = Attachment::where('UserRole', '=', $UserRole)
         ->orderByRaw('Sorter ASC')
         ->get();
 
-        return view('secured.for_actions.project_app', compact('project', 'attachments'));
+        
+        if(Str::lower($project->RoutedTo) === Str::lower($UserName) ){
+            return view('secured.for_actions.project_app', compact('project', 'attachments'));
+        } else {
+            return redirect()->route('default');
+        }
     }
 
     public function reviewer($GUID)
@@ -258,9 +270,29 @@ class ForActionsController extends Controller
     public function getActivityAttachmentsList(Request $req)
     {   
         $ActivityGUID = $req['ActivityGUID'];
-        $project = ProjectActivityAttachment::select('FilePath', 'Description', 'CreatedDate', 'CreatedBy')
-        ->where('ActivityGUID', '=', $ActivityGUID)
+        $ProjectGUID = $req['ProjectGUID'];
+        // $project = ProjectActivityAttachment::select('FilePath', 'Description', 'CreatedDate', 'CreatedBy')
+        // ->where('ActivityGUID', '=', $ActivityGUID)
 
+        // ->get();
+
+        $project = ProjectActivity::where('projectactivity.ProjectGUID', '=', $ProjectGUID)
+        ->Join('projectactivityattachment', function($join)
+        {
+            $join->on('projectactivityattachment.ActivityGUID', '=', 'projectactivity.GUID');
+            // $join->on('projectactivityattachment.Description', '=', 'projectrequirement.Description');
+        })
+        ->select(
+            'projectactivity.GUID', 
+            'projectactivityattachment.ActivityGUID',
+            'projectactivityattachment.FileName',
+            'projectactivityattachment.FilePath',
+            'projectactivityattachment.Directory',
+            'projectactivityattachment.CreatedDate',
+            'projectactivityattachment.CreatedBy',
+            'projectactivityattachment.Description',
+        )
+        ->orderByRaw('projectactivityattachment.CreatedDate DESC')
         ->get();
         
         return DataTables::of($project)
@@ -900,6 +932,8 @@ class ForActionsController extends Controller
         $ActivityGUID = Session::get('NewActivityGUID');
         $NewActivityGUID = Str::upper($ActivityGUID);
 
+        $ProjectGUID = $request['ProjectGUID'];
+
 
         if($request['Documents'] == 'Others, specify'){
             $description = $request['OthersAttachment'];
@@ -914,59 +948,69 @@ class ForActionsController extends Controller
             'file' => 'required|mimes:docx,jpg,jpeg,csv,txt,pdf|max:2048'
         ]);
 
-      if ($validator->fails()) {
+        if ($validator->fails()) {
+            $rtrn['success'] = 0;
+            $rtrn['error'] = $validator->errors()->first('file');// Error response
+        }else{
+            if($request->file('file')) {
+                $file = $request->file('file');
+                $filename = $file->getClientOriginalName();
 
-         $rtrn['success'] = 0;
-         $rtrn['error'] = $validator->errors()->first('file');// Error response
+                // $filename = $NewGUID;
 
-      }else{
-         if($request->file('file')) {
+                // filesize
+                $size = $file->getSize();
+                $filesize = $size * 0.001;
 
-             $file = $request->file('file');
-             $filename = $file->getClientOriginalName();
-             
-             // $filename = $NewGUID;
-             
-             // filesize
-             $size = $file->getSize();
-             $filesize = $size * 0.001;
-             // File extension
-             $extension = $file->getClientOriginalExtension();
+                // File extension
+                $extension = $file->getClientOriginalExtension();
 
-             // File upload location
-             $location = 'files';
+                $path = public_path('files/'.$ProjectGUID);
+                // $savedFiles = $pdf->saveAs($urlSavePDF);
 
-             // // Upload file
-             $file->move($location,$NewGUID.'.'.$extension);
-             
-             // File path
-             // $filepath = public_path('files/'.$NewGUID.'.'.$extension);
-             $filepath = 'files/'.$NewGUID.'.'.$extension;
+                if(!File::exists($path)) {
+                    File::makeDirectory($path, $mode = 0755, true, true);
 
-             // Response
-             $rtrn['success'] = 1;
-             $rtrn['message'] = 'Uploaded Successfully!';
+                    // File upload location
+                    $location = 'files/'.$ProjectGUID.'/';
 
-             $data['GUID'] = $GUID;
-             $data['ActivityGUID'] = $NewActivityGUID;
-             $data['Description'] = $description;
-             $data['Directory'] = public_path();
-             $data['FileName'] = $filename;
-             $data['FilePath'] = $filepath;
-             // $data['extension'] = $extension;
-             $data['FileSizeInKB'] = round($filesize, 3);
-             $data['CreatedBy'] = $UserName;
+                    // // Upload file
+                    $file->move($location,$NewGUID.'.'.$extension);
+
+                } else {
+                    $location = 'files/'.$ProjectGUID.'/';
+                    $file->move($location,$NewGUID.'.'.$extension);
+                }
+
+                // File path
+                // $filepath = public_path('files/'.$NewGUID.'.'.$extension);
+                $filepath = 'files/'.$ProjectGUID.'/'.$NewGUID.'.'.$extension;
+
+                // Response
+                $rtrn['success'] = 1;
+                $rtrn['message'] = 'Uploaded Successfully!';
+
+                // data to be insert into database
+                $data['GUID'] = $GUID;
+                $data['ActivityGUID'] = $NewActivityGUID;
+                $data['Description'] = $description;
+                $data['Directory'] = public_path();
+                $data['FileName'] = $filename;
+                $data['FilePath'] = $filepath;
+                // $data['extension'] = $extension;
+                $data['FileSizeInKB'] = round($filesize, 3);
+                $data['CreatedBy'] = $UserName;
 
 
+                DB::table('projectactivityattachmenttemp')->insert($data);
+            }else{
+                // Response
+                $rtrn['success'] = 2;
+                $rtrn['message'] = 'File not uploaded.';
+            }
+        }
 
-             DB::table('projectactivityattachmenttemp')->insert($data);
-         }else{
-             // Response
-             $rtrn['success'] = 2;
-             $rtrn['message'] = 'File not uploaded.'; 
-         }
-      }
-      return response()->json($rtrn);
+        return response()->json($rtrn);
     }
 
     public function uploadFileEndorseApplicant(Request $request)
@@ -979,6 +1023,7 @@ class ForActionsController extends Controller
         $NewActivityGUID = Str::upper($ActivityGUID);
 
         $description = $request['Documents'];
+        $ProjectGUID = $request['ProjectGUID'];
 
         $data = array();
         $rtrn = array();
@@ -987,58 +1032,68 @@ class ForActionsController extends Controller
             'file' => 'required|mimes:png,jpg,jpeg,csv,txt,pdf|max:2048'
         ]);
 
-      if ($validator->fails()) {
+        if ($validator->fails()) {
+            $rtrn['success'] = 0;
+            $rtrn['error'] = $validator->errors()->first('file');// Error response
+        }else{
+            if($request->file('file')) {
+                $file = $request->file('file');
+                $filename = $file->getClientOriginalName();
 
-         $rtrn['success'] = 0;
-         $rtrn['error'] = $validator->errors()->first('file');// Error response
-
-      }else{
-         if($request->file('file')) {
-
-             $file = $request->file('file');
-             $filename = $file->getClientOriginalName();
+                // $filename = $NewGUID;
              
-             // $filename = $NewGUID;
-             
-             // filesize
-             $size = $file->getSize();
-             $filesize = $size * 0.001;
-             // File extension
-             $extension = $file->getClientOriginalExtension();
+                // filesize
+                $size = $file->getSize();
+                $filesize = $size * 0.001;
 
-             // File upload location
-             $location = 'files';
+                // File extension
+                $extension = $file->getClientOriginalExtension();
 
-             // // Upload file
-             $file->move($location,$NewGUID.'.'.$extension);
-             
-             // File path
-             // $filepath = public_path('files/'.$NewGUID.'.'.$extension);
-             $filepath = 'files/'.$NewGUID.'.'.$extension;
+                $path = public_path('files/'.$ProjectGUID);
+                // $savedFiles = $pdf->saveAs($urlSavePDF);
 
-             // Response
-             $rtrn['success'] = 1;
-             $rtrn['message'] = 'Uploaded Successfully!';
 
-             $data['GUID'] = $GUID;
-             $data['ActivityGUID'] = $NewActivityGUID;
-             $data['Description'] = $description;
-             $data['Directory'] = public_path();
-             $data['FileName'] = $filename;
-             $data['FilePath'] = $filepath;
-             // $data['extension'] = $extension;
-             $data['FileSizeInKB'] = round($filesize, 3);
-             $data['CreatedBy'] = $UserName;
+                if(!File::exists($path)) {
+                    File::makeDirectory($path, $mode = 0755, true, true);
 
-             // DB::table('projectactivityattachmenttemp')->insert($data);
-             return response()->json($data);
-         }else{
-             // Response
-             $rtrn['success'] = 2;
-             $rtrn['message'] = 'File not uploaded.'; 
-         }
-      }
-      
+                    // File upload location
+                    $location = 'files/'.$ProjectGUID.'/';
+
+                    // // Upload file
+                    $file->move($location,$NewGUID.'.'.$extension);
+                } else {
+                    // File upload location
+                    $location = 'files/'.$ProjectGUID.'/';
+
+                    // // Upload file
+                    $file->move($location,$NewGUID.'.'.$extension);
+                }
+
+                // File path
+                $filepath = 'files/'.$ProjectGUID.'/'.$NewGUID.'.'.$extension;
+
+                // Response
+                $rtrn['success'] = 1;
+                $rtrn['message'] = 'Uploaded Successfully!';
+
+                $data['GUID'] = $GUID;
+                $data['ActivityGUID'] = $NewActivityGUID;
+                $data['Description'] = $description;
+                $data['Directory'] = public_path();
+                $data['FileName'] = $filename;
+                $data['FilePath'] = $filepath;
+                // $data['extension'] = $extension;
+                $data['FileSizeInKB'] = round($filesize, 3);
+                $data['CreatedBy'] = $UserName;
+
+                DB::table('projectactivityattachmenttemp')->insert($data);
+                return response()->json($data);
+            }else{
+                // Response
+                $rtrn['success'] = 2;
+                $rtrn['message'] = 'File not uploaded.'; 
+            }
+        }
     }
 
 
@@ -1054,9 +1109,11 @@ class ForActionsController extends Controller
         return $project;
     }
 
-    public function generateEvaluationReport($GUID)
+    public function generateEvaluationReport($ProjectGUID, $ActivityGUID)
     {
-        $ProjectGUID = $GUID;
+        $NewActivityGUID = Session::get('NewActivityGUID');
+        $UserName = Session::get('data')['UserName'];
+
         $project = ProjectRequirements::orderByRaw('ID ASC')
         // ->where('required', '=', 1)
         ->where('ProjectGUID', '=', $ProjectGUID)
@@ -1067,32 +1124,89 @@ class ForActionsController extends Controller
         $pdf = PDF::loadView('pdf.evaluation_report', compact('project', 'todate'));
         $pdf->output();
 
-        return $pdf->download('Evaluation Report.pdf');
+        $NewGUID = Uuid::generate()->string;
+        $GUID = Str::upper($NewGUID);
+
+        $todate = date('m/d/Y H:i:s A');
+
+        $Date = date('m/d/Y');
+
+        $urlSavePDF = public_path('files/'.$ProjectGUID.'/'.$GUID.'.pdf');
+        $path = public_path('files/'.$ProjectGUID);
+            // $savedFiles = $pdf->saveAs($urlSavePDF);
+
+        if(!File::exists($path)) {
+            File::makeDirectory($path, $mode = 0755, true, true);
+            $pdf->save($urlSavePDF);
+        } else {
+            $pdf->save($urlSavePDF);
+        }
+
+        $file = pathinfo($urlSavePDF);
+
+        $filesize = filesize($urlSavePDF) * 0.001;
+
+        //  $file = $request->file('file');
+
+        $filename = $file['filename'];
+        $extension = $file['extension'];
+        $basename = $file['basename'];
+        $dirname = $file['dirname'];
+
+        // File path
+        // $filepath = public_path('attachments/SignedECC/'.$filename.'.'.$extension);
+        $filepath = 'files/'.$ProjectGUID.'/'.$filename.'.'.$extension;
+
+        // Response
+
+        $data['GUID'] = $GUID;
+        $data['ActivityGUID'] = Str::upper($NewActivityGUID);
+        $data['Description'] = 'Evaluation Report';
+        $data['Directory'] = public_path();
+        $data['FileName'] = $filename;
+        $data['FilePath'] = $filepath;
+        // $data['extension'] = $extension;
+        $data['FileSizeInKB'] = round($filesize, 3);
+        $data['CreatedBy'] = $UserName;
+
+        if(DB::table('projectactivityattachmenttemp')->insert($data)){
+            $rtrn['success'] = 1;
+            $rtrn['message'] = 'Uploaded Successfully!';
+        } else {
+            $rtrn['success'] = 0;
+            $rtrn['error'] = 'Error while saving data into the database';// Error response
+        }
+
+        return redirect()->route('project_app', ['GUID' => $ProjectGUID, 'ActivityGUID' => $ActivityGUID]);
+
+        // return $pdf->download('Evaluation Report.pdf');
     }
 
-    public function generateOrderOfPayment($GUID)
+    public function generateOrderOfPayment($ProjectGUID, $ActivityGUID)
     {
+        $NewActivityGUID = Session::get('NewActivityGUID');
+        $UserName = Session::get('data')['UserName'];
 
         $MaxOOP = Project::max('OrderOfPayment');
 
-        $BankRefNo = str_replace("-","E",$GUID);
+        $BankRefNo = str_replace("-","E",$ProjectGUID);
 
         $now = new \DateTime(); 
 
-        $selectOrderOfPayment = Project::where('project.GUID', '=', $GUID)
+        $selectOrderOfPayment = Project::where('project.GUID', '=', $ProjectGUID)
         ->select('OrderOfPayment')
         ->first();
 
         if($selectOrderOfPayment->OrderOfPayment === null){
             $updateOOP = DB::table('project')
-            ->where('GUID','=', $GUID)
+            ->where('GUID','=', $ProjectGUID)
             ->update([
                 'OrderOfPayment' => $MaxOOP + 1,
                 'BankRefNo' => $BankRefNo
             ]);
         }
 
-        $project = Project::where('project.GUID', '=', $GUID)
+        $project = Project::where('project.GUID', '=', $ProjectGUID)
             // ->where('project.Stage', '>', 0 )
             ->Join('projectactivity', function ($join) {
                 $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
@@ -1130,12 +1244,62 @@ class ForActionsController extends Controller
             )
             ->first();
 
+            $NewGUID = Uuid::generate()->string;
+            $GUID = Str::upper($NewGUID);
 
             $todate = date('m/d/Y H:i:s A');
             $Date = date('m/d/Y');
 
             $pdf = PDF::loadView('pdf.order_of_payment', compact('project', 'todate', 'Date'));
-            return $pdf->download('Order of Payment - Application.pdf');
+            $urlSavePDF = public_path('files/'.$ProjectGUID.'/'.$GUID. '.pdf');
+            $path = public_path('files/'.$ProjectGUID.'/');
+            // $savedFiles = $pdf->saveAs($urlSavePDF);
+
+
+            if(!File::exists($path)) {
+                File::makeDirectory($path, $mode = 0755, true, true);
+                
+                $pdf->save($urlSavePDF);
+            } else {
+                $pdf->save($urlSavePDF);
+            }
+
+            $file = pathinfo($urlSavePDF);
+
+            $filesize = filesize($urlSavePDF) * 0.001;
+
+            //  $file = $request->file('file');
+            $filename = $file['filename'];
+            $extension = $file['extension'];
+            $basename = $file['basename'];
+            $dirname = $file['dirname'];
+
+            // File path
+            // $filepath = public_path('attachments/SignedECC/'.$filename.'.'.$extension);
+            $filepath = 'files/'.$ProjectGUID.'/'.$filename.'.'.$extension;
+
+            // Response
+
+            $data['GUID'] = $GUID;
+            $data['ActivityGUID'] = Str::upper($NewActivityGUID);
+            $data['Description'] = 'Order of Payment - Application';
+            $data['Directory'] = public_path();
+            $data['FileName'] = $filename;
+            $data['FilePath'] = $filepath;
+            // $data['extension'] = $extension;
+            $data['FileSizeInKB'] = round($filesize, 3);
+            $data['CreatedBy'] = $UserName;
+
+            if(DB::table('projectactivityattachmenttemp')->insert($data)){
+                $rtrn['success'] = 1;
+                $rtrn['message'] = 'Uploaded Successfully!';
+            } else {
+                $rtrn['success'] = 0;
+                $rtrn['error'] = 'Error while saving data into the database';// Error response
+            }
+
+            return redirect()->route('project_app', ['GUID' => $ProjectGUID, 'ActivityGUID' => $ActivityGUID]);
+            // return $pdf->download('Order of Payment - Application.pdf');
         
     }
 
@@ -1293,6 +1457,9 @@ class ForActionsController extends Controller
 
     public function generateDenialLetter($GUID, $ActivityGUID)
     {
+        $NewActivityGUID = Session::get('NewActivityGUID');
+        $UserName = Session::get('data')['UserName'];
+
         $project = Project::where('project.GUID', '=', $GUID)
         ->Join('projectactivity', function ($join) {
             $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
@@ -1393,8 +1560,44 @@ class ForActionsController extends Controller
         $urlSave = 'attachments/ECC/' . $GUID . '.docx';
         // dd($urlSave);
         $templateProcessor->saveAs($urlSave);
+
+        $file = pathinfo($urlSave);
+
+        $filesize = filesize($urlSave) * 0.001;
+
+        //  $file = $request->file('file');
+        $filename = $file['filename'];
+        $extension = $file['extension'];
+        $basename = $file['basename'];
+        $dirname = $file['dirname'];
+
+        // File path
+        // $filepath = public_path('attachments/SignedECC/'.$filename.'.'.$extension);
+        $filepath = 'attachments/ECC/'.$filename.'.'.$extension;
+
+        // Response
+
+        $data['GUID'] = $GUID;
+        $data['ActivityGUID'] = Str::upper($NewActivityGUID);
+        $data['Description'] = 'Draft Denial Letter';
+        $data['Directory'] = public_path();
+        $data['FileName'] = $filename;
+        $data['FilePath'] = $filepath;
+        // $data['extension'] = $extension;
+        $data['FileSizeInKB'] = round($filesize, 3);
+        $data['CreatedBy'] = $UserName;
+
+        if(DB::table('projectactivityattachmenttemp')->insert($data)){
+            $rtrn['success'] = 1;
+            $rtrn['message'] = 'Uploaded Successfully!';
+        } else {
+            $rtrn['success'] = 0;
+            $rtrn['error'] = 'Error while saving data into the database';// Error response
+        }
+
+        return redirect()->route('project_app', ['GUID' => $GUID, 'ActivityGUID' => $ActivityGUID]);
         
-        return response()->download('attachments/ECC/' . $GUID . '.docx')->deleteFileAftersend(false);
+        // return response()->download('attachments/ECC/' . $GUID . '.docx')->deleteFileAftersend(false);
 
         // return redirect()->route('project_app', ['GUID' => $GUID, 'ActivityGUID' => $ActivityGUID]);
     }
@@ -1850,6 +2053,159 @@ class ForActionsController extends Controller
 
         return redirect()->route('default');
     }
+
+    public function revertApplication(Request $req)
+    {
+        $now = new \DateTime(); 
+        $ProjectGUID = $req['ProjectGUID'];
+        $UpdatedDate = $req['UpdatedDate'];
+        $NewActivityGUID = Session::get('NewActivityGUID');
+
+        $UserName = Session::get('data')['UserName'];
+        $UserOffice = Session::get('data')['UserOffice'];
+
+        $start_date = $UpdatedDate;
+        $end_date = date('Y-m-d');
+
+        // Str::upper($NewActivityGUID);
+
+        $dateDiff = $this->Count_Days_Without_Weekends($start_date, $end_date);
+
+        $NewGUID = Uuid::generate()->string;
+
+        $ProjectID = ProjectActivity::where('ProjectGUID', '=', $ProjectGUID)->max('ID');
+
+        // get previous user id
+        $Previous = ProjectActivity::where('ID', '<', $ProjectID)
+        ->where('ProjectGUID', '=', $ProjectGUID)
+        ->orderBy('ID','desc')->first();
+
+        $projectActivity = array();
+        $projectActivity['GUID'] = Str::upper($NewActivityGUID);
+        $projectActivity['ProjectGUID'] = $ProjectGUID;
+        $projectActivity['Status'] = $Previous->Status;
+        $projectActivity['Details'] = $Previous->Details;
+        $projectActivity['RoutedFrom'] = $UserName;
+        $projectActivity['RoutedFromOffice'] = $UserOffice;
+        $projectActivity['RoutedTo'] = $Previous->RoutedTo;
+        $projectActivity['RoutedToOffice'] = $Previous->RoutedToOffice;
+        $projectActivity['Routing'] = $Previous->Routing;
+        $projectActivity['Remarks'] = 'Reverted';
+        $projectActivity['UpdatedBy'] = $UserName;
+        $projectActivity['CreatedBy'] = $UserName;
+        $projectActivity['FromDate'] = $UpdatedDate;
+        $projectActivity['TotWorkDays'] = $dateDiff;
+        $projectActivity['TotElapsedDays'] = $dateDiff;
+
+        if( DB::table('projectactivity')->insert($projectActivity))
+        {
+            return 'Success';
+        }else{
+            return 'Error while saving data into the database';
+        }
+    }
+
+    public function holidays()
+    {
+        $Holidays = HolidaysNational::all();
+
+        $Regions = Region::all();
+
+        return view('secured.holidays', compact('Holidays', 'Regions'));
+    }
+
+    public function getHolidaysTable(Request $req)
+    {
+        $UserName = $req['UserName'];
+        $UserRole = $req['UserRole'];
+        $UserOffice = $req['UserOffice'];
+
+        $StartDate = date('Y') . '-01-01';
+        $EndDate = date('Y') . '-12-31';
+
+
+        $Holidays = Holidays::where('Coverage', 'LIKE', '%'. $UserOffice . '%')
+        ->where('OnDate','>=', $StartDate)
+        ->where('OnDate','<=', $EndDate)
+        ->orderByRaw('OnDate ASC')
+        ->get();
+
+        return DataTables::of($Holidays)
+        ->addColumn('Description', function($Holidays){
+            $details = '<b>' . $Holidays->Description . '</b>';
+            return $details;
+
+        })
+        ->addColumn('Date', function($Holidays){
+            $date = date("F j, Y", strtotime($Holidays->OnDate));
+            return $date;
+
+        })
+        ->addColumn('Action', function($Holidays){
+            $details = '<button type="button" class="btn btn-default btn-sm" name="submit" title="Edit Holiday" onclick="editHoliday('.$Holidays->ID.')"><img src="../img/edit.png" style="width:15px;" /></button>&nbsp;&nbsp;';
+
+            $details .= '<button type="button" class="btn btn-default btn-sm" onclick="deleteFile('.$Holidays->ID.')" title="Delete Holiday"><img src="../img/trashbin.jpg" style="width:15px;" /></button></form>';
+            return $details;
+        })
+
+        
+        ->rawColumns(['Date', 'Description', 'Action'])
+        ->make(true);
+    }
+
+    public function addHolidays(Request $req)
+    {
+        $UserName = Session::get('data')['UserName'];
+        $ID = $req['DescriptionID'];
+        $Notes = $req['Notes'];
+
+
+        foreach($ID as $IDDesc){
+            $row = [];
+            $Holidays = HolidaysNational::where('ID', '=', $IDDesc)
+            ->first();
+
+            $row['Description'] = $Holidays->Description;
+            $row['OnDate'] = date("Y-m-d", strtotime($Holidays->OnDate . date('Y')) );
+            $row['Coverage'] = $Holidays->Coverage;
+            $row['Scope'] = 'National';
+            $row['Notes'] = $Notes;
+            $row['UpdatedBy'] = $UserName;
+            $row['UpdatedDate'] = date('Y-m-d H:i:s');
+            $row['CreatedBy'] = $UserName;
+            $row['CreatedDate'] = date('Y-m-d H:i:s');
+
+            DB::table('holidays')->insert($row);
+        }
+    }
+
+    public function getSpecificHolidays(Request $req)
+    {
+        $UserName = Session::get('data')['UserName'];
+        $ID = $req['ID'];
+
+        $Holidays = Holidays::where('ID', '=', $ID)
+            ->first();
+
+
+        // foreach ($Holidays as $key => $value) {
+            $rowData = [];
+
+            $rowData['Description'] = $Holidays['Description'];
+            $rowData['OnDate'] = date("m/d/Y", strtotime($Holidays['OnDate']) );
+            $rowData['Coverage'] =explode(", ",$Holidays['Coverage']);
+            $rowData['Scope'] = $Holidays['Scope'];
+            $rowData['Notes'] = $Holidays['Notes'];
+            $rowData['UpdatedBy'] = $Holidays['UpdatedBy'];
+            $rowData['UpdatedDate'] = $Holidays['UpdatedDate'];
+            $rowData['CreatedBy'] = $Holidays['CreatedBy'];
+            $rowData['CreatedDate'] = $Holidays['CreatedDate'];
+
+            return $rowData;
+        // }
+    }
+
+    
 }
 
 

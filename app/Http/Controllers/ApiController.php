@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\AspnetUser;
 use App\Models\Component;
 use App\Models\Project;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Webpatser\Uuid\Uuid;
 use App\Http\Controllers\View;
 use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client;
 
 use Illuminate\Support\Str;
 use Mapper;
@@ -82,6 +84,48 @@ class ApiController extends Controller
 
         return json_decode($response, TRUE);
     }
+
+    public function loginCRS(Request $req)
+    {
+        $UserName = $req['UserName'];
+        $Password = $req['Password'];
+
+        $UserName = 'sampleclient2021';
+        $Password = '1234567';
+
+        $url = 'https://iis.emb.gov.ph/embis/api/Crs_Api/crs_account_login_api?username='.$UserName.'&password='.$Password;
+
+        // $response = Http::get('https://iis.emb.gov.ph/embis/api/Crs_Api/crs_account_login_api?username=sampleclient2021&password=1234567');
+
+        // $response = Http::get('https://iis.emb.gov.ph/embis/api/Crs_Api/crs_account_login_api', [
+        //     'username' => 'sampleclient2021',
+        //     'password' => '1234567',
+        // ]);
+
+        $client = new Client();
+        $res = $client->get($url);
+
+        $result = json_decode($res->getBody());
+
+        $rowData = [];
+
+        $rowData['UserName'] = $result->response->username;
+        $rowData['AlternateEmail'] = $result->response->email;
+        $rowData['FirstName'] = $result->response->first_name;
+        $rowData['LastName'] = $result->response->last_name;
+        $rowData['MobileAlias'] = $result->response->contact_no;
+        $rowData['Position'] = $result->response->position;
+        $rowData['CreatedDate'] = $result->response->date_registered;
+        $rowData['UserCode'] = $result->response->user_code;
+        $rowData['Password'] = $result->response->password;
+        $rowData['UserOffice'] = 'Proponent';
+        $rowData['UserRole'] = 'Applicant';
+
+        return json_decode($res->getBody());
+    }
+
+    // EMBR4B-1365400-79 
+    // with establishment
 
     
 

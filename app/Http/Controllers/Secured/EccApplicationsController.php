@@ -119,7 +119,14 @@ class EccApplicationsController extends Controller
         $UserName = $req['UserName'];
         $UserRole = $req['UserRole'];
         $UserOffice = $req['UserOffice'];
-        $StatusFilter = $req['StatusFilter'];
+        
+        $Search = $req['Search'];
+
+        if($Search != 'null'){
+            $StatusFilter = 'All';
+        } else {
+            $StatusFilter = $req['StatusFilter'];
+        }
 
         $todate = date('Y-m-d H:i:s');
         $tomorrow = date('Y-m-d', strtotime( $todate . " +1 days"));
@@ -170,6 +177,8 @@ class EccApplicationsController extends Controller
         } else if($StatusFilter === 'Pending All'){
             $project->whereIn('RoutedToOffice', array($UserOffice, 'Proponent'), )
             ->whereNotIn('Status', array('Denied', 'Approved'));
+        } else if($StatusFilter === 'All'){
+            $project->where('project.ProjectName', 'LIKE', '%' . $Search . '%' );
         }
 
         
@@ -493,5 +502,9 @@ class EccApplicationsController extends Controller
     return $run_days;
     }
 
+    public function documents(Request $req)
+    {
+        return view('secured.ecc_applications.document', compact('req'));
+    }
 
 }

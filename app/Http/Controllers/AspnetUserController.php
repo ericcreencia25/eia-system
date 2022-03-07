@@ -16,6 +16,7 @@ use Webpatser\Uuid\Uuid;
 use App\Http\Controllers\View;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 
 class AspnetUserController extends Controller
 {
@@ -44,7 +45,7 @@ class AspnetUserController extends Controller
         // ->where('aspnet_users.InECCOAS', '=', 1)
         ->leftJoin('aspnet_membership', 'aspnet_users.UserId', '=', 'aspnet_membership.UserId')
         ->first();
-            
+        
         $now = new \DateTime(); 
         $GUID = Uuid::generate()->string;
 
@@ -79,6 +80,7 @@ class AspnetUserController extends Controller
 
             return redirect('login/'.$GUID)->with('msg', 'You have entered invalid credentials');
         }
+
     }
 
     public function logoutUser(Request $req)
@@ -145,7 +147,7 @@ class AspnetUserController extends Controller
                 }
             }
             
-            $details .= '<br><p class="text-uppercase">'.$project->Address.', '. $project->Municipality.', '. $project->Province.', '. $project->Region .'</p><br/>';
+            $details .= '<br><p class="text-uppercase">'.$project->Address.', '. $project->Municipality.', '. $project->Province.', '. $project->Region .'</p>';
             return $details;
         })
         ->addColumn('Status', function($project){
