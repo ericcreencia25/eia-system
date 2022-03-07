@@ -272,13 +272,14 @@ $(document).ready(function(){
         success: function(response){
             var text = response['Status'] + ' - ' + response['Details'] + ' - ';
             var name_date = response['UpdatedBy'] + ' on ' + response['UpdatedDate'];
+            var ProjectGUID = response['ProjectGUID'];
             $("#remarks").html(text);
             $("#name_date").html(name_date);
 
             if(response['Status'] === 'For Denial'){
-                var button = '<button class="btn btn-warning btn-md" onclick="ProcessApplication('+"'Denied'"+', '+"'"+textProject+"'"+')">Deny Application</button>&nbsp;<button class="btn btn-default btn-md" onclick="convertDocxToPDF()">Revert</button>';
+                var button = '<button class="btn btn-warning btn-md" onclick="ProcessApplication('+"'Denied'"+', '+"'"+textProject+"'"+')">Deny Application</button>&nbsp;<button class="btn btn-default btn-md" onclick="revertApplication('+"'"+ProjectGUID+"'"+')">Revert</button>';
             }else{
-                var button = '<button class="btn btn-primary btn-md" onclick="ProcessApplication('+"'Approved'"+', '+"'"+textProject+"'"+')">Approve Application</button>&nbsp;<button class="btn btn-default btn-md"  onclick="convertDocxToPDF()">Revert</button>';
+                var button = '<button class="btn btn-primary btn-md" onclick="ProcessApplication('+"'Approved'"+', '+"'"+textProject+"'"+')">Approve Application</button>&nbsp;<button class="btn btn-default btn-md"  onclick="revertApplication('+"'"+ProjectGUID+"'"+')">Revert</button>';
             }
             
             $("#button_approver").html(button);
@@ -310,6 +311,52 @@ $(document).ready(function(){
         window.location.href = '/reviewer/' + GUID;
     });
 });
+
+function revertApplication(ProjectGUID)
+{   
+    var UpdatedDate = "{{$project['UpdatedDate']}}";
+    Swal.fire({
+        title: '<small>Are you sure you want to REVERT this application?</small>',
+        // text: 'Confirm the REVERT of this application?',
+        showCancelButton: true,
+        showCloseButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Confirm'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "{{route('revertApplication')}}",
+                type: 'POST',
+                data: {
+                    ProjectGUID : GUID,
+                    UpdatedDate : UpdatedDate,
+                    _token: '{{csrf_token()}}',
+                },
+                beforeSend: function() {
+                    $('#overlay').show();
+                },  
+                success: function(response){
+                    $('#overlay').fadeOut(2000, () => {
+                        Swal.fire({
+                            // icon: 'success',
+                            title: "This application was reverted",
+                            showConfirmButton: false,
+                            timer: 1500,
+                            width: '850px'
+                        }).then((result) => {
+                            /* Read more about handling dismissals below */
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                // location.reload();
+                                window.location.href='/default';
+                            }
+                        });
+                    });
+                }
+            });
+        }
+     });
+}
 
 function modalEvaluation(ProjectGUID, ID, Description)
 {   
@@ -475,6 +522,7 @@ function ProcessApplication(Status, text)
                                         /* Read more about handling dismissals below */
                                         if (result.dismiss === Swal.DismissReason.timer) {
                                             // location.reload();
+                                            // window.location.href='/default';
                                         }
                                     });
                                 });
@@ -530,6 +578,7 @@ function ProcessApplication(Status, text)
                                         /* Read more about handling dismissals below */
                                         if (result.dismiss === Swal.DismissReason.timer) {
                                             // location.reload();
+                                            // window.location.href='/default';
                                         }
                                     });
                                 });
@@ -550,10 +599,7 @@ function ProcessApplication(Status, text)
 
 }
 
-function convertDocxToPDF(){
-    var GUID = "{{$project['GUID']}}";
-    window.location.href = '/convertDocxToPDF/' + GUID;
-}
+
 
 
 /// ReferenceNoSeries: Max of ReferenceNoSeries

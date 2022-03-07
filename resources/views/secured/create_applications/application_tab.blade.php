@@ -16,7 +16,7 @@
 @section('content')
 <div class="content-wrapper">
   <section class="content container-fluid">
-    <div class="box box-default">
+    <div class="box box-primary">
       <div class="box-header with-border">
         <img id="" src="../img/doc1.jpg" style="width:38px;">
         <!-- <h1 class="box-title"><b>New ECC Application </b></h1> -->
@@ -93,6 +93,7 @@
         url: "{{route('ResetInputs')}}",
         type: 'GET',
         success: function(response){
+          $('#myTab li a')[0].click();
           location.reload();
         }
       });
@@ -112,10 +113,8 @@
 
     // on load of the page: switch to the currently selected tab
     var hash = window.location.hash;
-    console.log(hash);
     $('#myTab a[href="' + hash + '"]').tab('show');
 
     var activetab = $('#myTab').find('li.active');
-    console.log(activetab);
   });
 </script>

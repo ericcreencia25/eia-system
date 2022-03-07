@@ -28,8 +28,7 @@ use Webpatser\Uuid\Uuid;
 // });
 
 
-
-Route::get('/welcome', [AspnetUserController::class, 'index']); 
+Route::get('/welcome', [AspnetUserController::class, 'index'])->name('index');
 
 // Route::view('forTesting/HazardHunterPH', 'georisk');
 
@@ -46,7 +45,6 @@ Route::group(['middleware'=>'web'], function(){
     Route::post('/hazardAssessmentGeneration', [ApiController::class, 'hazardAssessmentGeneration'])->name('hazardAssessmentGeneration');
 
 ////ECC APPLICATIONS CONTROLLER
-    
     
 
     Route::get('/index', [App\Http\Controllers\Secured\EccApplicationsController::class, 'index'])->name('index');
@@ -68,6 +66,9 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::get('/ECCDashboard', [EccApplicationsController::class, 'ECCDashboard'])->name('ECCDashboard');
 
+    Route::get('/documents', [EccApplicationsController::class, 'documents'])->name('documents');
+
+    // Route::view('documents', 'secured.ecc_applications.document');
 
 //// FOR ACTIONS CONTROLLER
     Route::get('index', [App\Http\Controllers\Secured\ForActionsController::class, 'index'])->name('index');
@@ -116,9 +117,9 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::post('/ReturnApplication', [ForActionsController::class, 'ReturnApplication'])->name('ReturnApplication');
 
-    Route::get('/dynamic_pdf/EvaluationReport/{GUID}', [ForActionsController::class, 'generateEvaluationReport'])->name('generateEvaluationReport');
+    Route::get('/dynamic_pdf/EvaluationReport/{GUID}/{ActivityGUID}', [ForActionsController::class, 'generateEvaluationReport'])->name('generateEvaluationReport');
 
-    Route::get('/dynamic_pdf/OrderOfPayment/{GUID}', [ForActionsController::class, 'generateOrderOfPayment'])->name('generateOrderOfPayment');
+    Route::get('/dynamic_pdf/OrderOfPayment/{GUID}/{ActivityGUID}', [ForActionsController::class, 'generateOrderOfPayment'])->name('generateOrderOfPayment');
 
     Route::get('/dynamic_pdf/DraftCerticate/{GUID}/{ActivityGUID}', [ForActionsController::class, 'generateDraftCerticate'])->name('generateDraftCerticate');
 
@@ -134,6 +135,8 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::post('/decideApplication', [ForActionsController::class, 'decideApplication'])->name('decideApplication');
 
+    Route::post('/revertApplication', [ForActionsController::class, 'revertApplication'])->name('revertApplication');
+
     Route::get('/reviewer/{GUID}', [ForActionsController::class, 'reviewer'])->name('reviewer');
 
     // Route::get('/reviewer/{GUID}', [ForActionsController::class, 'reviewer'])->name('reviewer');
@@ -142,13 +145,18 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::get('/generate-qrcode', [ForActionsController::class, 'generateQrCode'])->name('generateQrCode');
 
-    Route::get('/verification/{GUID}', [ForActionsController::class, 'verification'])->name('verification');
-
     Route::get('/convertDocxToPDF/{GUID}', [ForActionsController::class, 'convertDocxToPDF'])->name('convertDocxToPDF');
 
     Route::get('/default', [ForActionsController::class, 'default'])->name('default');
 
-    Route::get('/secured/verification/{GUID}', [ForActionsController::class, 'verification'])->name('verification');
+    Route::get('/holidays', [ForActionsController::class, 'holidays'])->name('holidays');
+
+    Route::post('/getHolidaysTable', [ForActionsController::class, 'getHolidaysTable'])->name('getHolidaysTable');
+
+    Route::post('/addHolidays', [ForActionsController::class, 'addHolidays'])->name('addHolidays');
+
+    Route::post('/getSpecificHolidays', [ForActionsController::class, 'getSpecificHolidays'])->name('getSpecificHolidays');
+
 
 /// ASPNET USER CONTROLLER
 
@@ -164,7 +172,9 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::get('/createNewGUID', [AspnetUserController::class, 'createNewGUID'])->name('createNewGUID');
 
+    Route::get('/verification/{GUID}', [AspnetUserController::class, 'verification'])->name('verification');
 
+    Route::post('/login-user-crs', [ApiController::class, 'loginCRS'])->name('loginCRS');
 
 
 
@@ -175,6 +185,8 @@ Route::group(['middleware'=>'web'], function(){
     Route::get('/getGeoTable', [NewApplicationsController::class, 'getGeoTable'])->name('getGeoTable');
 
     Route::post('/getProjectType', [NewApplicationsController::class, 'getProjectType'])->name('getProjectType');
+
+    Route::post('/getProjectTypeStep2', [NewApplicationsController::class, 'getProjectTypeStep2'])->name('getProjectTypeStep2');
 
     Route::post('/getMunicipalities', [NewApplicationsController::class, 'getMunicipalities'])->name('getMunicipalities');
 
@@ -221,6 +233,8 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::post('/LinkProjectType', [NewApplicationsController::class, 'LinkProjectType'])->name('LinkProjectType');
 
+    Route::get('/search/project-type', [NewApplicationsController::class, 'searchProjectType'])->name('searchProjectType');
+
 /// VIEW 
 
     // Route::view('default', 'secured.for_actions.default');
@@ -234,7 +248,9 @@ Route::group(['middleware'=>'web'], function(){
 
     // Route::view('new_document', 'secured\create_applications\new_application_tab');
 
-    Route::view('documents', 'secured.ecc_applications.document');
+    // Route::view('documents', 'secured.ecc_applications.document');
     Route::view('{GUID}/map', 'secured.create_applications.clickable_map');
+
+    // Route::view('{GUID}/map', 'secured.create_applications.clickable_map');
 
 });

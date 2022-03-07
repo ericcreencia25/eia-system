@@ -78,6 +78,7 @@ var UserName = "{{session('data')['UserName']}}";
 var UserRole = "{{session('data')['UserRole']}}";
 
 $(document).ready(function(){
+
   ResetSession();
   localStorage.clear();
   
@@ -100,6 +101,10 @@ $(document).ready(function(){
     processing:true,
     info:true,
     ordering: false,
+    serverSide : true,
+    // scrollY:        600,
+    deferRender: true,
+    scroller:true,
     ajax: {
       "url": "{{route('getCaseHandlerForActionsTable')}}",
       "type": "POST",
@@ -117,7 +122,12 @@ $(document).ready(function(){
     {data: 'Status', name: 'Status'},
     {data: 'Remarks', name: 'Remarks'},
     {data: 'IncurredDate', name: 'IncurredDate'},
-    ]
+    ],
+    language: 
+    {
+      'loadingRecords': '&nbsp;',
+      'processing': '<div class="spinner"></div>Processing...'
+    }
   });
 
 

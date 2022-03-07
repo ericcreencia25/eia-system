@@ -77,7 +77,7 @@
     var arrayPoly = [];
     var arrayPoly1 = [];
     var sessionArray = [];
-    var center_location = [];
+    var center_location;
 
     var url=window.location.pathname;
     var arr=url.split('/');
@@ -96,6 +96,8 @@
       var number = '';
     }
 
+    console.log(stored);
+
     ///check if there's already an input in session
     var step4_check = "{{ Session::has('step_4_status') ? Session::get('step_4_status') : 'N/A' }}";
 
@@ -104,11 +106,11 @@
         url: "{{route('getGeoTable')}}",
         type: 'GET',
         success: function(response){
-          center_location.push(response[0][5], response[0][4]);
 
           $.each(response, function(index, value ) {
             if(value[0] == number){
               arrayPoly1.push([value[5], value[4]]);
+              center_location = [value[5], value[4]];
             }
           });
         }
@@ -137,7 +139,6 @@
         }
       });
     }else{
-
       $.ajax({
         url: "{{route('selectedArea')}}",
         type: 'POST',
@@ -160,10 +161,11 @@
           });
         }
       });
-
-      center_location.push(121.045145, 14.656689);
+      center_location = [121.045145, 14.656689];
     }
-
+    console.log(description);
+    console.log(number);
+    console.log(center_location);
     require([
         "esri/tasks/Locator",
         "esri/Map",
@@ -179,7 +181,7 @@
       });
 
       var map = new Map({
-        basemap: "streets"
+        basemap: "streets-navigation-vector"
       });
 
       var view = new MapView({
@@ -188,7 +190,7 @@
         center: center_location, // longitude, latitude
         // center: [center_location], // longitude, latitude
         // center:[-118.821527826096, 34.0139576938577],
-        zoom: 17
+        zoom: 15
       });
       
        view.ui.add("instruction", "bottom-left");
@@ -196,7 +198,6 @@
       
       const graphicsLayer = new GraphicsLayer();
       map.add(graphicsLayer);   
-
       if(step4_check == 1){
         // Create a polygon geometry
         const polygon1 = {
@@ -250,57 +251,61 @@
       *******************************************************************/
       
       view.popup.autoOpenEnabled = false;
-      view.on("click", function(event) {
-        var lat = Math.round(event.mapPoint.latitude * 1000) / 1000;
-        var lon = Math.round(event.mapPoint.longitude * 1000) / 1000;
 
-        arrayPoly.push([event.mapPoint.longitude, event.mapPoint.latitude]);
-        sessionArray.push(['polygon',event.mapPoint.longitude, event.mapPoint.latitude]);
+      var selected_area_txt = $("#selected_area option:selected").text();
+      if(selected_area_txt == ''){
+        view.on("click", function(event) {
+          var lat = Math.round(event.mapPoint.latitude * 1000) / 1000;
+          var lon = Math.round(event.mapPoint.longitude * 1000) / 1000;
 
-        // Create a polygon geometry
-        const polygon = {
-          type: "polygon",
-          rings: [arrayPoly]
-        };
+          arrayPoly.push([event.mapPoint.longitude, event.mapPoint.latitude]);
+          sessionArray.push(['polygon',event.mapPoint.longitude, event.mapPoint.latitude]);
 
-        const simpleFillSymbol = {
-          type: "simple-fill",
-          color: [227, 139, 79, 0.8],  // Orange, opacity 80%
-          outline: {
-            color: [255, 255, 255],
-            width: 1
-          }
-        };
+          // Create a polygon geometry
+          const polygon = {
+            type: "polygon",
+            rings: [arrayPoly]
+          };
 
-        const polygonGraphic = new Graphic({
-          geometry: polygon,
-          symbol: simpleFillSymbol,
+          const simpleFillSymbol = {
+            type: "simple-fill",
+            color: [227, 139, 79, 0.8],  // Orange, opacity 80%
+            outline: {
+              color: [255, 255, 255],
+              width: 1
+            }
+          };
+
+          const polygonGraphic = new Graphic({
+            geometry: polygon,
+            symbol: simpleFillSymbol,
+          });
+
+          graphicsLayer.add(polygonGraphic);
+
+          // Get the coordinates of the click on the view
+          view.popup.open({
+            // Set the popup's title to the coordinates of the location
+            title: "Reverse geocode: [" + lon + ", " + lat + "]",
+            location: event.mapPoint // Set the location of the popup to the clicked location
+          });
+
+          document.getElementById("instruction").innerHTML = "Lon: " + lon + " / Lat: " + lat; 
+
+          // Display the popup
+          // Execute a reverse geocode using the clicked location
+          locatorTask
+          .locationToAddress(event.mapPoint)
+          .then(function(response) {
+            // If an address is successfully found, show it in the popup's content
+            view.popup.content = response.address;
+          })
+          .catch(function(error) {
+            // If the promise fails and no result is found, show a generic message
+            view.popup.content = "No address was found for this location";
+          });
         });
-
-        graphicsLayer.add(polygonGraphic);
-
-        // Get the coordinates of the click on the view
-        view.popup.open({
-          // Set the popup's title to the coordinates of the location
-          title: "Reverse geocode: [" + lon + ", " + lat + "]",
-          location: event.mapPoint // Set the location of the popup to the clicked location
-        });
-
-        document.getElementById("instruction").innerHTML = "Lon: " + lon + " / Lat: " + lat; 
-
-        // Display the popup
-        // Execute a reverse geocode using the clicked location
-        locatorTask
-        .locationToAddress(event.mapPoint)
-        .then(function(response) {
-          // If an address is successfully found, show it in the popup's content
-          view.popup.content = response.address;
-        })
-        .catch(function(error) {
-          // If the promise fails and no result is found, show a generic message
-          view.popup.content = "No address was found for this location";
-        });
-      });
+      }
     });
 
 
@@ -363,9 +368,15 @@
 
   ///append area in dropdown
 function addSelectedArea(Area){
-  var counts = $('#selected_area option').length;
-  var counter = counts + 1;
+  var counts = $('#selected_area option:last-child').text();
+
+  if(counts == ''){counts = 0}
+
+  var counter = parseInt(counts) + 1;
   var message = "Add a " + Area + "?";
+
+  // var lastValue = $('#selected_area option:last-child').text();
+  // console.log(lastValue);
   
   if(confirm(message)){
     $.ajax({

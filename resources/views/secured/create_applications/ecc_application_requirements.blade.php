@@ -1,11 +1,13 @@
 <link rel="stylesheet" href="../../adminlte/dist/css/overlay-success.css">
 <div class="box-body">
+    <div class="callout callout-default" style="background: #ccc; margin-bottom: 0px">
     <div>
         <button type="button" class="btn btn-primary pull-right" id="check_step_7">Confirm <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
     </div>
     <h4><b>7. ECC Application Requirements</b><br></h4>
     <i>Click the browse button to select the scanned copy of the requirement then click the 'Upload' arrow to attach the file or the bin icon to remove the uploaded file. You can click the description to view the uploaded file. Only PDF file is allowed not larger than 10MB.</i>
     <br><br>
+</div>
     <div class="box-body no-padding">
         <table class="table table-bordered" id="ApplicationRequirements" style="width: 100%;  display: table; table-layout: fixed;" >
             <thead>
@@ -103,12 +105,13 @@
     });
 
 
-    function uploadFile(description, id){
-
+    function uploadFile(description, id)
+    {
         var url=window.location.pathname;
         var arr=url.split('/');
         var NewGUID=arr[2];
         var input_id = "#files_" + id;
+
 
         // Get the selected file
         var files = $(input_id)[0].files;
@@ -119,42 +122,56 @@
             // Append data 
             fd.append('description', description);
             fd.append('file',files[0]);
+            fd.append('ProjectGUID',NewGUID);
             fd.append('_token','{{csrf_token()}}');
 
             // Hide alert
             $('#responseMsg').hide();
 
-            // AJAX request 
-            $.ajax({
-                url: "{{route('uploadFile')}}",
-                method: 'post',
-                data: fd,
-                contentType: false,
-                processData: false,
-                dataType: 'json',
-                beforeSend: function() {
-                    $('#overlay').show();
-                },
-                success: function(response){
-                    $('#overlay').delay(2000).fadeOut();
+            Swal.fire({
+              title: 'Are you sure?',
+              text: "You want to upload this file",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Confirm'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // AJAX request 
+                $.ajax({
+                    url: "{{route('uploadFile')}}",
+                    method: 'post',
+                    data: fd,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    beforeSend: function() {
+                        $('#overlay').show();
+                    },
+                    success: function(response){
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: response['message'],
-                        showConfirmButton: false,
-                        timer: 1500,
-                        width: '850px'
-                    }).then((result) => {
-                      /* Read more about handling dismissals below */
-                      if (result.dismiss === Swal.DismissReason.timer) {
-                        location.reload();
-                      }
-                    });
-                },
-                error: function(response){
-                    console.log("error : " + JSON.stringify(response) );
-                }
-            });
+                        $('#overlay').fadeOut(2000, () => {
+                             Swal.fire({
+                                icon: 'success',
+                                title: response['message'],
+                                showConfirmButton: false,
+                                timer: 1500,
+                                width: '850px'
+                            }).then((result) => {
+                              /* Read more about handling dismissals below */
+                              if (result.dismiss === Swal.DismissReason.timer) {
+                                location.reload();
+                              }
+                            });
+                          });
+                    },
+                    error: function(response){
+                        console.log("error : " + JSON.stringify(response) );
+                    }
+                });
+              }
+            })
         }else{
             Swal.fire({
                 icon: 'warning',
@@ -174,8 +191,16 @@
             fd.append('_token','{{csrf_token()}}');
 
 
-        if(confirm("Remove the updated file?")){
-            // alert("Successfully removed");
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You want to remove the updated file?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Confirm'
+        }).then((result) => {
+          if (result.isConfirmed) {
             $.ajax({
                 url: "{{route('deleteFile')}}",
                 method: 'post',
@@ -197,17 +222,43 @@
                     console.log("error : " + JSON.stringify(response) );
                 }
             });
-        }
-        else{
-           Swal.fire({
-            icon: 'error',
-            title: 'Notifications!',
-            text: 'Something went wrong while uploading your files!',
-            // footer: '<a href="">Why do I have this issue?</a>',
-            width: '850px'
-          });
-            // return false;
-        }
+          }
+        })
+
+        // if(confirm("Remove the updated file?")){
+        //     // alert("Successfully removed");
+        //     $.ajax({
+        //         url: "{{route('deleteFile')}}",
+        //         method: 'post',
+        //         data: fd,
+        //         contentType: false,
+        //         processData: false,
+        //         dataType: 'json',
+        //         success: function(response){
+        //             Swal.fire({
+        //                 icon: 'success',
+        //                 title: response['message'],
+        //                 showConfirmButton: false,
+        //                 timer: 1500,
+        //                 width: '850px'
+        //             });
+        //             location.reload();
+        //         },
+        //         error: function(response){
+        //             console.log("error : " + JSON.stringify(response) );
+        //         }
+        //     });
+        // }
+        // else{
+        //    Swal.fire({
+        //     icon: 'error',
+        //     title: 'Notifications!',
+        //     text: 'Something went wrong while uploading your files!',
+        //     // footer: '<a href="">Why do I have this issue?</a>',
+        //     width: '850px'
+        //   });
+        //     // return false;
+        // }
         
 
     }

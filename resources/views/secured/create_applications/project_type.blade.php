@@ -1,35 +1,30 @@
-<style>
-span.limit {
-    /*display: block;*/
-    word-wrap:break-word;
-    width: 150px;
-    white-space: normal
-}
-</style>
-
 <div class="box-body">
+  <div class="callout callout-default" style="background: #ccc; margin-bottom: 0px">
+    <div>
+    <button type="button" class="btn btn-primary pull-right" id="check_step_2">Confirm <i class="fa fa-fw fa-save"></i></button>
+  </div>
   <h4><b>2. PROJECT TYPE:  <span id="proceed_2"></span></b><br></h4>
   <i>Search the project type below by providing the keyword and click the search icon. From the search results, locate the appropriate type and provide the corresponding proposed size. Then, click the select arrow icon to proceed to next step. FOR EXPLANSION, PROVIDE THE TOTAL (ORIGINAL + INCREASE) SIZE.</i>
   <br><br>
+</div>
   <div class="box">
     <div class="box-body no-padding">
       <!-- <form class="search-form"> -->
-            <div class="input-group">
+            <!-- <div class="input-group">
               <input type="text" name="search" class="form-control" placeholder="Type in here the project keyword..." id="search_project_type">
 
               <div class="input-group-btn">
                 <button type="button" name="submit" class="btn btn-primary" style="width: 50px; height: 35px" id="submit_project_type"><i class="fa fa-search"></i>
                 </button>
               </div>
-            </div>
+            </div> -->
             <!-- /.input-group -->
           <!-- </form> -->
-      <table class="table" id="projectType" style="width: 100%;  display: table; ">
-        <thead>
-          <th>Category</th>
-          <th>Specific Type</th>
-          <th>Proposed Project Size <br> <span style="color:red;">(DO NOT SPLIT SIZE)</span> </th>
-          <th></th>
+      <table class="table" id="projectType" style="width: 100%;  display: table;">
+        <thead style=" background-color: #f5f6f8">
+          <th width="30%">CATEGORY</th>
+          <th width="30%">SPECIFIC TYPE</th>
+          <th width="40%"><small>PROPOSED PROJECT SIZE <br> <span style="color:red;">(DO NOT SPLIT SIZE)</span> </small></th>
         </thead>
         <tbody>
         </tbody>
@@ -52,6 +47,7 @@ $(document).ready(function(){
   if(ComponentGUID_check != ''){
     $('#projectType').DataTable({
       processing:true,
+      serverSide: true,
             info:true,
             searching: false,
             ordering: false,
@@ -60,22 +56,21 @@ $(document).ready(function(){
             bFilter: true,
             bInfo: false,
             bAutoWidth: false,
-      ajax: {
-            "url": "{{route('getProjectType')}}",
-            "type": "POST",
-            "data": {
-                ComponentGUID : ComponentGUID_check,
-                search : '',
-                ProjectSize : input_size_check,
-                _token: '{{csrf_token()}}' ,
-            }, 
-        },
-      columns: [
-        {data: 'Category', name: 'Category'},
-        {data: 'SpecificType', name: 'SpecificType'},
-        {data: 'ProjectSize', name: 'ProjectSize'},
-        {data: 'Action', name: 'Action'}
-      ]
+            ajax: {
+              "url": "{{route('getProjectTypeStep2')}}",
+              "type": "POST",
+              "data": {
+                  ComponentGUID : ComponentGUID_check,
+                  search : '',
+                  ProjectSize : input_size_check,
+                  _token: '{{csrf_token()}}' ,
+              }, 
+          },
+          columns: [
+          {data: 'Category', name: 'Category'},
+          {data: 'SpecificType', name: 'SpecificType'},
+          {data: 'ProjectSize', name: 'ProjectSize'}
+          ]
     });
   }
   
@@ -121,6 +116,31 @@ $(document).ready(function(){
   } else if(step2_check == "N/A"){
     // $("#step_2").css({"background-color":"#fff", "color": "#444"});
   }
+
+  $("#check_step_2").on("click", function() {
+    Swal.fire({
+            icon: 'success',
+            title: 'Step 2 is already saved in the session.',
+            showConfirmButton: false,
+            timer: 1500,
+            width: '850px'
+          }).then((result) => {
+            /* Read more about handling dismissals below */
+            if (result.dismiss === Swal.DismissReason.timer) {
+              $("#step_2").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+              var next = $('#mytabs li.active').next()
+              next.length?
+              next.find('a').click():
+              $('#myTab li a')[2].click();
+
+              $("#li_step_3").attr("class", "able");
+              $("#step_3").attr("data-toggle", "tab");
+              location.reload();
+            }
+          });
+
+    
+  });
     
 });
 function ProjectSize(ComponentGUID, Category) {
@@ -160,23 +180,27 @@ function ProjectSize(ComponentGUID, Category) {
                 showConfirmButton: false,
                 timer: 1500,
                 width: '850px'
+              }).then((result) => {
+                /* Read more about handling dismissals below */
+                if (result.dismiss === Swal.DismissReason.timer) {
+                  $("#step_2").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+                  var next = $('#mytabs li.active').next()
+                  next.length?
+                  next.find('a').click():
+                  $('#myTab li a')[2].click();
+
+                  $("#li_step_3").attr("class", "able");
+                  $("#step_3").attr("data-toggle", "tab");
+                  location.reload();
+                }
               });
-              $("#step_2").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+              
             }
           });
-
-          var next = $('#mytabs li.active').next()
-          next.length?
-          next.find('a').click():
-          $('#myTab li a')[2].click();
-
-          $("#li_step_3").attr("class", "able");
-          $("#step_3").attr("data-toggle", "tab");
         } else {
           Swal.fire('Your value is out of range');
         }
       }else{
-      
         $.ajax({
           url: "{{route('SecondStep')}}",
           type: 'POST',

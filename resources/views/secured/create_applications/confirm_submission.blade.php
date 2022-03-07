@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="../../adminlte/dist/css/alert-modal.css">
 <link rel="stylesheet" href="../../adminlte/dist/css/overlay-success.css">
 <div class="box-body">
+  <div class="callout callout-default" style="background: #ccc; margin-bottom: 0px">
   <div>
     <button type="button" class="btn btn-primary pull-right" id="confirm_submission">Submit <i class="fa fa-fw fa-save"></i></button>
   </div>
@@ -9,6 +10,7 @@
   </h4>
   <i>Please review your entries by navigating to previous pages or click the 'Next' button to confirm the submission of this application FOR SCREENING. The submitted documents are automatically forwarded to the EMB Regional Office having jurisdiction of the project. Once screened, you will be advised to pay the corresponding application fee or submit additional document/provide clarification. Returned applications will appear in the 'For Action' page.</i>
   <br><br>
+</div>
   <h4><label>Purpose: New ECC Application</label></h4>
     <label>Documents Uploaded:</label>
     <table class="table" id="documents_uploaded" style="width: 100%;  display: table; ">

@@ -152,6 +152,11 @@
           <!-- /.modal-dialog -->
         </div>
         <!-- /.modal -->
+        <div id="overlay" style="display:none;">
+            <div class="spinner"></div>
+            <br/>
+            <h3>Please wait while saving your data...</h3>
+        </div>
 @stop
 <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
@@ -301,47 +306,62 @@ $(document).ready(function(){
         var files = $("#InputFile")[0].files;
 
         if(files.length > 0){
-            var fd = new FormData();
+            Swal.fire({
+                title: '<small>Are you sure you want to upload this file?</small>',
+                // text: 'Confirm the REVERT of this application?',
+                showCancelButton: true,
+                showCloseButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var fd = new FormData();
 
-            // Append data 
-            fd.append('Documents', Documents);
-            fd.append('file',files[0]);
-            fd.append('_token','{{csrf_token()}}');
+                    // Append data 
+                    fd.append('Documents', Documents);
+                    fd.append('file',files[0]);
+                    fd.append('ProjectGUID',GUID);
+                    fd.append('_token','{{csrf_token()}}');
 
-            // Hide alert
-            $('#responseMsg').hide();
+                    // Hide alert
+                    $('#responseMsg').hide();
 
-            // AJAX request 
-            $.ajax({
-                url: "{{route('uploadFileEndorseApplicant')}}",
-                method: 'post',
-                data: fd,
-                contentType: false,
-                processData: false,
-                dataType: 'json',
-                success: function(response){
-                    var arrayCount = attachedDocuments.length;
-                    attachedDocuments.push(response);
+                    // AJAX request 
+                    $.ajax({
+                        url: "{{route('uploadFileEndorseApplicant')}}",
+                        method: 'post',
+                        data: fd,
+                        contentType: false,
+                        processData: false,
+                        dataType: 'json',
+                        success: function(response){
+                            var arrayCount = attachedDocuments.length;
+                            attachedDocuments.push(response);
 
-                    var url=window.location.origin;
-                    var filepath = response['FilePath'];
-                    var link = url + '/' + filepath;
+                            var url=window.location.origin;
+                            var filepath = response['FilePath'];
+                            var link = url + '/' + filepath;
 
-                    $('#activitiyAttachments option:selected').remove();
+                            $('#activitiyAttachments option:selected').remove();
 
-                    $("#InputFile").val(''); 
+                            $("#InputFile").val(''); 
 
-                    var details = '<tr role="row" class="odd">';
-                    details += '<td><a id="pointer" href="'+ link +'" target="_blank">'+ response['Description'] + ' </a> ( '+ response['FileSizeInKB'] +' ) </td>';
+                            var details = '<tr role="row" class="odd">';
+                            details += '<td><a id="pointer" href="'+ link +'" target="_blank">'+ response['Description'] + ' </a> ( '+ response['FileSizeInKB'] +' ) </td>';
 
-                    details += '<td><button type="button" class="btn btn-default" id="remove" value="'+arrayCount+'"><img src="../../img/trashbin.jpg" style="width:15px;" /></button></td></tr>';
+                            details += '<td><button type="button" class="btn btn-default" id="remove" value="'+arrayCount+'"><img src="../../img/trashbin.jpg" style="width:15px;" /></button></td></tr>';
 
-                    $("#attachRequirementsTable").append(details);
-                },
-                error: function(response){
-                    console.log("error : " + JSON.stringify(response) );
+                            $("#attachRequirementsTable").append(details);
+                        },
+                        error: function(response){
+                            console.log("error : " + JSON.stringify(response) );
+                        }
+                    });
                 }
-            });
+             });
+
         }else{
             Swal.fire({
                 icon: 'warning',

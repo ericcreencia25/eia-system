@@ -188,6 +188,7 @@
                                 </tr>
                             </tr>
                             <tr id="UploadedFile">
+                                
                             </tr>
                         </tbody></table>
                         <br>
@@ -257,7 +258,7 @@
                                             </div>
                                             <div class="col-md-2"></div>
                                             <div class="col-md-4">
-                                                <span id="" style="color:Red;font-size:smaller">Make sure local <a><u>holidays</u></a> were already entered before routing</span>    
+                                                <span id="" style="color:Red;font-size:smaller">Make sure local <a href="{{ url("holidays") }}"><u>holidays</u></a> were already entered before routing</span>    
                                             </div>
                                             <div class="col-md-2">
                                                 <button class="btn btn-flat btn-default" id="Endorse">Endorse</button>
@@ -419,10 +420,12 @@
 var GUID = "{{$project['GUID']}}";
 var ActivityGUID = "{{$project['ActivityGUID']}}";
 var CreatedBy = "{{$project['CreatedBy']}}";
+var CurrentStatus = "{{$project['Status']}}";
 
 var AdditionalRequirements = [];
 
-$(document).ready(function(){
+$(document).ready(function() {
+    
     var data = localStorage.getItem("ReqStorage");
     var ReqStorage = data ? JSON.parse(data) : [];
   
@@ -454,11 +457,14 @@ $(document).ready(function(){
                 var url=window.location.origin;
                 var filepath = response['FilePath'];
                 var link = url + '/' + filepath;
+                var arrayCount = 1;
 
-                var details = '<td style="width:50%;"><p class="help-block">Uploaded file here: <br> <a href="'+ link +'" target="_blank" id="filesCheck">'+  response['Description']  +'</a>( ' + response['FileSizeInKB'] + ' ) </p></td>';
-                details += '<td style="width: 10px"></td>';
+                var details = '<td style="width:30%;"><p class="help-block">Uploaded file here: <br> <a href="'+ link +'" target="_blank" id="filesCheck">'+  response['Description']  +'</a>( ' + response['FileSizeInKB'] + ' ) </p></td>';
+                details += '<td style="width: 60px"><button type="button" class="btn btn-default btn-sm" onclick="deleteUploadedFile('+"'"+response['ID']+"'"+')"><img src="../../img/trashbin.jpg" style="width:15px;" /></button></td>';
                 details += '<td></td>';
-                details += '<td style="width: 80px;"><button type="button" class="btn btn-default btn-sm" onclick="deleteUploadedFile('+"'"+response['ID']+"'"+')"><img src="../../img/trashbin.jpg" style="width:15px;" /></button></td>';
+                details += '<td style="width: 10px;"></td>';
+
+                
 
 
                 $("#UploadedFile").html(details);
@@ -875,7 +881,7 @@ $(document).ready(function(){
                             });
                         }
                     });
-                }else{
+                } else{
                     Swal.fire({
                         icon: 'warning',
                         title: 'Notifications!',
@@ -933,10 +939,11 @@ $(document).ready(function(){
                             });
                         }
                     });
-            }
+                }
+
+            
             
         }
-        
     });
 
     $("#AddRequirements").on('click', function() {
@@ -979,43 +986,58 @@ $(document).ready(function(){
         var OthersAttachment = $("#Others").val();
 
         if(files.length > 0){
-            var fd = new FormData();
+            Swal.fire({
+                title: '<small>Are you sure you want to upload this file?</small>',
+                // text: 'Confirm the REVERT of this application?',
+                showCancelButton: true,
+                showCloseButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var fd = new FormData();
 
-            // Append data 
-            fd.append('Documents', Documents);
-            fd.append('OthersAttachment', OthersAttachment);
-            fd.append('file',files[0]);
-            fd.append('_token','{{csrf_token()}}');
+                    // Append data 
+                    fd.append('Documents', Documents);
+                    fd.append('OthersAttachment', OthersAttachment);
+                    fd.append('file',files[0]);
+                    fd.append('ProjectGUID',GUID);
+                    fd.append('_token','{{csrf_token()}}');
 
-            // Hide alert
-            $('#responseMsg').hide();
+                    // Hide alert
+                    $('#responseMsg').hide();
 
-            // AJAX request 
-            $.ajax({
-                url: "{{route('uploadFileEndorseApp')}}",
-                method: 'post',
-                data: fd,
-                contentType: false,
-                processData: false,
-                dataType: 'json',
-                success: function(response){
-                    Swal.fire({
-                        icon: 'success',
-                        title: response['message'],
-                        showConfirmButton: false,
-                        timer: 1500,
-                        width: '850px'
-                    }).then((result) => {
-                        /* Read more about handling dismissals below */
-                        if (result.dismiss === Swal.DismissReason.timer) {
-                            location.reload();
+                    // AJAX request 
+                    $.ajax({
+                        url: "{{route('uploadFileEndorseApp')}}",
+                        method: 'post',
+                        data: fd,
+                        contentType: false,
+                        processData: false,
+                        dataType: 'json',
+                        success: function(response){
+                            Swal.fire({
+                                icon: 'success',
+                                title: response['message'],
+                                showConfirmButton: false,
+                                timer: 1500,
+                                width: '850px'
+                            }).then((result) => {
+                                /* Read more about handling dismissals below */
+                                if (result.dismiss === Swal.DismissReason.timer) {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function(response){
+                            console.log("error : " + JSON.stringify(response) );
                         }
                     });
-                },
-                error: function(response){
-                    console.log("error : " + JSON.stringify(response) );
                 }
-            });
+             });
+
         }else{
             Swal.fire({
                 icon: 'warning',
@@ -1028,52 +1050,82 @@ $(document).ready(function(){
     });
 
     $("#generate_evaluation_report").on('click', function() {
-        var url = '/dynamic_pdf/EvaluationReport/' + GUID;
+        // var url = '/dynamic_pdf/EvaluationReport/' + GUID;
 
-        Swal.fire({
-          // title: 'Are you sure?',
-          text: "Do you want to generate a report based on the evaluation of the above requirements? The generated report will be open in another tab.",
-          icon: 'info',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Okay'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            window.open(url,'_blank');
+        var filesCheck = $('#filesCheck').text();
 
-            Swal.fire(
-              // '|Downloaded!|',
-              'Your file has been opened.',
-              'success'
-            )
-          }
-        });
+        if(filesCheck != ''){
+            Swal.fire({
+                    icon: 'info',
+                    title: 'You need to delete the file first.',
+                    showConfirmButton: false,
+                    timer: 1300,
+                    width: '850px'
+                });
+
+            
+        } else {
+            Swal.fire({
+              // title: 'Are you sure?',
+              text: "Do you want to generate a report based on the evaluation of the above requirements? The generated report will be open in another tab.",
+              icon: 'info',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Okay'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // window.open(url,'_blank');
+
+                window.location.href = '/dynamic_pdf/EvaluationReport/' + GUID + '/' + ActivityGUID;
+
+                Swal.fire(
+                  // '|Downloaded!|',
+                  'Your file has been opened.',
+                  'success'
+                )
+              }
+            });
+        }
     });
 
     $("#generate_order_of_payment").on('click', function() {
-        var url = '/dynamic_pdf/OrderOfPayment/' + GUID;
-        
-        Swal.fire({
-          // title: 'Are you sure?',
-          text: "Order of Payment for ECC Application was generated successfully and was added to the attachments below. Please make sure you've reviewed/updated the amount in the Order of Payment to correspond to the fee/s appropriate for this application. See EMB Manual of Fees for reference.",
-          icon: 'info',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Okay'
-        }).then((result) => {
-          if (result.isConfirmed) {
+        // var url = '/dynamic_pdf/OrderOfPayment/' + GUID + '/' + ActivityGUID;
+        var filesCheck = $('#filesCheck').text();
 
-            window.open(url,'_blank');
+        if(filesCheck != ''){
+            Swal.fire({
+                    icon: 'info',
+                    title: 'You need to delete the file first.',
+                    showConfirmButton: false,
+                    timer: 1300,
+                    width: '850px'
+                });
 
-            Swal.fire(
-              // '|Downloaded!|',
-              'Your file has been opened.',
-              'success'
-            )
-          }
-        });
+            
+        } else {
+            Swal.fire({
+              // title: 'Are you sure?',
+              text: "Order of Payment for ECC Application was generated successfully and was added to the attachments below. Please make sure you've reviewed/updated the amount in the Order of Payment to correspond to the fee/s appropriate for this application. See EMB Manual of Fees for reference.",
+              icon: 'info',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Okay'
+            }).then((result) => {
+              if (result.isConfirmed) {
+
+                // window.open(url,'_blank');
+                window.location.href = '/dynamic_pdf/OrderOfPayment/' + GUID + '/' + ActivityGUID;
+
+                Swal.fire(
+                  // '|Downloaded!|',
+                  'Your file has been opened.',
+                  'success'
+                )
+              }
+            });
+        }
     });
 
     $("#generate_draft_certificate").on('click', function() {
@@ -1224,10 +1276,15 @@ function listOfAttachments(ActivityGUID)
         // bFilter: true,
         // bInfo: false,
         // bAutoWidth: false,
+        serverSide : true,
+        // scrollY:        600,
+        deferRender: true,
+        scroller:true,
         ajax: {
             "url": "{{route('getActivityAttachmentsList')}}",
             "type": "POST",
             "data" : {
+                ProjectGUID : GUID,
                 ActivityGUID : ActivityGUID,
                 _token: '{{csrf_token()}}',
             }
@@ -1263,7 +1320,7 @@ function getlistOfAttachments(CreatedBy, ActivityGUID)
             "url": "{{route('getListOfAttachments')}}",
             "type": "POST",
             "data" : {
-                CreatedBy : CreatedBy,q
+                CreatedBy : CreatedBy,
                 ActivityGUID : ActivityGUID,
                 _token: '{{csrf_token()}}',
             }
@@ -1301,6 +1358,13 @@ function UserListsOnRegion()
               
               $("#user_list").append(option);
             });
+
+            if(CurrentStatus === 'Approved' || CurrentStatus === 'Denied')
+            {
+                var option = '<option value="Repository"> Repository </option>';
+
+                $("#user_list").append(option);
+            }
         }
     });
 }

@@ -11,14 +11,16 @@ div.col-md-6 {
 </style>
 
 <div class="box-body">
+  <div class="callout callout-default" style="background: #ccc; margin-bottom: 0px">
   <div>
-    <button type="button" class="btn btn-primary pull-right" id="check_step_5">Save <i class="fa fa-fw fa-save"></i></button>
+    <button type="button" class="btn btn-primary pull-right" id="check_step_5">Confirm <i class="fa fa-fw fa-save"></i></button>
   </div>
   <h4><b>5.  BASIC PROJECT INFORMATION: 
     <span id="proceed_5"></span>
   </b><br></h4>
   <i>Provide below the proponent and project information. All fields below are required.</i>
   <br><br>
+</div>
   <h4><b>Proponent Information</b></h4>
   <div class="col-md-12">
     <!---Left side--->
@@ -121,10 +123,33 @@ div.col-md-6 {
 
   <div class="col-md-12" style="padding-top: 30px;">
     <div class="col-md-6">
-        Establishment Name
-        <input type="text" class="form-control" placeholder="" id="">
-      </div>
+      Check here if the establishment is existing:
+      <select class="form-control select2" style="width: 100%;">
+        </select>
+    </div>
+    <div class="col-md-6">
+    </div>
   </div>
+  <div class="col-md-12" style="padding-top: 30px;">
+    <div class="col-md-6">
+      Establishment Name
+      <input type="text" class="form-control" placeholder="" id="">
+    </div>
+    <div class="col-md-3">
+      Date Established
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-calendar"></i>
+        </div>
+        <input type="text" class="form-control pull-right" id="reservation">
+      </div>
+    </div>
+    <div class="col-md-3">
+      EMB ID
+      <input type="text" class="form-control" placeholder="" id="" disabled>
+    </div>
+  </div>
+
 </div>
 
 
@@ -133,8 +158,32 @@ div.col-md-6 {
   $(document).ready(function(){
     $('.select2').select2();
 
+    var now = moment().format("YYYY/MM/DD");
+    var start_date = now;
+    var end_date = now;
+
+    var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+
+    //get First day of the current month
+    var firstDay = new Date(y, m, 1);
+    var FirstDate = getDateFormat(firstDay);
+
+    //get Last day of the current month
+    var lastDay = new Date(y, m + 1, 0);
+    var LastDate = getDateFormat(lastDay);
+
+    $('#reservation').daterangepicker({
+      maxSpan: {"days":31},
+      locale : { format: 'YYYY-MM-DD' },
+      startDate : FirstDate,
+      endDate: LastDate
+    }, function(start,end,label){
+      start_date = start.format('YYYY-MM-DD');
+      end_date =  end.format('YYYY-MM-DD');
+    });
+
     var municipality_check = "{{ Session::has('step_5') ? Session::get('step_5')['municipality'] : '' }}";
-    console.log(municipality_check);
+    
     var url=window.location.pathname;
     var arr=url.split('/');
     var NewGUID=arr[2];
@@ -327,16 +376,24 @@ div.col-md-6 {
             showConfirmButton: false,
             timer: 1500,
             width: '850px'
+          }).then((result) => {
+            /* Read more about handling dismissals below */
+            if (result.dismiss === Swal.DismissReason.timer) {
+              $("#step_5").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+
+              var next = $('#mytabs li.active').next()
+                next.length?
+                next.find('a').click():
+                $('#myTab li a')[5].click();
+                location.reload();
+            }
           });
-          $("#step_5").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+          
           // location.reload();
         }
       });
 
-      var next = $('#mytabs li.active').next()
-          next.length?
-          next.find('a').click():
-          $('#myTab li a')[5].click();
+      
 
       $("#step_6").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 
@@ -397,4 +454,13 @@ div.col-md-6 {
       // $("#step_5").css({"background-color":"#fff", "color": "#444"});
     }
   });
+
+function getDateFormat(FilterDate)
+{
+  var dd = String(FilterDate.getDate()).padStart(2, '0');
+  var mm = String(FilterDate.getMonth() + 1).padStart(2, '0');
+  var yyyy = FilterDate.getFullYear();
+
+  return yyyy + '/' + mm + '/' + dd;
+}
 </script>

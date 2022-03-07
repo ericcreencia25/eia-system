@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="../../adminlte/dist/css/overlay-success.css">
 <div class="box-body">
+    <div class="callout callout-default" style="background: #ccc; margin-bottom: 0px">
     <div>
         <button type="button" class="btn btn-primary pull-right" id="save_entry">Save Entry<i class="fa fa-fw fa-save"></i></button>
       </div>
@@ -8,6 +9,7 @@
         Please download and fill up the forms below for notarial purposes. Once notarized, return to the system and locate this application from the 'For Action' Menu to upload the Checklist together with the required attachments. You need to have pdf reader installed to open the files.
     </i>
     <br><br>
+</div>
     <table cellpadding="12" width="100%">
         <tbody>
             <tr>

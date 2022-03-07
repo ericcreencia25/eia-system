@@ -1,4 +1,4 @@
-@if(session('data')['UserRole'] == 'Applicant')
+@if(session('data')['UserRole'] === 'Applicant')
   
   @include('secured.for_actions.applicant_project_app')  
 

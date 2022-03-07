@@ -1,48 +1,76 @@
 @extends('layouts.adminlte.default.layout')
 
+<style>
+  .pointer {cursor: pointer;}
+
+  /*.dataTables_filter {
+    display: none;
+  */}
+
+</style>
+
 @section('header')
-    <section class="content-header">
-        <h1 class="hidden-sm">
-        </h1>
+<section class="content-header">
+  <center>
+    <h2><b>
+      EIA Dashboard
+      <small></small>
+    </b></h2>
+  </center>
         <!-- <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#"><i class="fa fa-cog"></i>For Action</a></li>
-        </ol> -->
+        </ol -->
     </section>
 @stop
 
 
-<style>
-  .pointer {cursor: pointer;}
-</style>
+
 
 @section('content')
 
-    <div class="content-wrapper">
-      <!-- Main content -->
-      <section class="content container-fluid">
-        <div class="box box-default">
-          <div class="box-header with-border">
-            <img id="" src="../img/Tools.jpg" style="width:38px;"> <b>Applications for Action - </b>
-          </div>
-          <div class="box-body">
-          <div class="box-header">
-                Listed below are the ECC Applications pending with you for appropriate action. Click the project name/address to load the application.
-              </div>
-              <!-- /.box-header -->
-              <div class="box-body no-padding">
-                <table class="table table-bordered" id="ForActionTable" style="width: 100%;  display: table; table-layout: fixed;">
-                  <thead>
-                      <th style="width: 40%">Details</th>
-                      <th style="width: 20%">Status</th>
-                      <th style="width: 40%">Remarks</th>
-                  </thead>
-                  <tbody></tbody>
-                </table> 
-              </div>
+<div class="content-wrapper">
+  <!-- Main content -->
+  <section class="content container-fluid">
+    <div class="box box-default">
+      <div class="box-header with-border">
+        <h3 class="box-title"></h3>
+      </div>
+      <div class="box-body">
+      </div>
+    </div>
+
+    <div class="box box-default">
+      <div class="box-header with-border">
+        <img id="" src="../img/Tools.jpg" style="width:38px;"> <b>Applications for Action - </b>
+      </div>
+      <div class="box-body">
+        <div class="box-header">
+          Listed below are the ECC Applications pending with you for appropriate action. Click the project name/address to load the application.
+        </di v>
+        <!-- /.box-header -->
+        <div class="box-body no-padding">
+          <!-- <input type="text" id="searchInput" placeholder="Type Keywords..."> -->
+          <table class="table table-bordered" id="ForActionTable" style="width: 100%;  display: table; table-layout: fixed;">
+            <thead style=" background-color: #f5f6f8">
+              <th style="width: 40%; height: 30%">Details</th>
+              <th style="width: 20%; height: 30%">Status</th>
+              <th style="width: 40%; height: 30%">Remarks</th>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
-    </section>
-  </div>
+    </div>
+
+    <div class="box-header with-border">
+        <!-- <h3 class="box-title"></h3> -->
+        <a href="{{ url("/search/project-type") }}" class="btn btn-block btn-social btn-bitbucket btn-lg" style="text-align:center">
+          APPLY FOR PERMIT
+        </a>
+      </div>
+
+  </section>
+</div>
 @stop
 <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
@@ -72,6 +100,11 @@ $(document).ready(function(){
     processing:true,
     info:true,
     ordering: false,
+    // serverSide : true,
+    scrollY: 250,
+    deferRender: true,
+    scroller:true,
+    searching : true,
     ajax: {
       "url": "{{route('get.users.list')}}",
       "type": "POST",
@@ -86,8 +119,22 @@ $(document).ready(function(){
     {data: 'Details', name: 'Details'},
     {data: 'Status', name: 'Status'},
     {data: 'Remarks', name: 'Remarks'},
-    ]
+    ],
+    language: 
+    {
+      'loadingRecords': '&nbsp;',
+      'processing': '<div class="spinner"></div>Processing...'
+    }
   });
+
+  // var table = $('#ForActionTable').DataTable();
+
+  // // #myInput is a <input type="text"> element
+  // $('#searchInput').on('keyup change', function () {
+  //     table.search(this.value).draw();
+  // });
+
+
 });
 
   function ResetSession(){

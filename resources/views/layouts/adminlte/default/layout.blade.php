@@ -3,7 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>ECCOnline</title>
+  <title>EIA</title>
+  <!-- <link rel="icon" type="image/x-icon" href="../../imag/denr.png"> -->
+  <link rel = "icon" type = "image/png" href="../img/denr1.png">
   
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -56,7 +58,9 @@
     <nav class="navbar navbar-static-top">
       <div class="container">
         <div class="navbar-header">
-          <a href="" class="navbar-brand"><b>ECC</b></a>
+          <a href="" class="navbar-brand" style="padding-top: 5px; padding-left: 0px;">
+            <img src="../img/denr1.png" width="40" height="40" class="d-inline-block align-top" alt="">
+          </a>
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
             <i class="fa fa-bars"></i>
           </button>
@@ -68,11 +72,23 @@
             @if(session('data')['UserRole'] != 'Applicant')
               <li><a href="{{ url("default") }}">For Action <span class="sr-only">(current)</span></a></li>
               <li><a href="{{ url("documents") }}">ECC Applications</a></li>
-              <form class="navbar-form navbar-left" role="search">
+              <!-- <form class="navbar-form navbar-left" role="search">
                 <div class="form-group">
                   <input type="text" class="form-control" id="navbar-search-input" placeholder="Search Applications">
+                  
+                </div>
+              </form> -->
+               <li>
+              <form method="GET" action="{{ url("documents") }}" class="sidebar-form" style="width: 300px;">
+                <div class="input-group">
+                  <input type="text" name="search" class="form-control" placeholder="Search Applications..."  style="background: white;" value="{{ isset($req) ? $req['search'] : '' }}">
+                  <span class="input-group-btn">
+                    <button type="submit" id="search-btn" class="btn btn-flat"  style="background: white;"><i class="fa fa-search"></i>
+                    </button>
+                  </span>
                 </div>
               </form>
+               </li>
               <li><a href="{{ url("ECCDashboard") }}">Load ECC Dashboard</a></li>
               <li><a href="">Go to CNC Online</a></li>
               @else
@@ -159,8 +175,8 @@
 
 <!-- date-range-picker -->
 <script src="../../adminlte/bower_components/moment/min/moment.min.js"></script>
-<script src="../../adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
-<!-- bootstrap datepicker -->
+<script src="../../adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script><!-- bootstrap datepicker -->
+<script src="../../adminlte/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 <!-- AdminLTE App -->
 <script src="../../adminlte/dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->

@@ -7,7 +7,9 @@
     "require": {
         "php": "^7.3|^8.0",
         "almasaeed2010/adminlte": "~2.4",
+        "bacon/bacon-qr-code": "^2.0",
         "barryvdh/laravel-dompdf": "^0.9.0",
+        "convertapi/convertapi-php": "^1.5",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
@@ -15,8 +17,11 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.3",
         "phpoffice/phpword": "dev-master",
+        "simplesoftwareio/simple-qrcode": "^4.2",
+        "symfony/process": "5.1.4",
         "webpatser/laravel-uuid": "^4.0",
-        "yajra/laravel-datatables-oracle": "~9.0"
+        "yajra/laravel-datatables-oracle": "~9.0",
+        "cornford/googlmapper": "3.*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

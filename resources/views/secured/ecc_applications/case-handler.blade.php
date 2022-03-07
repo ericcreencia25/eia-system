@@ -85,17 +85,23 @@ $(document).ready(function(){
 });
 
 function dataTable(status_filter){
+  var search = "{{ isset($req) ? $req['search'] : '' }}";
+
   $('#ECCApplicationsTable').DataTable({
     destroy:true,
     processing:true,
     info:true,
-    searching: true,
+    searching: false,
     ordering: false,
     bPaginate: true,
     bLengthChange: true,
     bFilter: true,
     bInfo: true,
     bAutoWidth: false,
+    serverSide : true,
+    // scrollY:        600,
+    deferRender: true,
+    scroller:true,
     ajax: {
       "url": "{{route('get.ecc.applications.casehandler')}}",
       "type": "POST",
@@ -104,6 +110,7 @@ function dataTable(status_filter){
         UserRole : UserRole,
         UserOffice : UserOffice,
         StatusFilter :status_filter,
+        Search : search,
         _token: '{{csrf_token()}}' ,
       },
     },
@@ -111,7 +118,12 @@ function dataTable(status_filter){
     {data: 'Details', name: 'Details'},
     {data: 'Status', name: 'Status'},
     {data: 'Remarks', name: 'Remarks'},
-    ]
+    ],
+    language: 
+    {
+      'loadingRecords': '&nbsp;',
+      'processing': '<div class="spinner"></div>Processing...'
+    }
   });
 }
 </script>

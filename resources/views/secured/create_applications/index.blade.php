@@ -1,12 +1,14 @@
 <div class="box-body">
-  <div>
-    <button type="button" class="btn btn-primary pull-right" id="check_step_1">Save <i class="fa fa-fw fa-save"></i></button>
+  <div class="callout callout-default" style="background: #ccc; margin-bottom: 0px">
+    <div>
+      <button type="button" class="btn btn-primary pull-right" id="check_step_1">Confirm <i class="fa fa-fw fa-save"></i></button>
+    </div>
+    <h4><b>1. PURPOSE:  
+      <span id="proceed_1"></span>
+    </b><br></h4>
+    <i>In compliace with MC2019-003, all projects that fall under Category B of MC 2014-005 must be applied through the ECC Online Application System. Please answer the questions below then click the Next button. <span style=" color:red; font-style:italic;">For BARMM located project, please submit your application to BARMM environmental office</span></i><br><br>
   </div>
-  <h4><b>1. PURPOSE:  
-    <span id="proceed_1"></span>
-  </b><br></h4>
-  <i>In compliace with MC2019-003, all projects that fall under Category B of MC 2014-005 must be applied through the ECC Online Application System. Please answer the questions below then click the Next button. <span style=" color:red; font-style:italic;">For BARMM located project, please submit your application to BARMM environmental office</span></i><br><br>
-  <div class="box" >
+  <div class="box" style="padding-top: 0px">
     <div class="box-body no-padding">
       <table class="table table-condensed">
         <tbody>

@@ -100,15 +100,15 @@
                         <form action="{{ route('login-user') }}" method="post">
                           @csrf
                           <div class="form-group has-feedback">
-                            <input type="text" name="username"  class="form-control" placeholder="Full Name use during registration">
+                            <input type="text" name="username"  class="form-control" placeholder="Full Name use during registration" id="username">
                             <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                           </div>
                           <div class="form-group has-feedback">
-                            <input type="password" name="password" class="form-control" placeholder="********">
+                            <input type="password" name="password" class="form-control" placeholder="********" id="password">
                             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                           </div>
                           <div class="row">
-                            <div class="col-xs-8">
+                            <div class="col-xs-7">
                               <div class="checkbox icheck">
                                 <label>
                                 <input type="checkbox"> Keep me logged in
@@ -116,8 +116,9 @@
                               </div>
                             </div>
                             <!-- /.col -->
-                          <div class="col-xs-4">
+                          <div class="col-xs-5">
                             <button type="submit" class="btn btn-primary btn-block btn-flat" >Log In</button>
+                            <button type="button" class="btn btn-warning btn-block btn-flat" id='log-in-crs'>Log In w/CRS</button>
                           </div>
                           <!-- /.col -->
                           </div>
@@ -177,6 +178,28 @@
       increaseArea: '20%' /* optional */
     });
   });
+
+  $(document).ready(function(){
+    
+
+    $("#log-in-crs").on('click', function() {
+      var UserName = $("input[name=username]").val();
+      var Password = $("input[name=password]").val();
+
+      $.ajax({
+        url: "{{route('loginCRS')}}",
+        type: 'POST',
+        data: {
+          UserName : UserName,
+          Password : Password,
+          _token: '{{csrf_token()}}' ,
+        },
+        success: function(response){
+        }
+      });
+    });
+  });
+  
 </script>
 </body>
 </html>
