@@ -1,3 +1,4 @@
+
 <div class="box-body">
   <div class="callout callout-default" style="background: #ccc; margin-bottom: 0px">
     <div>
@@ -118,28 +119,31 @@ $(document).ready(function(){
   }
 
   $("#check_step_2").on("click", function() {
-    Swal.fire({
-            icon: 'success',
-            title: 'Step 2 is already saved in the session.',
-            showConfirmButton: false,
-            timer: 1500,
-            width: '850px'
-          }).then((result) => {
-            /* Read more about handling dismissals below */
-            if (result.dismiss === Swal.DismissReason.timer) {
-              $("#step_2").css({"background-color":"#3c8dbc", "color": "#ffffff"});
-              var next = $('#mytabs li.active').next()
+    Pace.restart()
+
+    // Pace.on('done', function() {
+      Swal.fire({
+        icon: 'success',
+        title: 'Step 2 is already saved in the session.',
+        showConfirmButton: false,
+        timer: 1500,
+        width: '850px'
+      }).then((result) => {
+        /* Read more about handling dismissals below */
+        if (result.dismiss === Swal.DismissReason.timer) {
+          $("#step_2").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+          var next = $('#mytabs li.active').next()
               next.length?
               next.find('a').click():
               $('#myTab li a')[2].click();
 
               $("#li_step_3").attr("class", "able");
               $("#step_3").attr("data-toggle", "tab");
-              location.reload();
+
             }
           });
+    // });
 
-    
   });
     
 });
@@ -163,40 +167,45 @@ function ProjectSize(ComponentGUID, Category) {
       if(input_size != ''){
         if(inRange(input_size, min, max))
         {
-          $.ajax({
-            url: "{{route('SecondStep')}}",
-            type: 'POST',
-            data: {
-              input_size : input_size,
-              second : 1,
-              ComponentGUID : ComponentGUID,
-              _token: '{{csrf_token()}}',
-            },
-            success: function(response)
-            {
-              Swal.fire({
-                icon: 'success',
-                title: 'Step 2 is already saved in the session.',
-                showConfirmButton: false,
-                timer: 1500,
-                width: '850px'
-              }).then((result) => {
-                /* Read more about handling dismissals below */
-                if (result.dismiss === Swal.DismissReason.timer) {
-                  $("#step_2").css({"background-color":"#3c8dbc", "color": "#ffffff"});
-                  var next = $('#mytabs li.active').next()
-                  next.length?
-                  next.find('a').click():
-                  $('#myTab li a')[2].click();
+          Pace.restart()
+          // Pace.on('done', function() {
+            $.ajax({
+              url: "{{route('SecondStep')}}",
+              type: 'POST',
+              data: {
+                input_size : input_size,
+                second : 1,
+                ComponentGUID : ComponentGUID,
+                _token: '{{csrf_token()}}',
+              },
+              success: function(response)
+              {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Step 2 is already saved in the session.',
+                  showConfirmButton: false,
+                  timer: 1500,
+                  width: '850px'
+                }).then((result) => {
+                  /* Read more about handling dismissals below */
+                  if (result.dismiss === Swal.DismissReason.timer) {
+                    
+                    $("#step_2").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+                      var next = $('#mytabs li.active').next()
+                      next.length?
+                      next.find('a').click():
+                      $('#myTab li a')[2].click();
 
-                  $("#li_step_3").attr("class", "able");
-                  $("#step_3").attr("data-toggle", "tab");
-                  location.reload();
-                }
-              });
-              
-            }
-          });
+                      $("#li_step_3").attr("class", "able");
+                      $("#step_3").attr("data-toggle", "tab");
+
+                    }
+                });
+                
+              }
+            });
+          // });
+          
         } else {
           Swal.fire('Your value is out of range');
         }

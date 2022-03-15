@@ -96,7 +96,6 @@
       var number = '';
     }
 
-    console.log(stored);
 
     ///check if there's already an input in session
     var step4_check = "{{ Session::has('step_4_status') ? Session::get('step_4_status') : 'N/A' }}";
@@ -163,9 +162,7 @@
       });
       center_location = [121.045145, 14.656689];
     }
-    console.log(description);
-    console.log(number);
-    console.log(center_location);
+    
     require([
         "esri/tasks/Locator",
         "esri/Map",

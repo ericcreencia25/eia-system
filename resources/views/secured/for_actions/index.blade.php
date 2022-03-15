@@ -93,6 +93,30 @@ var UserOffice = "{{session('data')['UserOffice']}}";
 var UserName = "{{session('data')['UserName']}}";
 var UserRole = "{{session('data')['UserRole']}}";
 $(document).ready(function(){
+
+  //Login success pop-up
+  var message = "{{session()->get('msg')}}";
+  if(message != ''){
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
+
+    Toast.fire({
+      icon: 'success',
+      title: message
+    })
+
+  }
+  
+
   ResetSession();
   localStorage.clear();
 
@@ -123,42 +147,34 @@ $(document).ready(function(){
     language: 
     {
       'loadingRecords': '&nbsp;',
-      'processing': '<div class="spinner"></div>Processing...'
+      'processing': '<div class="spinner"><img src="../../img/apply.png" /></div>Processing...'
     }
   });
-
-  // var table = $('#ForActionTable').DataTable();
-
-  // // #myInput is a <input type="text"> element
-  // $('#searchInput').on('keyup change', function () {
-  //     table.search(this.value).draw();
-  // });
-
-
 });
 
-  function ResetSession(){
-    $.ajax({
-      url: "{{route('ResetInputs')}}",
-      type: 'GET',
-      success: function(response){
-      }
-    });
-  }
+function ResetSession(){
+  $.ajax({
+    url: "{{route('ResetInputs')}}",
+    type: 'GET',
+    success: function(response){
+    }
+  });
+}
 
-  function NewDocument(result){
-    var href = "NewDocument/";
 
-    $.ajax({
-        url: "{{route('putExistingDataInSession')}}",
-        type: 'POST',
-        data: {
-          ProjectGUID : result,
-          _token: '{{csrf_token()}}' ,
-        },
-        success: function(response){
-          document.location = href + result;
-        }
-      }); 
-  }
+function NewDocument(result){
+  var href = "NewDocument/";
+
+  $.ajax({
+    url: "{{route('putExistingDataInSession')}}",
+    type: 'POST',
+    data: {
+      ProjectGUID : result,
+      _token: '{{csrf_token()}}',
+    },
+    success: function(response){
+      document.location = href + result;
+    }
+  }); 
+}
 </script>

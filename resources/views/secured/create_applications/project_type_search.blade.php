@@ -19,6 +19,10 @@
     white-space: normal
 }
 
+.align-left {
+  text-align: left;
+}
+
 </style>
 
 @section('header')
@@ -58,8 +62,9 @@
 
           <table class="table" id="projectType" style="width: 100%;  display: table;">
             <thead style=" background-color: #f5f6f8">
+              <th width="5%">Ref.ID</th>
               <th width="30%">CATEGORY</th>
-              <th width="30%">SPECIFIC TYPE</th>
+              <th width="25%">SPECIFIC TYPE</th>
               <th width="20%"><small>PROPOSED PROJECT SIZE <br> <span style="color:red;">(DO NOT SPLIT SIZE)</span> </small></th>
               <th width="10%"></th>
               <th width="10%"></th>
@@ -73,6 +78,8 @@
 
   </section>
 </div>
+
+<div id="modal-apply-permit"></div>
 @stop
 <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
@@ -99,38 +106,41 @@ $(document).ready(function(){
   localStorage.clear();
 
   $('#projectType').DataTable({
-      processing:true,
-      info:true,
-      ordering: false,
-      // serverSide : true,
-      scrollY: 350,
-      deferRender: true,
-      scroller:true,
-      searching : true,
+    processing:true,
+    info:true,
+    ordering: false,
+    // serverSide : true,
+    scrollY: 350,
+    deferRender: true,
+    scroller:true,
+    searching : true,
 
-      // bPaginate: false,
-      // bLengthChange: false,
-      // bInfo: false,
-      bAutoWidth: false,
+    // bPaginate: false,
+    // bLengthChange: false,
+    // bInfo: false,
+    bAutoWidth: false,
 
-      ajax: {
-        "url": "{{route('getProjectType')}}",
-        "type": "POST",
-        "data": {
-          ComponentGUID : '',
-          search : '',
-          ProjectSize : '',
-          _token: '{{csrf_token()}}' ,
-        },
+
+    ajax: {
+      "url": "{{route('getProjectType')}}",
+      "type": "POST",
+      "data": {
+        ComponentGUID : '',
+        search : '',
+        ProjectSize : '',
+        _token: '{{csrf_token()}}',
       },
-      columns: [
-      {data: 'Category', name: 'Category'},
-      {data: 'SpecificType', name: 'SpecificType'},
-      {data: 'ProjectSize', name: 'ProjectSize', className: "table-cell-edit"},
-      {data: 'ProjectSizeInput', name: 'ProjectSizeInput'},
-      {data: 'Action', name: 'Action'}
-      ]
-    });
+    },
+    columns: [
+    {data: 'ReferenceID', name: 'ReferenceID'},
+    {data: 'Category', name: 'Category'},
+    {data: 'SpecificType', name: 'SpecificType'},
+    {data: 'ProjectSize', name: 'ProjectSize', className: "table-cell-edit"},
+    {data: 'ProjectSizeInput', name: 'ProjectSizeInput'},
+    {data: 'Action', name: 'Action'}
+    ]
+  });
+
 
   var table = $('#projectType').DataTable();
 
@@ -139,48 +149,137 @@ $(document).ready(function(){
       table.search(this.value).draw();
   });
 
-
 });
 
-  function ResetSession(){
-    $.ajax({
-      url: "{{route('ResetInputs')}}",
-      type: 'GET',
-      success: function(response){
+function ResetSession(){
+  $.ajax({
+    url: "{{route('ResetInputs')}}",
+    type: 'GET',
+    success: function(response){
+    }
+  });
+}
+
+function NewDocument(result){
+  var href = "NewDocument/";
+
+  $.ajax({
+    url: "{{route('putExistingDataInSession')}}",
+    type: 'POST',
+    data: {
+      ProjectGUID : result,
+      _token: '{{csrf_token()}}',
+    },
+    success: function(response){
+      document.location = href + result;
+    }
+  });
+}
+
+function ProjectSize(ComponentthresholdGUID, ComponentGUID, ReportType){
+  var id = "#input_project_size_" + ComponentGUID;
+  var input_size = $(id).val();
+
+  $.ajax({
+    url: "{{route('getComponents')}}",
+    type: 'POST',
+    data: {
+      ReportType : ReportType,
+      ComponentGUID : ComponentGUID,
+      input_size : input_size,
+      _token: '{{csrf_token()}}',
+    },
+    success: function(result)
+    {
+      // #f39c12 - yellow
+      // #3c8dbc - blue
+      // #00a65a - green
+
+      if(result['ReportType'] === 'EIS'){
+        var buttonColor = '#00a65a';
+      }else if(result['ReportType'] === 'IEE'){
+        var buttonColor = '#3c8dbc';
+      }else if(result['ReportType'] === 'CNC Application'){
+        var buttonColor = '#f39c12';
+      }
+
+      if(result != ''){
+        if(result['ProjectSpecificSubType'] == 'NULL'){
+          var subtype = '';
+        } else {
+          var subtype = result['ProjectSpecificSubType'];
+        }
+
+        if(result['ProjectSpecificType'] == 'NULL'){
+          var specifictype = '';
+        } else {
+          var specifictype = result['ProjectSpecificType'];
+        }
+
+        var table = '<table class="table" style="width: 100%;  display: table;">';
+          table += '<tr>';
+          table += '<th style=" background-color: #f5f6f8" width="30%">CATEGORY</th>';
+          table += '<td><b><small>'+result['ProjectType'].toUpperCase() + '</b> ('+result['Category']+') </b> <br>' + result['ProjectSubType']+'</td>';
+          table += '</tr>';
+
+          table += '<tr>';
+          table += '<th style=" background-color: #f5f6f8"  width="30%">SPECIFIC TYPE</td>';
+          table += '<td><small>'+specifictype.toUpperCase() +'</b>' + subtype +'</td>';
+          table += '<tr>';
+
+          table += '<tr>';
+          table += '<th style=" background-color: #f5f6f8" width="20%"><small>PROJECT SIZE <br></td>';
+          table += '<td><b><small>'+result['Parameter'].toUpperCase() + '</b>' + '<br> Min: ' + result['Minimum']  + ' ' + result['UnitOfMeasure']  + '<br> Max: ' + result['Maximum'] + ' '  + result['UnitOfMeasure'] +'</td>';
+          table += '<tr>';
+
+          table += '<tr>';
+          table += '<th style=" background-color: #f5f6f8" width="20%"><small>PROPOSED PROJECT SIZE <br></td>';
+          table += '<td>'+ input_size + ' ' + result['UnitOfMeasure'].toUpperCase() +'</td>';
+          table += '<tr>';
+
+
+          table += '<tbody></tbody>';
+          table += '</table>';
+
+          var html = '<div class="align-left"><b>' +result['ProjectType'].toUpperCase() +'</b> <br>' + result['ProjectSubType'] + '</div><br>' + table ;
+
+          var button = result['ReportType'];
+
+          Swal.fire({
+            html:html,
+            width: 800,
+            showCancelButton: false,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Apply ' + button + ' Permit',
+            confirmButtonColor: buttonColor,
+          }).then((response)  => {
+            if (response.isConfirmed) {
+              if(result['ReportType'] === 'EIS'){
+                Swal.fire('Link for EIS Application');
+              }else if(result['ReportType'] === 'IEE'){
+                applyPermit(result, input_size);
+              }else if(result['ReportType'] === 'CNC Application'){
+                Swal.fire('Link for CNC Application');
+              }
+            }
+          });
+        } else {
+          Swal.fire('Your value is out of range');
+        }
       }
     });
-  }
+}
 
-  function NewDocument(result){
-    var href = "NewDocument/";
-
-    $.ajax({
-        url: "{{route('putExistingDataInSession')}}",
-        type: 'POST',
-        data: {
-          ProjectGUID : result,
-          _token: '{{csrf_token()}}' ,
-        },
-        success: function(response){
-          document.location = href + result;
-        }
-      }); 
-  }
-
-  function ProjectSize(ComponentGUID, Category, ReportType) {
-    var id = "#input_project_size_" + ComponentGUID;
-    var input_size = $(id).val();
-
-    var min = $(id).attr("min");
-
-    var max= $(id).attr("max");
-
-    
-
+  function applyPermit(result, input_size){
+    ReportType = result['ReportType'];
+    min =  result['Minimum'];
+    max = result['Maximum'];
+    ComponentGUID = result['GUID'];
     if(ReportType == 'IEE'){
       var Type = 'Initial Environmental Examination Checklist'
     } else {
-      var Type = '';
+      var Type = ReportType;
     }
 
     var html = 'Are you sure you want to apply to ' + Type + ' (' +ReportType+') ?';
@@ -203,7 +302,6 @@ $(document).ready(function(){
               url: "{{route('LinkProjectType')}}",
               type: 'POST',
               data: {
-                Category : Category,
                 ReportType : ReportType,
                 ComponentGUID : ComponentGUID,
                 input_size : input_size,

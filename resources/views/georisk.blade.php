@@ -907,6 +907,20 @@
 <script>
 
   $(document).ready(function(){
+    // $.ajax({
+    //     url: "{{route('tokenGeneration')}}",
+    //     type: 'POST',
+    //     data: {
+    //       client_id : '955fa9bd-59c4-4e47-b936-bffe0855ecfd',
+    //       client_secret : 'JXLOKsXakXXfqJUGep6bGjhgAYg3CQuobydrZygq',
+    //       _token: '{{csrf_token()}}',
+    //     },
+    //     success: function(response){
+
+    //       console.log(response);
+    //     }
+    //   });
+
     $('[data-mask]').inputmask();
 
     var data = localStorage.getItem("ReqStorage");

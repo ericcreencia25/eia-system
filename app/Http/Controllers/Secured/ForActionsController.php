@@ -192,7 +192,7 @@ class ForActionsController extends Controller
             return $details;
         })
         ->addColumn('Action', function($project){
-            $details =  '<button class="btn btn-block btn-flat" onclick="listOfAttachments('."'". $project->CreatedBy."', "."'". $project->ActivityGUID."'".')"><i class="fa fa-file-o"></i></button>';
+            $details =  '<button class="btn btn-block btn-flat" onclick="listOfAttachments('."'". $project->CreatedBy."', "."'". $project->ActivityGUID."'".')"><i class="fa fa-paperclip"></i></button>';
             return $details;
         })
         ->addColumn('Date', function($project){
@@ -240,7 +240,7 @@ class ForActionsController extends Controller
             return $details;
         })
         ->addColumn('Action', function($project){
-            $details =  '<button class="btn btn-block btn-flat" onclick="getlistOfAttachments('."'". $project->CreatedBy."', "."'". $project->ActivityGUID."'".')"><i class="fa fa-file-o"></i></button>';
+            $details =  '<button class="btn btn-block btn-flat" onclick="getlistOfAttachments('."'". $project->CreatedBy."', "."'". $project->ActivityGUID."'".')"><i class="fa fa-paperclip"></i></button>';
             return $details;
         })
         ->addColumn('PostedOn', function($project){
@@ -1607,6 +1607,9 @@ class ForActionsController extends Controller
     {
         $ProjectGUID = $req['ProjectGUID'];
         $UserName = Session::get('data')['UserName'];
+        $UserOffice = Session::get('data')['UserOffice'];
+        $Screened = Session::get('data')['Screened'];
+        $Email = Session::get('data')['AlternateEmail'];
         $todate = date('Y-m-d H:i:s');
 
         DB::table('project')
@@ -1616,12 +1619,21 @@ class ForActionsController extends Controller
             'AcceptedDate' => $todate
         ]);
 
+        DB::table('aspnet_users')
+        ->where('UserOffice', '=', $UserOffice)
+        ->where('UserName', '=', $UserName)
+        ->where('AlternateEmail', '=', $Email)
+        ->update([
+            'Screened' => $Screened + 1,
+        ]);
+
         return "Success";
     }
 
     public function getActionRequired(Request $req)
     {
         $UserName = $req['selected_user'];
+        $ActionRequired = $req['ActionRequired'];
 
         $actionrequiredperson = ActionRequiredPerson::where('UserName', '=', $UserName)
         ->where('Active', 1)
@@ -1630,7 +1642,12 @@ class ForActionsController extends Controller
         $array = [];
         foreach ($actionrequiredperson as $key => $arp) {
             $data = [];
-            $data = '<option value="'.$arp['Action'].'"> '.$arp['Action'].'</option>';
+            if($arp['Action'] == $ActionRequired){
+                $data = '<option value="'.$arp['Action'].'" selected> '.$arp['Action'].'</option>';
+            } else {
+                $data = '<option value="'.$arp['Action'].'"> '.$arp['Action'].'</option>';
+            }
+            
 
             $array[] = $data;
         }

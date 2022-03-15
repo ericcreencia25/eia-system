@@ -424,10 +424,46 @@ var CurrentStatus = "{{$project['Status']}}";
 
 var AdditionalRequirements = [];
 
+
+//Endorse Application tab
+var data1 = localStorage.getItem("ReqStorage1");
+var ReqStorage1 = data1 ? JSON.parse(data1) : [];
+var stored1 = localStorage.getItem("ReqStorage1");
+    stored1 = JSON.parse(stored1 || '[]');
+
 $(document).ready(function() {
     
     var data = localStorage.getItem("ReqStorage");
     var ReqStorage = data ? JSON.parse(data) : [];
+
+    if(stored1.length > 0) {
+        $("#destination").val(stored1[0]['destination']);
+        
+
+        var option = '<option value="For Review"> For Review</option>'; 
+            option += '<option value="For Evaluation">For Evaluation</option>';
+            $("#user_office").html(option);
+
+            UserListsOnRegion();
+
+            $("#user_list").html('');
+
+        $.ajax({
+            url: "{{route('getActionRequired')}}",
+            type: 'POST',
+            data: {
+                selected_user : stored1[0]['selected_user'],
+                ActionRequired : stored1[0]['ActionRequired'],
+                _token: '{{csrf_token()}}',
+            },
+            success: function(result){
+                $("#ActionRequired").html(result);
+            }
+            // $("#ActionRequired").val(stored1[0]['ActionRequired']);
+        });
+
+        
+    }
   
     var ProjectName = "{{ $project['ProjectName']}}";
     var ProjectAddress = "{{$project['Address']}}";
@@ -440,8 +476,6 @@ $(document).ready(function() {
 
     var AcceptedBy = "{{ $project['AcceptedBy']}}";
     var AcceptedDate = "{{ $project['AcceptedDate']}}";
-
-    console.log(AcceptedBy);
  
     
     $.ajax({
@@ -459,10 +493,15 @@ $(document).ready(function() {
                 var link = url + '/' + filepath;
                 var arrayCount = 1;
 
-                var details = '<td style="width:30%;"><p class="help-block">Uploaded file here: <br> <a href="'+ link +'" target="_blank" id="filesCheck">'+  response['Description']  +'</a>( ' + response['FileSizeInKB'] + ' ) </p></td>';
-                details += '<td style="width: 60px"><button type="button" class="btn btn-default btn-sm" onclick="deleteUploadedFile('+"'"+response['ID']+"'"+')"><img src="../../img/trashbin.jpg" style="width:15px;" /></button></td>';
-                details += '<td></td>';
-                details += '<td style="width: 10px;"></td>';
+
+                var details = '<td><br><b><p class="help-block">Uploaded file here: <br></b><ul class="mailbox-attachments clearfix">';
+                details += '<li>';
+                details += '<span class="mailbox-attachment-icon"><i class="fa fa-file-pdf-o"></i>';
+                details += '</span>';
+                details += '<div class="mailbox-attachment-info">';
+                details += '<a href="'+ link +'" class="mailbox-attachment-name" target="_blank" id="filesCheck"><i class="fa fa-paperclip"></i>'+  response['Description']  +'.pdf </a>';
+                details += '<span class="mailbox-attachment-size" title="Delete File">' + response['FileSizeInKB'] + ' KB<a class="btn btn-default btn-xs pull-right" onclick="deleteUploadedFile('+"'"+response['ID']+"'"+')"><i class="fa  fa-trash-o"></i></a></span>';
+                details += '</div></li></ul></td>';
 
                 
 
@@ -653,8 +692,10 @@ $(document).ready(function() {
 
 
     $("#destination").on('change', function() {
-        var destination = $("#destination").val();
+        ReqStorage1 = [];
 
+        var destination = $("#destination :selected").val();
+        
         if(destination == 'Proponent') {
             var option = '<option value="For Submission of Basic Requirements"> For Submission of Basic Requirements</option>'; 
             option += '<option value="For Submission of Additional Information">For Submission of Additional Information</option>';
@@ -674,22 +715,72 @@ $(document).ready(function() {
 
             $("#user_list").html('');
         }
+
+        var selected_user = $("#user_list :selected").val();
+        var ActionRequired = $("#ActionRequired :selected").val();
+
+        var req1 = {
+            'destination': destination,
+            'selected_user' : selected_user,
+            'ActionRequired' : ActionRequired
+        }
+
+        ReqStorage1.push(req1);
+
+        ///put additional requirements into local storage
+        localStorage.setItem("ReqStorage1", JSON.stringify(ReqStorage1));
+
     });
 
     $("#user_list").on('change', function() {
-        var selected_user = $(this).val().toLowerCase();
+        ReqStorage1 = [];
+
+        var destination = $("#destination :selected").val();
+        var selected_user = $("#user_list :selected").val();
+        var ActionRequired = $("#ActionRequired :selected").val();
+
+        var req1 = {
+            'destination': destination,
+            'selected_user' : selected_user,
+            'ActionRequired' : ActionRequired
+        }
+
+        ReqStorage1.push(req1);
+
+        ///put additional requirements into local storage
+        localStorage.setItem("ReqStorage1", JSON.stringify(ReqStorage1));
 
         $.ajax({
             url: "{{route('getActionRequired')}}",
             type: 'POST',
             data: {
                 selected_user : selected_user,
+                ActionRequired : ActionRequired,
                 _token: '{{csrf_token()}}',
             },
             success: function(result){
                 $("#ActionRequired").html(result);
             }
         });
+    });
+
+    $("#ActionRequired").on('change', function() {
+        ReqStorage1 = [];
+
+        var destination = $("#destination :selected").val();
+        var selected_user = $("#user_list :selected").val();
+        var ActionRequired = $("#ActionRequired :selected").val();
+
+        var req1 = {
+            'destination': destination,
+            'selected_user' : selected_user,
+            'ActionRequired' : ActionRequired
+        }
+
+        ReqStorage1.push(req1);
+
+        ///put additional requirements into local storage
+        localStorage.setItem("ReqStorage1", JSON.stringify(ReqStorage1));
     });
 
 
@@ -1339,6 +1430,15 @@ function getlistOfAttachments(CreatedBy, ActivityGUID)
 function UserListsOnRegion()
 {
     // user_list
+    // var selectedUser = stored1[0]['selected_user'];
+
+    if(stored1.length > 0){
+        var selectedUser = stored1[0]['selected_user'];
+    } else {
+        var selectedUser = '';
+    }
+
+    // $("#user_list").val(stored1[0]['selected_user']);
     var Region = "{{$project['Region']}}"; 
 
     $.ajax({
@@ -1352,7 +1452,10 @@ function UserListsOnRegion()
             $.each(response, function(index, itemData) {
                 if(itemData['OnLeaveReceiver'] == 1){
                     var option = '<option value="OnLeaveReceiver">' + itemData['UserName'] + ' ('+ itemData['UserRole'] + ') -- On Leave -- ' +'</option>';
-                } else {
+                } else if(itemData['UserName'] == selectedUser){
+                    var option = '<option value="'+itemData['UserName']+'" selected>' + itemData['UserName'] + ' ('+ itemData['UserRole'] + ') ' +'</option>';
+                } 
+                else {
                     var option = '<option value="'+itemData['UserName']+'">' + itemData['UserName'] + ' ('+ itemData['UserRole'] + ') ' +'</option>';
                 }
               
@@ -1465,7 +1568,7 @@ function deleteUploadedFile(ID)
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Okay'
+        confirmButtonText: 'Confirm'
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({

@@ -43,10 +43,10 @@ class ApiController extends Controller
 
     public function tokenGeneration(Request $req)
     {
-        // $response = Http::post('https://api.georisk.gov.ph/generate/token', [
-        //     'client_id' => '955fa9bd-59c4-4e47-b936-bffe0855ecfd',
-        //     'client_secret' => 'JXLOKsXakXXfqJUGep6bGjhgAYg3CQuobydrZygq',
-        // ]);
+        $response = Http::post('https://api.georisk.gov.ph/generate/token', [
+            'client_id' => '955fa9bd-59c4-4e47-b936-bffe0855ecfd',
+            'client_secret' => 'JXLOKsXakXXfqJUGep6bGjhgAYg3CQuobydrZygq',
+        ]);
 
 
     //     $response = $client->request('POST', '/api/user', [
@@ -55,6 +55,8 @@ class ApiController extends Controller
     //         'Accept' => 'application/json',
     //     ],
     // ]);
+
+        return $response;
 
     }
 
@@ -70,7 +72,7 @@ class ApiController extends Controller
         $latitude = $req['latitude'];
 
 
-        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NTVmYTliZC01OWM0LTRlNDctYjkzNi1iZmZlMDg1NWVjZmQiLCJqdGkiOiI1ODk1YTE1ZTMxYTcwNGI1ZTRlYzYyMzFiNzdiM2JmNjk1ODQ5ZjI5YTBjNWM5NTE1MjgwZGRiZjAwM2JlMjE5NzJkOWZlMWIyYzAyMTlhMyIsImlhdCI6MTY0NTA1ODMyMywibmJmIjoxNjQ1MDU4MzIzLCJleHAiOjE2NDYyNjc5MjMsInN1YiI6IiIsInNjb3BlcyI6WyJhc3Nlc3NtZW50cyJdfQ.dCoTUwlGINX5a95uHr7FUtw8ClXlcDGkOmRFmc0ZeRRgyW1m0CCBoi9FNzK6EBAX532rHw45uLvCPyq-D7E8wQfJTo3Ah3F6q28nzsUZckFS5v8TZKKH1WiVL-ZWFmJ9KeHSeD12xL8-sgh3sjCSm_zHnTnFS9jFxOKlWZujz30P-u4YJPfgAU2xsKaS-xSPj58cYbCVu9KW2344eSN8vVB-Rp8FhqRefH_PjWXEhY4p3wTaxNqMih7p2dc5eMmYHi1Cl2DIzBFQcPHUV68DZ1kYtiJItI8d7oZvMfsRJzt5PxCqHhDUMh1ZjJv80Lx6PnbKRRUd-SNbt5rVXV5RUvWlwK2KYaLpR8f0js3XOJm9cU_Z3XruUYmgCepwqhYNxzrOXusnCj2MQ_RneZmv5VRdoHlZsIaiHYjKxaxrcODi_k03LpgoL_JBjExRwY9hRYRbXED_s-KccgC3MWhxUumgP9HmS5ncgvQSfbLdIu5ADggoTlNSM1Sv9Jct_sja66bXWlESPsC4AELHVRDYYvcEpd8FxezN8dRtmGmaNyoQ823yYFzediQdH_s-nU4Vh2ref8kr7xbQfamPX0gRxSdvqRcGXQJBVXC0Pj-Yqyd_eXmQzj1bDaa5z4Xrv8urq_zTY9ahn3Vf6xtmihlrEQXHM41lt-1q1H1rkC7J50E';
+        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NTVmYTliZC01OWM0LTRlNDctYjkzNi1iZmZlMDg1NWVjZmQiLCJqdGkiOiIyZjE3ZDYzMDNmNDYwYWE0ZDM4MGJjNzE1MzcxZmE3OTI5MjUzODIwMmNlNDcyZDMxYzAyYjFlNDNmNzUyYzg5NTAzY2Q0ODIyOWUzYjFhOCIsImlhdCI6MTY0NjcyMTAzNSwibmJmIjoxNjQ2NzIxMDM1LCJleHAiOjE2NDc5MzA2MzQsInN1YiI6IiIsInNjb3BlcyI6WyJhc3Nlc3NtZW50cyJdfQ.WtJFZLP5N7zVKSIUKJVHh736tqd68Qt3GRNx27O30evtDNcB9EzKtUHFNp9tzBSRHTe9wT2pnqEU0U7nvR08XB7qxkrL77QXHaO9YmEUJ1TqsKEIAM9j023Cv2UJ3upys4-B8U8uDwnnkOdComUW-3cenMykirZ67CWhgXSspViVBzGjl_Jfu0XHMLbyA1C2M-_hvHekM6TgHY9Qj2Hzi3goqH6Sb0yYPQsDlBBF6UMJY_EIgjGmo09bLWojY7RlI-Nn-lGIgYx2sQ5RmCqbE7pZreP-44cWPa33cE0K9ajMjYQNHeIfopb78-Po51tFHN92WFEVThiukdl7KSNC-v0wZdOHiCooKIQ0S7spTiV0vkveLBqBOwdGv1EXNWzWSCrgIlqMbkV7m86_CNXsw-lMWPhSR2C4lDYamovqvuHgiBfaML4xpGc3OWO8BkqvmquiF0QalCNDRvR2dSV1bs9EJSRGKwoF8R87IWuWFQIp0XNiybK2SxnTQ3Z6Vn0tWalul4_EVXvstNDO9DPCThUCD_Ug-EqDkr8D_hXyxJptxJ10KsJdbRTJzRF7EXh_pQs9AjvUsm0XCedeLYdKzPQ08JAxzimPA5biFZWswKXP1MD_ia02V3CrQAinJtIpIyK8KvE8gqhEvtDYlNotzBFp4z_c4BPHuVmj2muitRo';
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer '.$token

@@ -19,62 +19,67 @@
 $(document).ready(function(){
   $('#check_step_3').on("click", function() {
     var description = $("#description_input").val();
-
+    Pace.restart()
     if(description != ''){
-      $.ajax({
-        url: "{{route('ThirdStep')}}",
-        type: 'POST',
-        data: {
-          description : description,
-          third:1,
-          _token: '{{csrf_token()}}' ,
-        },
-        success: function(response){
-          Swal.fire({
-            icon: 'success',
-            title: 'Step 3 is already saved in the session.',
-            showConfirmButton: false,
-            timer: 1500,
-            width: '850px'
-          }).then((result) => {
-            /* Read more about handling dismissals below */
-            if (result.dismiss === Swal.DismissReason.timer) {
-              $("#step_3").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+      // Pace.on('done', function() {
+        $.ajax({
+          url: "{{route('ThirdStep')}}",
+          type: 'POST',
+          data: {
+            description : description,
+            third:1,
+            _token: '{{csrf_token()}}' ,
+          },
+          success: function(response){
+            Swal.fire({
+              icon: 'success',
+              title: 'Step 3 is already saved in the session.',
+              showConfirmButton: false,
+              timer: 1500,
+              width: '850px'
+            }).then((result) => {
+              /* Read more about handling dismissals below */
+              if (result.dismiss === Swal.DismissReason.timer) {
+                $("#step_3").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 
-              var next = $('#mytabs li.active').next()
-              next.length?
-              next.find('a').click():
-              $('#myTab li a')[3].click();
-              $("#li_step_4").attr("class", "able");
-              $("#step_4").attr("data-toggle", "tab");
+                var next = $('#mytabs li.active').next()
+                next.length?
+                next.find('a').click():
+                $('#myTab li a')[3].click();
+                $("#li_step_4").attr("class", "able");
+                $("#step_4").attr("data-toggle", "tab");
 
-              location.reload();
-            }
-          });
-        }
-      });
-    }else{
-      $.ajax({
-        url: "{{route('ThirdStep')}}",
-        type: 'POST',
-        data: {
-          description : description,
-          third:0,
-          _token: '{{csrf_token()}}' ,
-        },
-        success: function(response){
-          Swal.fire({
-            icon: 'error',
-            title: 'Notifications!',
-            text: 'You need to provide the description of the proposed project.',
-            // footer: '<a href="">Why do I have this issue?</a>',
-            width: '850px'
-          });
-
-          $("#step_3").css({"background-color":"#dd4b39", "color": "#ffffff"});
-        }
-      });
+                // location.reload();
+                
+              }
+            });
+          }
+        });
+      // });
       
+    }else{
+      // Pace.on('done', function() {
+        $.ajax({
+          url: "{{route('ThirdStep')}}",
+          type: 'POST',
+          data: {
+            description : description,
+            third:0,
+            _token: '{{csrf_token()}}' ,
+          },
+          success: function(response){
+            Swal.fire({
+              icon: 'error',
+              title: 'Notifications!',
+              text: 'You need to provide the description of the proposed project.',
+              // footer: '<a href="">Why do I have this issue?</a>',
+              width: '850px'
+            });
+
+            $("#step_3").css({"background-color":"#dd4b39", "color": "#ffffff"});
+          }
+        });
+      // });
     }
   });
 

@@ -35,7 +35,7 @@ class AspnetUserController extends Controller
 
     public function login()
     {
-         return view('auth.login');
+        return view('auth.login');
     }
 
     public function loginUser(Request $req)
@@ -68,9 +68,9 @@ class AspnetUserController extends Controller
 
 
             if($user->UserRole == 'Evaluator'){
-                return redirect('default');
+                return redirect('default')->with('msg', 'Hi, '.$user->UserName.'! You signed in successfully');
             }else{
-                return redirect('default');
+                return redirect('default')->with('msg', 'Hi, '.$user->UserName.'! You signed in successfully');
             }
             
         }else{
@@ -109,14 +109,15 @@ class AspnetUserController extends Controller
             'project.ProjectName', 
             'project.Region AS Region', 
             'project.GUID AS ProjectGUID', 
-            'project.UpdatedDate AS UpdatedDate', 
+            // 'project.UpdatedDate AS UpdatedDate', 
 
             'projectactivity.Status', 
             'projectactivity.Details AS Remarks', 
             'projectactivity.GUID AS ActivityGUID', 
             'projectactivity.RoutedTo', 
             'projectactivity.RoutedFrom', 
-            'projectactivity.CreatedDate'
+            'projectactivity.CreatedDate',
+            'projectactivity.UpdatedDate AS UpdatedDate', 
         )
         ->Join('projectactivity', function ($join) {
             $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
@@ -127,9 +128,9 @@ class AspnetUserController extends Controller
         ->where('projectactivity.Status', '<>', "For Screening")
         ->where('projectactivity.RoutedTo', '=', $UserName)
         ->where('project.CreatedBy', '=', $UserName)
-        ->where('project.UpdatedDate', '>=', '2019-01-01')
-        ->where('project.UpdatedDate', '<=', $tomorrow)
-        ->orderBy('project.UpdatedDate', 'DESC')
+        ->where('projectactivity.UpdatedDate', '>=', '2019-01-01')
+        ->where('projectactivity.UpdatedDate', '<=', $tomorrow)
+        ->orderBy('projectactivity.UpdatedDate', 'DESC')
         ->groupBy('project.GUID')
         ->get();
 

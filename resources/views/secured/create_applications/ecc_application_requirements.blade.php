@@ -11,9 +11,9 @@
     <div class="box-body no-padding">
         <table class="table table-bordered" id="ApplicationRequirements" style="width: 100%;  display: table; table-layout: fixed;" >
             <thead>
-                <th style="width: 10%">Count</th>
+                <th style="width: 5%; text-align: center"></th>
                 <th style="width: 50%">Requirements</th>
-                <th style="width: 40%">Files</th>
+                <th style="width: 45%">Files</th>
             </thead>
             <tbody></tbody>
         </table>
@@ -147,7 +147,19 @@
                     processData: false,
                     dataType: 'json',
                     beforeSend: function() {
-                        $('#overlay').show();
+                        let timerInterval
+                        Swal.fire({
+                          // title: 'Auto close alert!',
+                          html: 'Uploading attachment...',
+                          timer: 2000,
+                          timerProgressBar: true,
+                          didOpen: () => {
+                            Swal.showLoading()
+                          },
+                          willClose: () => {
+                            clearInterval(timerInterval)
+                          }
+                        })
                     },
                     success: function(response){
 

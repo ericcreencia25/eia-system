@@ -123,9 +123,10 @@ class NewApplicationsController extends Controller
                 'componentthreshold.Maximum',
                 'componentthreshold.ReportType as ReportType',
                 'componentthreshold.GUID as componentthresholdGUID',
+                'componentthreshold.ReferenceID',
             )
-            // ->where('componentthreshold.Category', '=', 'NECP')
-            // ->where('componentthreshold.ReportType', '=', 'IEE')
+            ->orderByRaw('componentthreshold.ReferenceID')
+            ->groupBy('component.GUID')
             ->get();
         // }
         
@@ -148,7 +149,7 @@ class NewApplicationsController extends Controller
                 $specifictype = $component->ProjectSpecificType;
             }
 
-            $details =  Str::upper($specifictype) . '<br>'. $subtype;
+            $details =  $specifictype . '<br>'. $subtype;
             return $details;
         })
         ->addColumn('ProjectSize', function($component)  use ($ProjectSize){
@@ -160,27 +161,31 @@ class NewApplicationsController extends Controller
         })
         ->addColumn('ProjectSizeInput', function($component)  use ($ProjectSize){
 
-            $details = '<div class="input-group input-group-lg col-md-12" ">
+            // $details = '<div class="input-group input-group-lg col-md-12" ">
                 
-                <input type="number" id="input_project_size_'.$component->componentthresholdGUID.'"  class="form-control" value="'.$ProjectSize.'"  min="'.$component->Minimum.'" max="'.$component->Maximum.'" style="height: 70px">
+            //     <input type="number" id="input_project_size_'.$component->componentthresholdGUID.'"  class="form-control" value="'.$ProjectSize.'"  min="'.$component->Minimum.'" max="'.$component->Maximum.'" style="height: 70px">
+            //   </div>';
+
+              $details = '<div class="input-group input-group-lg col-md-12" ">
+                
+                <input type="number" id="input_project_size_'.$component->GUID.'"  class="form-control" style="height: 70px">
               </div>';
 
 
             return $details;
         })
         ->addColumn('Action', function($component){
-            // $details = '<input type="image" name="" id="" title="Click here to add entry" src="../img/SelectBlue.png" align="absmiddle" style="width:20px;">';
-            // $details = '<button class="btn btn-default btn-lg" onclick="ProjectSize('."'". $component->GUID."', ". 
-            // "'". $component->Category."'".')"><img src="../img/selectblue.png" style="width:24px;" /></button>';
 
-            if($component->ReportType === 'EIS'){
-                $details = '<button type="button" class="btn btn-block btn-success btn-sm" style="margin-top: 20px" onclick="ProjectSize(\''.$component->componentthresholdGUID.'\', \''.$component->GUID.'\', \''.$component->ReportType.'\')" disabled>Apply Permit</button>';
+            // if($component->ReportType === 'EIS'){
+            //     $details = '<button type="button" class="btn btn-block btn-success btn-sm" style="margin-top: 20px" onclick="ProjectSize(\''.$component->componentthresholdGUID.'\', \''.$component->GUID.'\', \''.$component->ReportType.'\')" disabled>Apply Permit</button>';
 
-            }else if($component->ReportType === 'IEE'){
-                $details = '<button type="button" class="btn btn-block btn-primary btn-sm" style="margin-top: 20px" onclick="ProjectSize(\''.$component->componentthresholdGUID.'\', \''.$component->GUID.'\', \''.$component->ReportType.'\')">Apply Permit</button>';
-            }else if($component->ReportType === 'CNC Application'){
-                $details = '<button type="button" class="btn btn-block btn-warning btn-sm" style="margin-top: 20px" onclick="ProjectSize(\''.$component->componentthresholdGUID.'\', \''.$component->GUID.'\', \''.$component->ReportType.'\')" disabled>Apply Permit</button>';
-            }
+            // }else if($component->ReportType === 'IEE'){
+            //     $details = '<button type="button" class="btn btn-block btn-primary btn-sm" style="margin-top: 20px" onclick="ProjectSize(\''.$component->componentthresholdGUID.'\', \''.$component->GUID.'\', \''.$component->ReportType.'\')">Apply Permit</button>';
+            // }else if($component->ReportType === 'CNC Application'){
+            //     $details = '<button type="button" class="btn btn-block btn-warning btn-sm" style="margin-top: 20px" onclick="ProjectSize(\''.$component->componentthresholdGUID.'\', \''.$component->GUID.'\', \''.$component->ReportType.'\')" disabled>Apply Permit</button>';
+            // }
+
+            $details = '<button type="button" class="btn btn-block btn-default btn-sm" style="margin-top: 20px" onclick="ProjectSize(\''.$component->componentthresholdGUID.'\', \''.$component->GUID.'\', \''.$component->ReportType.'\')">Apply Permit</button>';
             
 
             return $details;
@@ -191,6 +196,37 @@ class NewApplicationsController extends Controller
         ->make(true);
 
         // This type of project and its size falls under the Environmentally Critical Projects (ECPs). The ECC Online Application System covers only the Non-Environmentally Critical Projects (NECPs). For ECP Project, please coordinate with EMB Central Office - Environmnetal Impact Assessment and Management Division.
+    }
+
+    public function getComponents(Request $req)
+    {
+        $ComponentGUID = $req['ComponentGUID'];
+        $ReportType = $req['ReportType'];
+
+        $ProjectSize = number_format((float)$req['input_size'], 6, '.', '');
+
+        $component = Component::where('component.GUID', '=', $ComponentGUID)
+        ->Join('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
+
+        ->select(
+            'component.GUID as GUID',
+            'component.ProjectType as ProjectType',
+            'component.ProjectSubType as ProjectSubType',
+                'component.ProjectSpecificSubType as ProjectSpecificSubType',
+                'component.ProjectSpecificType as ProjectSpecificType',
+                'component.Parameter as Parameter',
+                'component.UnitOfMeasure as UnitOfMeasure',
+
+                'componentthreshold.Category as Category',
+                'componentthreshold.Minimum',
+                'componentthreshold.Maximum',
+                'componentthreshold.ReportType as ReportType',
+                'componentthreshold.GUID as componentthresholdGUID',
+            )
+        ->whereRaw($ProjectSize .'BETWEEN componentthreshold.Minimum AND componentthreshold.Maximum')
+        ->first();
+
+        return $component;
     }
 
     public function getProjectTypeStep2(Request $req)
@@ -236,7 +272,8 @@ class NewApplicationsController extends Controller
                 'componentthreshold.Category as Category',
                 'componentthreshold.Minimum',
                 'componentthreshold.Maximum',
-                'componentthreshold.ReportType'
+                'componentthreshold.ReportType',
+                'componentthreshold.ReferenceID',
             )
             // ->where('componentthreshold.Category', '=', 'NECP')
             ->where('componentthreshold.ReportType', '=', 'IEE')
@@ -420,9 +457,15 @@ class NewApplicationsController extends Controller
             $project_ID = ProjectApplicationRequirements::select('ID', 'Description')->where('Description', '=', $project->Description)
             ->first();
 
-            $details = '<div style="padding:3px; background-color:RGB(30, 126, 223); color:White;">
-                                Files: <span id="count_files_'.$project_ID->ID.'" title="Files Attached">'.$count.'</span>
-                            </div>';
+            // $details = '<div style="padding:3px; background-color:RGB(30, 126, 223); color:White;">
+            //                     Files: <span id="count_files_'.$project_ID->ID.'" title="Files Attached">'.$count.'</span>
+            //                 </div>';
+            if($count == 1){
+                $details = '<center><img id="" src="../img/checkroundedblue.jpg" style="width:30px; padding-top: 5px">';
+            }else{
+                $details = '';
+            }
+
             return $details;
         })
         ->addColumn('Requirements', function($project) use ($ActivityGUID){
@@ -1125,29 +1168,29 @@ class NewApplicationsController extends Controller
         ->first();
 
         
-        $now = new \DateTime(); 
+        // $now = new \DateTime(); 
 
-        DB::table('projectactivity')
-        ->where('GUID','=', $ProjectActivityGUID)
-        ->where('ProjectGUID', '=', $ProjectGUID)
-        ->update([
-            'Status' => 'For Screening',
-            'Details' => "ECC Application Requirements Submitted for Screening",
-            'Remarks' => $Remarks,
-            'RoutedTo' => $RouteTo->UserName,
-            'RoutedToOffice' => $province->ProcessingOffice,
-            'UpdatedDate' => $now->format('Y-m-d H:i:s')
-        ]);
+        // DB::table('projectactivity')
+        // ->where('GUID','=', $ProjectActivityGUID)
+        // ->where('ProjectGUID', '=', $ProjectGUID)
+        // ->update([
+        //     'Status' => 'For Screening',
+        //     'Details' => "ECC Application Requirements Submitted for Screening",
+        //     'Remarks' => $Remarks,
+        //     'RoutedTo' => $RouteTo->UserName,
+        //     'RoutedToOffice' => $province->ProcessingOffice,
+        //     'UpdatedDate' => $now->format('Y-m-d H:i:s')
+        // ]);
 
-        DB::table('project')
-        ->where('GUID','=', $ProjectGUID)
-        ->update([
-            'Stage' => 1,
-            'UpdatedBy' => $UserName,
-            'UpdatedDate' => $now->format('Y-m-d H:i:s')
-        ]);
+        // DB::table('project')
+        // ->where('GUID','=', $ProjectGUID)
+        // ->update([
+        //     'Stage' => 1,
+        //     'UpdatedBy' => $UserName,
+        //     'UpdatedDate' => $now->format('Y-m-d H:i:s')
+        // ]);
 
-        return $RouteTo->UserName;
+        // return $RouteTo->UserName;
     }
 
 

@@ -121,7 +121,7 @@ div.col-md-6 {
     </div>
   </div>
 
-  <div class="col-md-12" style="padding-top: 30px;">
+  <!-- <div class="col-md-12" style="padding-top: 30px;">
     <div class="col-md-6">
       Check here if the establishment is existing:
       <select class="form-control select2" style="width: 100%;">
@@ -148,7 +148,7 @@ div.col-md-6 {
       EMB ID
       <input type="text" class="form-control" placeholder="" id="" disabled>
     </div>
-  </div>
+  </div> -->
 
 </div>
 
@@ -272,6 +272,8 @@ div.col-md-6 {
 
     ///Check
     $('#check_step_5').on("click", function() {
+      Pace.restart()
+
       var proponent_name = $("#proponent_name").val();
       var landline_no = $("#landline_no").val();  
       var fax_no = $("#fax_no").val();  
@@ -316,27 +318,30 @@ div.col-md-6 {
 
       var check_error_message = error_message.length;
       if(check_error_message > 0){
-        $.ajax({
-        url: "{{route('FifthStep')}}",
-        type: 'POST',
-        data: {
-          data,
-          fifth : 0,
-          _token: '{{csrf_token()}}' ,
-        },
-        success: function(response){
-          Swal.fire({
-            icon: 'error',
-            title: 'Notifications!',
-            text: 'You need to completely fill-up the proponent and project information.',
-            // footer: '<a href="">Why do I have this issue?</a>',
-            width: '850px'
+        // Pace.on('done', function() {
+          $.ajax({
+            url: "{{route('FifthStep')}}",
+            type: 'POST',
+            data: {
+              data,
+              fifth : 0,
+              _token: '{{csrf_token()}}' ,
+            },
+            success: function(response){
+              Swal.fire({
+                icon: 'error',
+                title: 'Notifications!',
+                text: 'You need to completely fill-up the proponent and project information.',
+                // footer: '<a href="">Why do I have this issue?</a>',
+                width: '850px'
+              });
+
+
+              $("#step_5").css({"background-color":"#dd4b39", "color": "#ffffff"});
+            }
           });
-
-
-          $("#step_5").css({"background-color":"#dd4b39", "color": "#ffffff"});
-        }
-      });
+        // });
+        
       } else {
         var data = {
         proponent_name : proponent_name,
@@ -361,39 +366,40 @@ div.col-md-6 {
       }
 
       /// insert in session
-      $.ajax({
-        url: "{{route('FifthStep')}}",
-        type: 'POST',
-        data: {
-          data, 
-          fifth : 1,
-          _token: '{{csrf_token()}}' ,
-        },
-        success: function(response){
-          Swal.fire({
-            icon: 'success',
-            title: 'Step 5 is already saved in the session.',
-            showConfirmButton: false,
-            timer: 1500,
-            width: '850px'
-          }).then((result) => {
-            /* Read more about handling dismissals below */
-            if (result.dismiss === Swal.DismissReason.timer) {
-              $("#step_5").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+      // Pace.on('done', function() {
+        $.ajax({
+          url: "{{route('FifthStep')}}",
+          type: 'POST',
+          data: {
+            data, 
+            fifth : 1,
+            _token: '{{csrf_token()}}' ,
+          },
+          success: function(response){
+            Swal.fire({
+              icon: 'success',
+              title: 'Step 5 is already saved in the session.',
+              showConfirmButton: false,
+              timer: 1500,
+              width: '850px'
+            }).then((result) => {
+              /* Read more about handling dismissals below */
+              if (result.dismiss === Swal.DismissReason.timer) {
+                $("#step_5").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 
-              var next = $('#mytabs li.active').next()
-                next.length?
-                next.find('a').click():
-                $('#myTab li a')[5].click();
-                location.reload();
-            }
-          });
-          
-          // location.reload();
-        }
-      });
+                var next = $('#mytabs li.active').next()
+                  next.length?
+                  next.find('a').click():
+                  $('#myTab li a')[5].click();
+                  // location.reload();
+              }
+            });
+            
+            // location.reload();
+          }
+        });
 
-      
+      // });
 
       $("#step_6").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 

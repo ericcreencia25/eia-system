@@ -23,12 +23,12 @@ class CustomAuth
         if(($paths[0] == 'login' && Session::get('data') != null) || ($paths[0] == 'welcome' && Session::get('data') != null)){
             return redirect('default');
         }
-        // else if(
-        //     ($paths[0] != 'login' && !Session::get('data')) && 
-        //     ($paths[0] != 'login-user' && !Session::get('data')) && 
-        //     ($paths[0] != 'welcome' && !Session::get('data'))){
-        //     return redirect('welcome');
-        // }
+        else if(
+            ($paths[0] != 'login' && !Session::get('data')) && 
+            ($paths[0] != 'login-user' && !Session::get('data')) && 
+            ($paths[0] != 'welcome' && !Session::get('data'))){
+            return redirect('welcome');
+        }
 
 
         return $next($request);

@@ -25,9 +25,10 @@
   <!-- Select2 -->
   <link rel="stylesheet" href="../../adminlte/bower_components/select2/dist/css/select2.min.css">
 
+  <!-- Pace style -->
+  <link rel="stylesheet" href="../../adminlte/plugins/pace/pace.min.css">
+
   <link rel="stylesheet" href="../../adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
-  <!-- jvectormap -->
-  <link rel="stylesheet" href="../../adminlte/bower_components/jvectormap/jquery-jvectormap.css">
 
   <link rel="stylesheet" href="../../adminlte/dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -49,6 +50,9 @@
   <link rel="stylesheet" href="../../adminlte/dist/css/sweet-alert-2.css">
 
   <link rel="stylesheet" href="../../adminlte/dist/css/overlay-success.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css"/>
+    
 </head>
 <!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
 <body class="hold-transition skin-blue layout-top-nav">
@@ -59,7 +63,7 @@
       <div class="container">
         <div class="navbar-header">
           <a href="" class="navbar-brand" style="padding-top: 5px; padding-left: 0px;">
-            <img src="../img/denr1.png" width="40" height="40" class="d-inline-block align-top" alt="">
+            <img src="../../img/denr1.png" width="40" height="40" class="d-inline-block align-top" alt="">
           </a>
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
             <i class="fa fa-bars"></i>
@@ -140,7 +144,7 @@
             @yield('header')
 
             <!-- Main content -->
-            <section class="content container-fluid">
+            <section class="content container-fluid" id="container-fluid">
 
                 @yield('content')
 
@@ -168,10 +172,9 @@
 <script src="../../adminlte/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
 <script src="../../adminlte/plugins/input-mask/jquery.inputmask.extensions.js"></script>
 
+<!-- PACE -->
+<script src="../../adminlte/bower_components/PACE/pace.min.js"></script>
 
-<!-- jvectormap  -->
-<script src="../../adminlte/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="../../adminlte/plugins/jvectormap/jquery-jvectormap-ph-mill-en.js"></script>
 
 <!-- date-range-picker -->
 <script src="../../adminlte/bower_components/moment/min/moment.min.js"></script>
@@ -199,10 +202,13 @@
   $(document).ready(function(){
     $("#newApplication").click(function(){
       // var href = "NewDocument/";
-
+      ResetSession();
+      localStorage.clear();
 
       $.ajax({url: "{{route('createNewGUID')}}", 
         success: function(result){
+          
+
           document.location.href = "/NewDocument/" + result;
         }});
     });
@@ -219,4 +225,13 @@
     // }
 
   });
+
+function ResetSession(){
+  $.ajax({
+    url: "{{route('ResetInputs')}}",
+    type: 'GET',
+    success: function(response){
+    }
+  });
+}
 </script>

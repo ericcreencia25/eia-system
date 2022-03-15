@@ -87,6 +87,7 @@
 <script src="../../adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 
 <script>
+  $(document).ajaxStart(function() { Pace.restart(); });
   $(document).ready(function(){
     $('#reset_data').on("click", function() {
       $.ajax({
