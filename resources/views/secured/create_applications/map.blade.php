@@ -9,8 +9,6 @@
         alert('It seems like Geolocation, which is required for this page, is not enabled in your browser.');
     }
 
-    setTimeout(function(){ map.invalidateSize()}, 400);
-
   });
 
   function modalPolyLine(Area)
@@ -113,7 +111,7 @@
 
   function errorFunction(position) 
   {
-      alert('Error!');
+      alert('Error while getting your location!');
   }
     
   </script>
