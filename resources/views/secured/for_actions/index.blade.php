@@ -147,7 +147,7 @@ $(document).ready(function(){
     language: 
     {
       'loadingRecords': '&nbsp;',
-      'processing': '<div class="spinner"><img src="../../img/apply.png" /></div>Processing...'
+      'processing': '<div class="spinner"></div>Processing...'
     }
   });
 });
