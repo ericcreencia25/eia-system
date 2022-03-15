@@ -186,6 +186,8 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::post('/getProjectType', [NewApplicationsController::class, 'getProjectType'])->name('getProjectType');
 
+    Route::post('/getComponents', [NewApplicationsController::class, 'getComponents'])->name('getComponents');
+
     Route::post('/getProjectTypeStep2', [NewApplicationsController::class, 'getProjectTypeStep2'])->name('getProjectTypeStep2');
 
     Route::post('/getMunicipalities', [NewApplicationsController::class, 'getMunicipalities'])->name('getMunicipalities');
