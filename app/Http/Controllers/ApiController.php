@@ -126,6 +126,42 @@ class ApiController extends Controller
         return json_decode($res->getBody());
     }
 
+    public function companyData()
+    {
+
+        $emb_id = 'EMBR7-973470-105815';
+
+        $url = 'https://iis.emb.gov.ph/embis/api/Getdata/json_company_for_ecc?api_key=x&emb_id='.$emb_id;
+        
+        $client = new Client();
+        $res = $client->get($url);
+
+        $result = json_decode($res->getBody());
+
+        $rowData = [];
+
+        $rowData['emb_id'] = $result->emb_id;
+        $rowData['company_name'] = $result->company_name;
+        $rowData['establishment_name'] = $result->establishment_name;
+        $rowData['date_established'] = $result->date_established;
+        $rowData['house_no'] = $result->house_no;
+        $rowData['barangay_name'] = $result->barangay_name;
+        $rowData['city_name'] = $result->city_name;
+        $rowData['province_name'] = $result->province_name;
+        $rowData['region_name'] = $result->region_name;
+        $rowData['latitude'] = $result->latitude;
+        $rowData['longitude'] = $result->longitude;
+        $rowData['email'] = $result->email;
+        $rowData['contact_no'] = $result->contact_no;
+        $rowData['project_name'] = $result->project_name;
+        $rowData['int_comp_address'] = $result->int_comp_address;
+        $rowData['input_date'] = $result->input_date;
+        $rowData['affiliated'] = $result->affiliated;
+
+
+        return json_decode($res->getBody());
+    }
+
     // EMBR4B-1365400-79 
     // with establishment
 

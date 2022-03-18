@@ -629,8 +629,9 @@ class NewApplicationsController extends Controller
                 $raw[3] = $Geo->LongDeg .'°'. $Geo->LongMin . "'". $Geo->LongSec;
                 $raw[4] = $Geo->Latitude;
                 $raw[5] = $Geo->Longitude;
-                $raw[6] = "<button type='button' class='btn btn-danger' id='remove'>Remove</button>";
-                $raw[7] = $Geo->AreaGUID;
+                $raw[6] = '<button type="button" class="btn btn-default" id="remove" title="delete coordinates"><img src="../img/trashbin.jpg" style="width:15px;" /></button>';
+                $raw[7] = '<button type="button" class="btn btn-default" id="map-view"       onclick="clickMe('.$Geo->Latitude.', '."'".$Geo->Longitude."'".')" title="view by point"><img src="../img/map.png" style="width:17px;" /></button';
+                $raw[8] = $Geo->AreaGUID;
                 array_push($arrayGeo, $raw);
         }
 
@@ -736,7 +737,6 @@ class NewApplicationsController extends Controller
         } else {
             $req->session()->put('step_4_status', $fourth);
         }
-        
     }
 
     public function FifthStep(Request $req)
