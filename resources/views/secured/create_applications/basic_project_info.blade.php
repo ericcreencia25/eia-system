@@ -387,11 +387,11 @@ div.col-md-6 {
               if (result.dismiss === Swal.DismissReason.timer) {
                 $("#step_5").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 
-                var next = $('#mytabs li.active').next()
-                  next.length?
-                  next.find('a').click():
+                // var next = $('#mytabs li.active').next()
+                //   next.length?
+                //   next.find('a').click():
                   $('#myTab li a')[5].click();
-                  // location.reload();
+                  location.reload();
               }
             });
             

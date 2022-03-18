@@ -70,15 +70,16 @@
                         }).then((result) => {
                             /* Read more about handling dismissals below */
                             if (result.dismiss === Swal.DismissReason.timer) {
-                                // location.reload();
+                                
                                 Pace.restart()
 
                                 // Pace.on('done', function() {
-                                    var next = $('#mytabs li.active').next()
-                                        next.length?
-                                        next.find('a').click():
-                                        $('#myTab li a')[6].click();
+                                    // var next = $('#mytabs li.active').next()
+                                    //     next.length?
+                                    //     next.find('a').click():
+                                    $('#myTab li a')[6].click();
                                     // });
+                                    location.reload();
                             }
                         });
                     });

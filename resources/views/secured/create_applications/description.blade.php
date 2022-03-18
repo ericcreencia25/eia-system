@@ -42,14 +42,14 @@ $(document).ready(function(){
               if (result.dismiss === Swal.DismissReason.timer) {
                 $("#step_3").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 
-                var next = $('#mytabs li.active').next()
-                next.length?
-                next.find('a').click():
+                // var next = $('#mytabs li.active').next()
+                // next.length?
+                // next.find('a').click():
                 $('#myTab li a')[3].click();
                 $("#li_step_4").attr("class", "able");
                 $("#step_4").attr("data-toggle", "tab");
 
-                // location.reload();
+                location.reload();
                 
               }
             });

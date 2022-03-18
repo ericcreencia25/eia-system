@@ -180,8 +180,6 @@
   });
 
   $(document).ready(function(){
-    
-
     $("#log-in-crs").on('click', function() {
       var UserName = $("input[name=username]").val();
       var Password = $("input[name=password]").val();

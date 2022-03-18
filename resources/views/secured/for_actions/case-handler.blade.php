@@ -20,8 +20,7 @@
             <div class="col-md-9">
               <img id="" src="../img/doc1.jpg" style="width:38px;"><h1 class="box-title"><b>Applications for Action   -  </b></h1>
             </div>
-            <div class="col-md-3">
-              <!-- <div class="form-group"> -->
+            <!-- <div class="col-md-3">
                 <label>Date range:</label>
 
                 <div class="input-group">
@@ -30,9 +29,7 @@
                   </div>
                   <input type="text" class="form-control pull-right" id="reservation">
                 </div>
-                <!-- /.input group -->
-              <!-- </div> -->
-            </div>
+            </div> -->
             
           </div>
           <div class="box-body">
@@ -99,6 +96,8 @@ $(document).ready(function(){
     })
 
   }
+
+
 
   ResetSession();
   localStorage.clear();
@@ -213,5 +212,4 @@ function ResetSession(){
       }
     });
   }
-
 </script>

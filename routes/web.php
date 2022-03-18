@@ -176,6 +176,8 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::post('/login-user-crs', [ApiController::class, 'loginCRS'])->name('loginCRS');
 
+    Route::get('/company-data', [ApiController::class, 'companyData'])->name('companyData');
+
 
 
 /// NEW APPLICANT CONTROLLER

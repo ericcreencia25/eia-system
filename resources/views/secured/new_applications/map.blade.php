@@ -31,7 +31,7 @@
           $.each(response, function(index, value ) {
             if(value[0] == Area){
               areaType = value[1];
-              arr.push([parseFloat(value[4]) , parseFloat(value[5]) ]);
+              arr.push([value[4], value[5]]);
             }
           });
 
@@ -52,12 +52,12 @@
 
           var popup = L.popup();
 
-          // map.on("click", function(event) {
-          //   popup
-          //         .setLatLng(event.latlng)
-          //         .setContent("You clicked the map at " + event.latlng.toString())
-          //         .openOn(map);
-          // });
+          map.on("click", function(event) { 
+            popup
+                  .setLatLng(event.latlng)
+                  .setContent("You clicked the map at " + event.latlng.toString())
+                  .openOn(map);
+          });
 
           setTimeout(function(){ map.invalidateSize()}, 400);
         }
@@ -93,7 +93,6 @@
         maxZoom: 19,
         crossOrigin: true,
       }).addTo(map);
-
 
       var popup = L.popup();
 
