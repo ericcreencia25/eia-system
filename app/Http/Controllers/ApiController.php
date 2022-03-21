@@ -104,7 +104,7 @@ class ApiController extends Controller
         //     'password' => '1234567',
         // ]);
 
-        $client = new Client();
+        $client = new Client(['verify' => false]);
         $res = $client->get($url);
 
         $result = json_decode($res->getBody());
@@ -128,12 +128,8 @@ class ApiController extends Controller
 
     public function companyData()
     {
-
-        $emb_id = 'EMBR7-973470-105815';
-
-        $url = 'https://iis.emb.gov.ph/embis/api/Getdata/json_company_for_ecc?api_key=x&emb_id='.$emb_id;
-        
-        $client = new Client();
+        $url = 'https://iis.emb.gov.ph/embis/api/Getdata/json_company_for_ecc?api_key=x&emb_id=EMBR7-973470-105815';
+        $client = new Client(['verify' => false]);
         $res = $client->get($url);
 
         $result = json_decode($res->getBody());
