@@ -153,9 +153,8 @@ class ApiController extends Controller
         $rowData['int_comp_address'] = $result->int_comp_address;
         $rowData['input_date'] = $result->input_date;
         $rowData['affiliated'] = $result->affiliated;
-
-
-        return json_decode($res->getBody());
+        
+        return $rowData;
     }
 
     // EMBR4B-1365400-79 
