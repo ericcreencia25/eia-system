@@ -21,10 +21,16 @@
             <div style="padding:10px;">
                 <div class='col-md-12'>
                     <div class="col-md-1">
-                        <img src="../../img/gear.jpeg" style="width:80px;">
+                        <img src="../../img/gear.jpeg" style="width:40px;">
                     </div>
-                    <div class="col-md-11">
-                        <h3><b id="header-title"></b></h3>
+                    <div class="col-md-10">
+                        <h4><b id="header-title"></b></h4>
+                    </div>
+                    <div class="col-md-1">
+                        @if($project->Status == 'Approved')
+                        <a href="../../qr-code/{{$project['GUID']}}.png" id="pointer"  style="cursor: pointer;" download>
+                        <img title="Click to download QR Code" src="../../qr-code/{{$project['GUID']}}.png" style="width:60px;" alt="" download></a>
+                        @endif
                     </div>
                 </div>
 
@@ -254,7 +260,7 @@
                                         <div class="col-md-12">
                                             <div class="col-md-2"></div>
                                             <div class="col-md-2">
-                                                <input type="checkbox" id="IncludeAttachment"> Include attachments
+                                                <input type="checkbox" id="IncludeAttachment" checked> Include attachments
                                             </div>
                                             <div class="col-md-2"></div>
                                             <div class="col-md-4">

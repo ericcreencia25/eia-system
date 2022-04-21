@@ -31,7 +31,7 @@
           $.each(response, function(index, value ) {
             if(value[0] == Area){
               areaType = value[1];
-              arr.push([parseFloat(value[4]) , parseFloat(value[5]) ]);
+              arr.push([value[4], value[5]]);
             }
           });
 
@@ -52,12 +52,12 @@
 
           var popup = L.popup();
 
-          // map.on("click", function(event) {
-          //   popup
-          //         .setLatLng(event.latlng)
-          //         .setContent("You clicked the map at " + event.latlng.toString())
-          //         .openOn(map);
-          // });
+          map.on("click", function(event) { 
+            popup
+                  .setLatLng(event.latlng)
+                  .setContent("You clicked the map at " + event.latlng.toString())
+                  .openOn(map);
+          });
 
           setTimeout(function(){ map.invalidateSize()}, 400);
         }
@@ -87,24 +87,19 @@
 
       var container = L.DomUtil.get('map');
 
-      if(container != null){
-        container._leaflet_id = null;
-      } 
-
-      var map = L.map('map').setView([lat, long], 19);
+      var map = L.map('map').setView([lat, long], 16);
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
         maxZoom: 19,
         crossOrigin: true,
       }).addTo(map);
 
-
       var popup = L.popup();
 
       var marker = L.marker([lat, long]).addTo(map);
           marker.bindPopup("Your current location: " + lat + ', ' + long).openPopup();
 
-          map.on("click", function(event) {
+          map.on("click", function(event) { 
             popup
                 .setLatLng(event.latlng)
                 .setContent("You clicked the map at " + event.latlng.toString())

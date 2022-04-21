@@ -65,7 +65,13 @@
                             <tbody><tr>
                                 <td style="width:600px;">
                                     <select class='form-control' id='activitiyAttachments' name='activitiyAttachments'>
+                                        @if($project['Status'] == 'Approved')
+                                            <option value="Notarized ECC">
+                                               Notarized ECC
+                                            </option> 
+                                        @endif
                                     </select>
+                                    
 
                                     <!-- <select class="form-control" id="Attachments">
                                         @foreach($attachments as $attach)
@@ -157,6 +163,7 @@
             <br/>
             <h3>Please wait while saving your data...</h3>
         </div>
+<input id="NewActivityGUID" hidden>
 @stop
 <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
@@ -179,6 +186,8 @@ var GUID = "{{$project['GUID']}}";
 var ActivityGUID = "{{$project['ActivityGUID']}}";
 var CreatedBy = "{{$project['CreatedBy']}}";
 
+
+
 $(document).ready(function(){
     var ProjectName = "{{ $project['ProjectName']}}";
     var ProjectAddress = "{{$project['Address']}}";
@@ -186,7 +195,6 @@ $(document).ready(function(){
     var ProjectProvince = "{{$project['Province']}}";
     var ProjectPurpose = "{{$project['Purpose']}}";
     var PreviousECCNo = "{{$project['PreviousECCNo']}}";
-    var NewActivityGUID;
 
     if(ProjectPurpose == "New Application"){
         var Purpose = "New ECC Application";
@@ -198,26 +206,32 @@ $(document).ready(function(){
     "<br/>" +'Purpose: ' + Purpose;
     $("#header-title").html(text);
 
+    var attachedDocuments = [];
 
     var check = "{{ Session::has('NewActivityGUID') ? Session::get('NewActivityGUID') : ''}}";
-
-
-    var attachedDocuments = [];
+    
 
     if(check === ''){
         $.ajax({
-        url: "{{route('addNewActivityGUID')}}",
-        type: 'POST',
-        data: {
-          ProjectGUID : GUID,
-          _token: '{{csrf_token()}}' ,
-        },
-        success: function(response){
-            // alert(response);
-            NewActivityGUID = response;
+            url: "{{route('addNewActivityGUID')}}",
+            type: 'POST',
+            data: {
+              ProjectGUID : GUID,
+              _token: '{{csrf_token()}}' ,
+            },
+            success: function(response){
+                // alert(response);
+                NewActivityGUID = response;
+
+                $("#NewActivityGUID").val(response);
+            }
+          });
+        } else {
+            $("#NewActivityGUID").val("{{ Session::get('NewActivityGUID') }}");
         }
-      });
-    }
+
+    var NewActivityGUID = $("#NewActivityGUID").val();
+    
 
     $('#RoutingHistoryTable').DataTable({
       destroy:true,
@@ -356,6 +370,7 @@ $(document).ready(function(){
                             $("#attachRequirementsTable").append(details);
                         },
                         error: function(response){
+                            alert("There's an error while uploading your file.");
                             console.log("error : " + JSON.stringify(response) );
                         }
                     });
@@ -423,7 +438,7 @@ $(document).ready(function(){
                             RoutedFrom : RoutedFrom, 
 
                             Remarks : Remarks,
-                            NewActivityGUID : NewActivityGUID,
+                            NewActivityGUID : $("#NewActivityGUID").val(),
 
                             attachedDocuments : attachedDocuments,
 

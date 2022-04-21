@@ -11,13 +11,18 @@
             <div style="padding:10px;">
                 <div class='col-md-12'>
                     <div class="col-md-1">
-                        <img src="../../img/gear.jpeg" style="width:80px;">
+                        <img src="../../img/gear.jpeg" style="width:40px;">
                     </div>
-                    <div class="col-md-11">
-                        <h3><b id="header-title"></b></h3>
+                    <div class="col-md-10">
+                        <h4><b id="header-title"></b></h4>
+                    </div>
+                    <div class="col-md-1">
+                        @if($project->Status == 'Approved')
+                        <a href="../../qr-code/{{$project['GUID']}}.png" id="pointer"  style="cursor: pointer;" download>
+                        <img title="Click to download QR Code" src="../../qr-code/{{$project['GUID']}}.png" style="width:60px;" alt="" download></a>
+                        @endif
                     </div>
                 </div>
-
 
                 <div style="width: 70%; background-color: white; display: none; position: fixed;">
                     <div style="background-color:RGB(16,106,154); padding:5px; color:White;">
@@ -46,12 +51,13 @@
                         <div>
                             <!--Endorse Application -->
                             <div style="padding-top:20px; padding-bottom:20px;">
-                                <b>Recent Activity/Comments:</b> <a  href="" style="text-decoration:none;" id="remarks"></a> <span id="name_date"></span>
+                                <b>Status:</b> <a  href="" style="text-decoration:none;" id="remarks"></a> <span id="name_date"></span>
                             </div>
+                            @if($project->Status != 'Approved')
                             <div style="padding-top:20px; padding-bottom:20px;" id="button_approver">
-                                
                             </div>
-                     </div>
+                            @endif
+                        </div>
                     <!--Routing History-->
                     <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">ROUTING HISTORY
                         <button class="btn btn-warning btn-md pull-right no-padding" id="review_requirements">Review Requirements</button>

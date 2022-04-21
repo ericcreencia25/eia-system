@@ -19,6 +19,8 @@
   <link rel="stylesheet" href="../../adminlte/dist/css/skins/_all-skins.min.css">
     <!-- iCheck -->
   <link rel="stylesheet" href="../../adminlte/plugins/iCheck/square/blue.css">
+  <!--sweetalert-->
+  <link rel="stylesheet" href="../../adminlte/dist/css/sweet-alert-2.css">
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
@@ -117,12 +119,18 @@
                             </div>
                             <!-- /.col -->
                           <div class="col-xs-5">
-                            <button type="submit" class="btn btn-primary btn-block btn-flat" >Log In</button>
-                            <button type="button" class="btn btn-warning btn-block btn-flat" id='log-in-crs'>Log In w/CRS</button>
+                            <button type="submit" class="btn btn-primary btn-block btn-flat" >Sign In</button>
+                            <!-- <button type="button" class="btn btn-warning btn-block btn-flat" id='log-in-crs'>Log In w/CRS</button> -->
                           </div>
-                          <!-- /.col -->
                           </div>
                         </form>
+
+                        <div class="social-auth-links text-center">
+                          <p>- OR -</p>
+                          <a class="btn btn-block btn-social btn-vk" id='log-in-crs'>
+                              <img id="" src="../img/denr1.png" style="width:35px;"> Sign in with CRS
+                            </a>
+                        </div>
                         <a href="#">Can't sign-in to your account?</a><br>
                         Not yet registered? <a href="register.html" class="text-center"><b>Sign-up now!</b></a>
                       </div>
@@ -170,6 +178,8 @@
 <script src="../../adminlte/dist/js/demo.js"></script>
 <!-- iCheck -->
 <script src="../../adminlte/plugins/iCheck/icheck.min.js"></script>
+<!---sweetalert2--->
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
   $(function () {
     $('input').iCheck({
@@ -181,20 +191,102 @@
 
   $(document).ready(function(){
     $("#log-in-crs").on('click', function() {
-      var UserName = $("input[name=username]").val();
-      var Password = $("input[name=password]").val();
 
-      $.ajax({
-        url: "{{route('loginCRS')}}",
-        type: 'POST',
-        data: {
-          UserName : UserName,
-          Password : Password,
-          _token: '{{csrf_token()}}' ,
-        },
-        success: function(response){
+      (async () => {
+
+        const { value: formValues } = await Swal.fire({
+          background: '#f5f6f8',
+          title: 'Sign in with CRS',
+          html:
+            '<input id="swal-input1" class="swal2-input" placeholder="username">' +
+            '<input id="swal-input2" type="password" class="swal2-input" placeholder="password">',
+          focusConfirm: false,
+          confirmButtonText: 'Sign in',
+          preConfirm: () => {
+            return [
+              document.getElementById('swal-input1').value,
+              document.getElementById('swal-input2').value
+            ]
+          }
+        })
+
+        if (formValues) {
+          // console.log(formValues);
+          // Swal.fire(JSON.stringify(formValues))
+
+          $.ajax({
+            url: "{{route('loginCRS')}}",
+            type: 'POST',
+            data: {
+              UserName : formValues[0],
+              Password : formValues[1],
+              _token: '{{csrf_token()}}' ,
+            },
+            success: function(response){
+              console.log(response);
+              // location.reload();
+              document.location = '/default';
+
+            }
+          });
         }
-      });
+
+        })()
+
+      // var UserName = $("input[name=username]").val();
+      // var Password = $("input[name=password]").val();
+
+      // $.ajax({
+      //   url: "{{route('loginCRS')}}",
+      //   type: 'POST',
+      //   data: {
+      //     UserName : formValues[0],
+      //     Password : formValues[1],
+      //     _token: '{{csrf_token()}}' ,
+      //   },
+      //   success: function(response){
+      //     console.log(response);
+      //     // location.reload();
+
+      //     // var html = '<div class="lockscreen-wrapper" style=" background-color: #f5f6f8">';
+      //     // html += '<div class="lockscreen-logo">';
+      //     // html += '<a href="#">Sign in with <b>CRS</b></a></div>';
+      //     //  // html += '<div class="lockscreen-name">John Doe</div>';
+      //     // html += '<div class="lockscreen-item">';
+      //     // html += '<div class="lockscreen-image">';
+      //     // html += '<img src="../img/personlock.jpg" alt="User Image"></div>';
+
+      //     // html += '<form class="lockscreen-credentials">';
+
+      //     // html += '<div class="input-group">';
+      //     // html += '<input type="password" class="form-control" placeholder="password" name="password-crs">';
+      //     // html += '<div class="input-group-btn">';
+      //     // html += '<button type="button" class="btn"><i class="fa fa-arrow-right text-muted"></i></button>';
+      //     // html += '</div></div></form></div>';
+      //     // html += '<div class="help-block text-center">Enter your password to retrieve your session</div>';
+      //     // html += '<div class="text-center">';
+      //     // html += '<a href="login.html">Or sign in as a different user</a></div>';
+      //     // html += '</div>';
+
+      //     // Swal.fire({
+      //     //   html : html,
+      //     //   background: '#f5f6f8',
+      //     //   showCancelButton: false,
+      //     //   showConfirmButton: false,
+      //     //   confirmButtonColor: '#3085d6',
+      //     //   cancelButtonColor: '#d33',
+      //     // }).then((result) => {
+      //     //   if (result.isConfirmed) {
+      //     //     // Swal.fire(
+      //     //     //   'Deleted!',
+      //     //     //   'Your file has been deleted.',
+      //     //     //   'success'
+      //     //     // )
+      //     //   }
+      //     // })
+
+      //   }
+      // });
     });
   });
   

@@ -26,7 +26,9 @@ class CustomAuth
         else if(
             ($paths[0] != 'login' && !Session::get('data')) && 
             ($paths[0] != 'login-user' && !Session::get('data')) && 
-            ($paths[0] != 'welcome' && !Session::get('data'))){
+            ($paths[0] != 'welcome' && !Session::get('data')) && 
+            ($paths[0] != 'login-user-crs' && !Session::get('data'))
+        ){
             return redirect('welcome');
         }
 

@@ -25,13 +25,13 @@
   <!-- Select2 -->
   <link rel="stylesheet" href="../../adminlte/bower_components/select2/dist/css/select2.min.css">
 
-   <!-- iCheck for checkboxes and radio inputs -->
-  <link rel="stylesheet" href="../../adminlte/plugins/iCheck/all.css">
-  
   <!-- Pace style -->
   <link rel="stylesheet" href="../../adminlte/plugins/pace/pace.min.css">
 
   <link rel="stylesheet" href="../../adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+
+     <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="../../adminlte/plugins/iCheck/all.css">
 
   <link rel="stylesheet" href="../../adminlte/dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -56,12 +56,9 @@
 
   <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css"/> -->
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin="" />   
 
 </head>
-<style>
-  .pointer {cursor: pointer;}
-  </style>
 <!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
 <body class="hold-transition skin-blue layout-top-nav">
 <div class="wrapper">
@@ -81,33 +78,36 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
           <ul class="nav navbar-nav">
-            @if(session('data')['UserRole'] != 'Applicant')
-              <li><a href="{{ url("default") }}">For Action <span class="sr-only">(current)</span></a></li>
-              <li><a href="{{ url("documents") }}">ECC Applications</a></li>
-              <!-- <form class="navbar-form navbar-left" role="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="navbar-search-input" placeholder="Search Applications">
-                  
-                </div>
-              </form> -->
-               <li>
-              <form method="GET" action="{{ url("documents") }}" class="sidebar-form" style="width: 300px;">
-                <div class="input-group">
-                  <input type="text" name="search" class="form-control" placeholder="Search Applications..."  style="background: white;" value="{{ isset($req) ? $req['search'] : '' }}">
-                  <span class="input-group-btn">
-                    <button type="submit" id="search-btn" class="btn btn-flat"  style="background: white;"><i class="fa fa-search"></i>
-                    </button>
-                  </span>
-                </div>
-              </form>
-               </li>
-              <li><a href="{{ url("ECCDashboard") }}">Load ECC Dashboard</a></li>
-              <li><a href="">Go to CNC Online</a></li>
-              @else
-              <li><a href="{{ url("default") }}">For Action <span class="sr-only">(current)</span></a></li>
-              <li><a href='' id="newApplication">New Application</a></li>
-              <li><a href="{{ url("documents") }}">ECC Applications</a></li>
-              @endif
+            
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Statistics <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">Status Per Region</a></li>
+                <li><a href="#">Collection Per Region</a></li>
+                <li><a href="#">Performance Per Region</a></li>
+              </ul>
+            </li>
+
+            <li><a href="#">Email Notifications</a></li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Tools <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">Manage ECC</a></li>
+                <li><a href="#">Manage Proponents</a></li>
+                <li><a href="{{ url("administration/default") }}">Manage Users</a></li>
+                <li><a href="{{ url("administration/signatories") }}">Manage Signatories</a></li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Reports <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">ECC Issued</a></li>
+                <li><a href="#">CNC Issued</a></li>
+                <li><a href="#">Approval Exemption</a></li>
+              </ul>
+            </li>
             
           </ul>
         </div>
@@ -124,18 +124,18 @@
                 <ul class="menu">
                   @if(session('data')['UserRole'] != 'Sysad')
                   <li>
-                    <a href="{{ url("secured/manageAccount") }}">Manage Account
+                    <a href="#">Manage Account
                     </a>
                   </li>
                   <li>
                     <a href="#">User's Manual</a>
                   </li>
                   <li>
-                    <a class="pointer" onclick="logout()">Sign out</a>
+                    <a href="{{ url("logout") }}" >Sign out</a>
                   </li>
                   @else
                   <li>
-                    <a href="{{ url("administration/default") }}">Manage Users
+                    <a href="#">Manage Users
                     </a>
                   </li>
 
@@ -163,7 +163,7 @@
                     <a href="#">User's Manual</a>
                   </li>
                   <li>
-                    <a class="pointer" onclick="logout()">Sign out</a>
+                    <a href="{{ url("logout") }}" >Sign out</a>
                   </li>
 
                   @endif
@@ -219,6 +219,8 @@
 <script src="../../adminlte/bower_components/PACE/pace.min.js"></script>
 
 
+
+
 <!-- date-range-picker -->
 <script src="../../adminlte/bower_components/moment/min/moment.min.js"></script>
 <script src="../../adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script><!-- bootstrap datepicker -->
@@ -228,17 +230,21 @@
 <!-- AdminLTE for demo purposes -->
 <script src="../../adminlte/dist/js/demo.js"></script>
 
+<!-- iCheck 1.0.1 -->
+<script src="../../adminlte/plugins/iCheck/icheck.min.js"></script>
+
+<script src="../../adminlte/dist/js/bootstrap-switch.js"></script>
+
 <!-- DataTables -->
 <script src="../../adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="../../adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-
-<!-- iCheck 1.0.1 -->
-<script src="../../adminlte/plugins/iCheck/icheck.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
 <!---sweetalert2--->
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 </body>
 </html>
 
@@ -279,30 +285,5 @@ function ResetSession(){
     success: function(response){
     }
   });
-}
-
-function logout(){
-  Swal.fire({
-    title: 'Are you sure you want to sign out?',
-    showDenyButton: false,
-    showCancelButton: false,
-    confirmButtonText: 'Sign out',
-    denyButtonText: `Cancel`,
-  }).then((result) => {
-    /* Read more about isConfirmed, isDenied below */
-    if (result.isConfirmed) {
-      $.ajax({
-        url: "{{route('logout')}}",
-        type: 'GET',
-        success: function(response){
-          location.reload();
-        }
-      });
-    } else if (result.isDenied) {
-      // Swal.fire('Changes are not saved', '', 'info')
-    }
-  })
-
-  
 }
 </script>

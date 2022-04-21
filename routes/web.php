@@ -164,11 +164,15 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::post('/login-user', [AspnetUserController::class, 'loginUser'])->name('login-user');
 
-    Route::get('/logout', [AspnetUserController::class, 'logoutUser']); 
+    Route::post('/first-time-login-user', [AspnetUserController::class, 'firstTimeLoginUser'])->name('first-time-login-user');
+
+    Route::get('/logout', [AspnetUserController::class, 'logoutUser'])->name('logout'); 
 
     Route::post('/getUsersList', [AspnetUserController::class, 'getUsersList'])->name('get.users.list');
 
     Route::post('/getProponentInformation', [AspnetUserController::class, 'getProponentInformation'])->name('getProponentInformation');
+
+    Route::post('/getProponentInformationComparison', [AspnetUserController::class, 'getProponentInformationComparison'])->name('getProponentInformationComparison');
 
     Route::get('/createNewGUID', [AspnetUserController::class, 'createNewGUID'])->name('createNewGUID');
 
@@ -177,6 +181,29 @@ Route::group(['middleware'=>'web'], function(){
     Route::post('/login-user-crs', [ApiController::class, 'loginCRS'])->name('loginCRS');
 
     Route::get('/company-data', [ApiController::class, 'companyData'])->name('companyData');
+
+    Route::get('/log-in/lockscreen', [ApiController::class, 'lockScreen'])->name('lockScreen');
+
+    Route::get('/administration/default', [AspnetUserController::class, 'manageCredentials'])->name('manageCredentials');
+
+    Route::get('/administration/signatories', [AspnetUserController::class, 'manageSignatories'])->name('manageSignatories');
+
+    Route::post('/administration/getRegisteredUsers', [AspnetUserController::class, 'getRegisteredUsers'])->name('getRegisteredUsers');
+
+    Route::get('/administration/getSignatories', [AspnetUserController::class, 'getSignatories'])->name('getSignatories');
+
+    Route::get('/administration/getOffice', [AspnetUserController::class, 'getOffice'])->name('getOffice');
+    Route::post('/administration/getUserAction', [AspnetUserController::class, 'getUserAction'])->name('getUserAction');
+
+    Route::post('/administration/getRegionalInformation', [AspnetUserController::class, 'getRegionalInformation'])->name('getRegionalInformation');
+
+    Route::get('/authentication/registerUrAccount', [AspnetUserController::class, 'registerUrAccount'])->name('registerUrAccount');
+
+    Route::post('/saveRegister', [AspnetUserController::class, 'saveRegister'])->name('saveRegister');
+
+    Route::get('/secured/manageAccount', [AspnetUserController::class, 'manageAccount'])->name('manageAccount');
+
+    Route::post('/updateAccount', [AspnetUserController::class, 'updateAccount'])->name('updateAccount');
 
 
 
@@ -239,6 +266,14 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::get('/search/project-type', [NewApplicationsController::class, 'searchProjectType'])->name('searchProjectType');
 
+    Route::post('/addBindData', [NewApplicationsController::class, 'addBindData'])->name('addBindData');
+
+    Route::post('/unBindData', [NewApplicationsController::class, 'unBindData'])->name('unBindData');
+
+    Route::post('/searchCompany', [NewApplicationsController::class, 'searchCompany'])->name('searchCompany');
+
+    Route::post('/getBindedData', [NewApplicationsController::class, 'getBindedData'])->name('getBindedData');
+
 /// VIEW 
 
     // Route::view('default', 'secured.for_actions.default');
@@ -254,6 +289,10 @@ Route::group(['middleware'=>'web'], function(){
 
     // Route::view('documents', 'secured.ecc_applications.document');
     Route::view('{GUID}/map', 'secured.create_applications.clickable_map');
+
+    Route::view('stepper', 'secured.new_applications_v3.application_tab');
+
+    Route::view('admin', 'secured.manage_credentials.admin');
 
     // Route::view('{GUID}/map', 'secured.create_applications.clickable_map');
 

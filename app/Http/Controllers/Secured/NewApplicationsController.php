@@ -15,11 +15,13 @@ use App\Models\ProjectActivityAttachmentTemp;
 use App\Models\ProjectApplicationRequirements;
 use App\Models\ProjectArea;
 use App\Models\ProjectRequirements;
-use Webpatser\Uuid\Uuid;
+use App\Models\BindedData;
+
 use App\Models\Proponent;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str; 
+use Webpatser\Uuid\Uuid;
 
 use Session;
 use Yajra\DataTables\DataTables;
@@ -42,73 +44,8 @@ class NewApplicationsController extends Controller
         $search = $req['search'];
 
         $ProjectSize = $req['ProjectSize'];
-        
-        // if(empty($ComponentGUID)){
-        //     $component = Component::where('component.ProjectType', 'LIKE', '%'. $search.'%')
-        //     ->leftJoin('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
-        //     ->select(
-        //         'component.GUID as GUID',
-        //         'component.ProjectType as ProjectType',
-        //         'component.ProjectSubType as ProjectSubType',
-        //         'component.ProjectSpecificSubType as ProjectSpecificSubType',
-        //         'component.ProjectSpecificType as ProjectSpecificType',
-        //         'component.Parameter as Parameter',
-        //         'component.UnitOfMeasure as UnitOfMeasure',
 
-        //         'componentthreshold.Category as Category',
-        //         'componentthreshold.Minimum',
-        //         'componentthreshold.Maximum'
-        //     )
-
-        //     // ->where('componentthreshold.Category', '=', 'NECP')
-        //     ->where('componentthreshold.ReportType', '=', 'IEE')
-        //     ->get();
-        // }
-        // else{
-        //     $component = Component::where('component.GUID', '=', $ComponentGUID)
-        //     ->leftJoin('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
-        //     ->select(
-        //         'component.GUID as GUID',
-        //         'component.ProjectType as ProjectType',
-        //         'component.ProjectSubType as ProjectSubType',
-        //         'component.ProjectSpecificSubType as ProjectSpecificSubType',
-        //         'component.ProjectSpecificType as ProjectSpecificType',
-        //         'component.Parameter as Parameter',
-        //         'component.UnitOfMeasure as UnitOfMeasure',
-
-        //         'componentthreshold.Category as Category',
-        //         'componentthreshold.Minimum',
-        //         'componentthreshold.Maximum'
-        //     )
-        //     // ->where('componentthreshold.Category', '=', 'NECP')
-        //     ->where('componentthreshold.ReportType', '=', 'IEE')
-        //     ->get();
-        // }
-
-        // if(empty($ComponentGUID)){
-        //     $component = Component::where('component.ProjectType', 'LIKE', '%'. $search.'%')
-        //     ->leftJoin('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
-        //     ->select(
-        //         'component.GUID as GUID',
-        //         'component.ProjectType as ProjectType',
-        //         'component.ProjectSubType as ProjectSubType',
-        //         'component.ProjectSpecificSubType as ProjectSpecificSubType',
-        //         'component.ProjectSpecificType as ProjectSpecificType',
-        //         'component.Parameter as Parameter',
-        //         'component.UnitOfMeasure as UnitOfMeasure',
-
-        //         'componentthreshold.Category as Category',
-        //         'componentthreshold.Minimum',
-        //         'componentthreshold.Maximum'
-        //     )
-
-        //     // ->where('componentthreshold.Category', '=', 'NECP')
-        //     ->where('componentthreshold.ReportType', '=', 'IEE')
-        //     ->get();
-        // }
-        // else{
-        
-            $component = Component::leftJoin('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
+        $component = Component::leftJoin('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
             ->select(
                 'component.GUID as GUID',
                 'component.ProjectType as ProjectType',
@@ -1168,29 +1105,29 @@ class NewApplicationsController extends Controller
         ->first();
 
         
-        // $now = new \DateTime(); 
+        $now = new \DateTime(); 
 
-        // DB::table('projectactivity')
-        // ->where('GUID','=', $ProjectActivityGUID)
-        // ->where('ProjectGUID', '=', $ProjectGUID)
-        // ->update([
-        //     'Status' => 'For Screening',
-        //     'Details' => "ECC Application Requirements Submitted for Screening",
-        //     'Remarks' => $Remarks,
-        //     'RoutedTo' => $RouteTo->UserName,
-        //     'RoutedToOffice' => $province->ProcessingOffice,
-        //     'UpdatedDate' => $now->format('Y-m-d H:i:s')
-        // ]);
+        DB::table('projectactivity')
+        ->where('GUID','=', $ProjectActivityGUID)
+        ->where('ProjectGUID', '=', $ProjectGUID)
+        ->update([
+            'Status' => 'For Screening',
+            'Details' => "ECC Application Requirements Submitted for Screening",
+            'Remarks' => $Remarks,
+            'RoutedTo' => $RouteTo->UserName,
+            'RoutedToOffice' => $province->ProcessingOffice,
+            'UpdatedDate' => $now->format('Y-m-d H:i:s')
+        ]);
 
-        // DB::table('project')
-        // ->where('GUID','=', $ProjectGUID)
-        // ->update([
-        //     'Stage' => 1,
-        //     'UpdatedBy' => $UserName,
-        //     'UpdatedDate' => $now->format('Y-m-d H:i:s')
-        // ]);
+        DB::table('project')
+        ->where('GUID','=', $ProjectGUID)
+        ->update([
+            'Stage' => 1,
+            'UpdatedBy' => $UserName,
+            'UpdatedDate' => $now->format('Y-m-d H:i:s')
+        ]);
 
-        // return $RouteTo->UserName;
+        return $RouteTo->UserName;
     }
 
 
@@ -1433,4 +1370,116 @@ class NewApplicationsController extends Controller
     {
         return view('secured.create_applications.project_type_search');
     }
+
+    public function addBindData(Request $req)
+    {
+        $EmbID = $req['EmbID'];
+        $ProponentGUID = $req['ProponentGUID'];
+        $CompanyName = $req['CompanyName'];
+        $ProponentName = $req['ProponentName'];
+        $UserId = Session::get('data')['UserId'];
+
+        $UserData = DB::table('binded_data')->where('UserId', '=', $UserId)->first();
+
+        if(!$UserData){
+            $row = ['ProponentGUID' => $ProponentGUID, 'EmbID' => $EmbID, 'CompanyName' => $CompanyName, 'UserId' => $UserId, 'ProponentName' => $ProponentName];
+
+            if(DB::table('binded_data')->insert($row)){
+
+                 DB::table('aspnet_users')
+                    ->where('UserId', '=', $UserId)
+                    ->update([
+                        'ProponentGUID' => $ProponentGUID
+                    ]);
+
+
+                return 'Success';
+            } else {
+                return 'Error while saving into your database';
+            }
+        } elseif($UserData->ProponentGUID == ''){
+            DB::table('binded_data')
+            ->where('UserId', '=', $UserId)
+            ->update([
+                'ProponentGUID' => $ProponentGUID,
+                'ProponentName' => $ProponentName
+            ]);
+
+            DB::table('aspnet_users')
+                    ->where('UserId', '=', $UserId)
+                    ->update([
+                        'ProponentGUID' => $ProponentGUID
+                    ]);
+
+            return 'Success';
+
+        }else {
+            return "There's binded data: unbind data first";
+        }
+    }
+
+    public function unBindData(Request $req)
+    {
+        $EmbID = $req['EmbID'];
+        $ProponentGUID = $req['ProponentGUID'];
+        $CompanyName = $req['CompanyName'];
+        $UserId = Session::get('data')['UserId'];
+
+
+        DB::table('binded_data')
+        ->where('UserId', '=', $UserId)
+        ->where('EmbID', '=', $EmbID)
+        ->update([
+            'ProponentGUID' => '',
+            'ProponentName' => '',
+        ]);
+
+        DB::table('aspnet_users')
+                    ->where('UserId', '=', $UserId)
+                    ->update([
+                        'ProponentGUID' => 1
+                    ]);
+
+        return 'Success';
+    }
+
+    public function searchCompany(Request $req)
+    {
+        $search = $req['search'];
+        
+        $Proponent = Proponent::where('ProponentName', 'LIKE', '%' . $search .'%');
+
+        return DataTables::of($Proponent)
+        ->addColumn('ProponentName', function($Proponent){
+            $details = '<small>'. $Proponent->ProponentName . '</small>';
+            
+            return $details;
+
+        })
+        
+        ->addColumn('Action', function($Proponent){
+            $details = '<button class="btn btn-default" onclick="ComparisonData(' . "'" . $Proponent->ProponentName . "'". ')"><span class="glyphicon glyphicon-eye-open"></span></button>';
+            
+            return $details;
+
+        })
+        ->rawColumns(['Action', 'ProponentName'])
+        ->make(true);
+    }
+
+    public function getBindedData(Request $req)
+    {
+        $ID = $req['emb_id'];
+        $Name = $req['company_name'];
+        $UserId = Session::get('data')['UserId'];
+
+        $BindedData = BindedData::where('EmbID', '=', $ID)
+        ->where('CompanyName', '=', $Name)
+        ->where('UserId', '=', $UserId)
+        ->first();
+
+        return $BindedData;
+    }
+
+
 }

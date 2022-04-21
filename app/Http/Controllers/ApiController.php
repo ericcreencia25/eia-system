@@ -17,6 +17,7 @@ use Webpatser\Uuid\Uuid;
 use App\Http\Controllers\View;
 use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Support\Str;
 use Mapper;
@@ -89,11 +90,11 @@ class ApiController extends Controller
 
     public function loginCRS(Request $req)
     {
+        // $UserName = 'sampleclient2021';
+        // $Password = '1234567';
+
         $UserName = $req['UserName'];
         $Password = $req['Password'];
-
-        $UserName = 'sampleclient2021';
-        $Password = '1234567';
 
         $url = 'https://iis.emb.gov.ph/embis/api/Crs_Api/crs_account_login_api?username='.$UserName.'&password='.$Password;
 
@@ -109,26 +110,78 @@ class ApiController extends Controller
 
         $result = json_decode($res->getBody());
 
-        $rowData = [];
+        $user = AspnetUser::on('mysql')->where('aspnet_users.UserName', '=', $UserName)
+        ->where('aspnet_membership.Password', '=', $Password)
+        // ->where('aspnet_users.InECCOAS', '=', 1)
+        ->leftJoin('aspnet_membership', 'aspnet_users.UserId', '=', 'aspnet_membership.UserId')
+        ->first();
 
-        $rowData['UserName'] = $result->response->username;
-        $rowData['AlternateEmail'] = $result->response->email;
-        $rowData['FirstName'] = $result->response->first_name;
-        $rowData['LastName'] = $result->response->last_name;
-        $rowData['MobileAlias'] = $result->response->contact_no;
-        $rowData['Position'] = $result->response->position;
-        $rowData['CreatedDate'] = $result->response->date_registered;
-        $rowData['UserCode'] = $result->response->user_code;
-        $rowData['Password'] = $result->response->password;
-        $rowData['UserOffice'] = 'Proponent';
-        $rowData['UserRole'] = 'Applicant';
+        if($user){
 
-        return json_decode($res->getBody());
+            $now = new \DateTime(); 
+
+            $req->session()->put('data', $user);
+
+            DB::table('aspnet_users')
+              ->where('UserId','=', $user->UserId)
+              ->where('UserName', '=', $user->UserName)
+              ->update([
+                'LastActivityDate' => $now->format('Y-m-d H:i:s')
+            ]);
+
+            DB::table('aspnet_membership')
+              ->where('UserId','=', $user->UserId)
+              ->update([
+                'LastLoginDate' => $now->format('Y-m-d H:i:s')
+            ]);
+
+              if($user->UserRole == 'Evaluator'){
+                return redirect('default')->with('msg', 'Hi, '.$user->UserName.'! You signed in successfully');
+            }else{
+                return redirect('default')->with('msg', 'Hi, '.$user->UserName.'! You signed in successfully');
+            }
+
+        } else {
+
+            $rowData = [];
+
+            $rowData['UserName'] = $result->response->username;
+            $rowData['Email'] = $result->response->email;
+            $rowData['FirstName'] = $result->response->first_name;
+            $rowData['LastName'] = $result->response->last_name;
+            $rowData['MobileAlias'] = $result->response->contact_no;
+            $rowData['Position'] = $result->response->position;
+            $rowData['CreatedDate'] = $result->response->date_registered;
+            $rowData['UserCode'] = $result->response->user_code;
+            $rowData['Password'] = $Password;
+            $rowData['PasswordSalt'] = $result->response->password;
+            $rowData['UserOffice'] = 'Proponent';
+            $rowData['UserRole'] = 'Applicant';
+            $rowData['UserId'] = '';
+            $rowData['UserCode'] = $result->response->user_code;
+            
+            $req->session()->put('data', $rowData);
+
+            if($rowData['UserRole'] == 'Evaluator'){
+                return redirect('default')->with('msg', 'Hi, '.$UserName.'! You signed in successfully');
+            }else{
+                return redirect('default')->with('msg', 'Hi, '.$UserName.'! You signed in successfully');
+            }
+
+        }
+        
+        
+
+        
+
+        
+        // return $rowData;
+        // return json_decode($rowData);
     }
 
     public function companyData()
     {
-        $url = 'https://iis.emb.gov.ph/embis/api/Getdata/json_company_for_ecc?api_key=x&emb_id=EMBR7-973470-105815';
+        $url = 'https://iis.emb.gov.ph/embis/api/Getdata/json_company_for_ecc?api_key=x&emb_id=EMBR2-1314200-45572';
         $client = new Client(['verify' => false]);
         $res = $client->get($url);
 
@@ -153,6 +206,10 @@ class ApiController extends Controller
         $rowData['int_comp_address'] = $result->int_comp_address;
         $rowData['input_date'] = $result->input_date;
         $rowData['affiliated'] = $result->affiliated;
+        $rowData['street'] = $result->street;
+        $rowData['ceo_fname'] = $result->ceo_fname;
+        $rowData['ceo_sname'] = $result->ceo_sname;
+        $rowData['ceo_mname'] = $result->ceo_mname;
         
         return $rowData;
     }

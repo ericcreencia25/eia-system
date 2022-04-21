@@ -396,7 +396,7 @@ class ForActionsController extends Controller
             // ->where('project.UpdatedDate', '<=', $EndDate)
             ->where('projectactivity.RoutedTo', '=', $UserName)
             ->where('projectactivity.RoutedToOffice', '=', $UserOffice)
-            ->whereNotIn('Status', array('Approved', 'Denied'))
+            // ->whereNotIn('Status', array('Approved', 'Denied'))
             ->groupBy('project.GUID')
             ->orderByRaw('project.UpdatedDate DESC')
             ->get();
@@ -885,6 +885,16 @@ class ForActionsController extends Controller
 
         $dateDiff = $this->Count_Days_Without_Weekends($start_date, $end_date);
 
+        $RouteTo = DB::table('aspnet_users')
+        ->select('*')
+        ->where('UserOffice', '=', $RoutedToOffice)
+        ->where('UserRole', '=', 'Evaluator')
+        ->where('InECCOAS', '=', 1)
+        // ->where('Designation', '=', 'casehandler')
+        ->where('DefaultRecipient', '=', 1)
+        ->orderByRaw('Screened Desc')
+        ->first();
+
         $NewGUID = Uuid::generate()->string;
 
         $projectActivity = array();
@@ -894,7 +904,7 @@ class ForActionsController extends Controller
         $projectActivity['Details'] = $Remarks;
         $projectActivity['RoutedFrom'] = $UserName;
         $projectActivity['RoutedFromOffice'] = $UserOffice;
-        $projectActivity['RoutedTo'] = $RoutedTo;
+        $projectActivity['RoutedTo'] = $RouteTo->UserName;
         $projectActivity['RoutedToOffice'] = $RoutedToOffice;
         $projectActivity['Routing'] = 1;
         $projectActivity['Remarks'] = '';
@@ -1029,7 +1039,7 @@ class ForActionsController extends Controller
         $rtrn = array();
 
         $validator = Validator::make($request->all(), [
-            'file' => 'required|mimes:png,jpg,jpeg,csv,txt,pdf|max:2048'
+            'file' => 'required|mimes:pdf,docx|max:2048'
         ]);
 
         if ($validator->fails()) {
