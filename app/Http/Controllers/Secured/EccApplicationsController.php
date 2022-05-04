@@ -7,11 +7,15 @@ use App\Http\Requests;
 use App\Models\AspnetUser;
 use App\Models\Project;
 use App\Models\ProjectActivity;
+use App\Models\Attachment;
+
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Secured\EccApplicationsController;
+
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Session;
 
 class EccApplicationsController extends Controller
 {
@@ -70,23 +74,31 @@ class EccApplicationsController extends Controller
 
             $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
             })
-            // ->where('RoutedFrom', '=', $UserOffice)
-            // ->where('project.CreatedDate', '>=', '2021-01-01')
-            // ->where('project.CreatedDate', '<=', $tomorrow)
+
         ->where('project.CreatedBy', '=', $UserName)
         ->groupBy('project.GUID')
         ->get();
 
         return DataTables::of($project)
-        ->addColumn('Details', function($project) use($UserRole){
-            if($project->Stage > 0){
+        ->addColumn('Details', function($project) use($UserName){
+            // if($project->Stage == 0){
+            //     $details = '<a class="text-uppercase" href="ProjectApp/'.$project->ProjectGUID.'/'.$project->ActivityGUID.'">'. $project->ProjectName.'</a>';
+            // }else{
+            //     if($UserRole != 'Evaluator'){
+            //         $details = '<a class="text-uppercase pointer" onclick="NewDocument('. "'" .$project->ProjectGUID. "'".')">'. $project->ProjectName.'</a>';
+            //     }else{
+            //         $details = '<a class="text-uppercase pointer" onclick="NewDocument('. "'" .$project->ProjectGUID. "'".')">'. $project->ProjectName.'</a>';
+            //     }
+            // }
+
+            if($project->Stage == 0){
+                $details = '<a class="text-uppercase pointer" onclick="NewDocument('. "'" .$project->ProjectGUID. "'".')">'. $project->ProjectName.'</a>';
+            }else if($project->Status == 'Archived' || $project->Status == 'Approved'){
+                $details = '<a class="text-uppercase" href="ProjectComp?GUID='.$project->ProjectGUID.'&AGUID='.$project->ActivityGUID.'">'. $project->ProjectName.'</a>';
+            }else if($project->RoutedTo == $UserName){
                 $details = '<a class="text-uppercase" href="ProjectApp/'.$project->ProjectGUID.'/'.$project->ActivityGUID.'">'. $project->ProjectName.'</a>';
-            }else{
-                if($UserRole != 'Evaluator'){
-                    $details = '<a class="text-uppercase pointer" onclick="NewDocument('. "'" .$project->ProjectGUID. "'".')">'. $project->ProjectName.'</a>';
-                }else{
-                    $details = '<a class="text-uppercase pointer" onclick="NewDocument('. "'" .$project->ProjectGUID. "'".')">'. $project->ProjectName.'</a>';
-                }
+            } else {
+                $details = '<a class="text-uppercase" href="ProjectView?GUID='.$project->ProjectGUID.'&AGUID='.$project->ActivityGUID.'">'. $project->ProjectName.'</a>';
             }
 
             $details .= '<br><p class="text-uppercase">'.$project->Address.', '. $project->Municipality.', '. $project->Province.', '. $project->Region .'</b><br/>';
@@ -122,7 +134,7 @@ class EccApplicationsController extends Controller
         
         $Search = $req['Search'];
 
-        if($Search != 'null'){
+        if($Search != null){
             $StatusFilter = 'All';
         } else {
             $StatusFilter = $req['StatusFilter'];
@@ -156,57 +168,57 @@ class EccApplicationsController extends Controller
 
             $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
             });
-        if($StatusFilter === 'Pending with EMB'){
-            $project->where('RoutedToOffice', '=', $UserOffice)
-            ->whereNotIn('Status', array('Approved', 'Denied'));
-        } else if($StatusFilter === 'Pending with Proponents'){
-            $project->where('RoutedToOffice', '=', 'Proponent')
-            ->whereNotIn('Status', array('Approved', 'Denied', 'Pending for Submission'));
-        } else if($StatusFilter === 'Decided'){
-            $project->whereIn('RoutedToOffice', array($UserOffice, 'Proponent'), )
-            ->whereIn('Status', array('Approved', 'Denied'));
-        } else if($StatusFilter === 'Approved'){
-            $project->whereIn('RoutedToOffice', array($UserOffice, 'Proponent'), )
-            ->whereIn('Status', array('Approved'));
-        } else if($StatusFilter === 'Approved (Auto)'){
-            $project->whereIn('RoutedToOffice', array($UserOffice, 'Proponent'), )
-            ->whereIn('Status', array('Approved'));
-        } else if($StatusFilter === 'Denied'){
-            $project->whereIn('RoutedToOffice', array($UserOffice, 'Proponent'), )
-            ->whereIn('Status', array('Denied'));
-        } else if($StatusFilter === 'Pending All'){
-            $project->whereIn('RoutedToOffice', array($UserOffice, 'Proponent'), )
-            ->whereNotIn('Status', array('Denied', 'Approved'));
-        } else if($StatusFilter === 'All'){
-            $project->where('project.ProjectName', 'LIKE', '%' . $Search . '%' );
+
+        if($StatusFilter == 'Pending with EMB'){
+            $project->where('projectactivity.RoutedToOffice', '=', $UserOffice)
+            ->whereNotIn('projectactivity.Status', array('Approved', 'Denied'));
+        } else if($StatusFilter == 'Pending with Proponents'){
+            $project->where('projectactivity.RoutedToOffice', '=', 'Proponent')
+            ->whereNotIn('projectactivity.Status', array('Approved', 'Denied', 'Pending for Submission'));
+        } else if($StatusFilter == 'Decided'){
+            $project->whereIn('projectactivity.RoutedToOffice', array($UserOffice, 'Proponent'), )
+            ->whereIn('projectactivity.Status', array('Approved', 'Denied'));
+        } else if($StatusFilter == 'Approved'){
+            $project->whereIn('projectactivity.RoutedToOffice', array($UserOffice, 'Proponent'), )
+            ->whereIn('projectactivity.Status', array('Approved'));
+        } else if($StatusFilter == 'Approved (Auto)'){
+            $project->whereIn('projectactivity.RoutedToOffice', array($UserOffice, 'Proponent'), )
+            ->whereIn('projectactivity.Status', array('Approved'));
+        } else if($StatusFilter == 'Denied'){
+            $project->whereIn('projectactivity.RoutedToOffice', array($UserOffice, 'Proponent'), )
+            ->whereIn('projectactivity.Status', array('Denied'));
+        } else if($StatusFilter == 'Pending All'){
+            $project->whereIn('projectactivity.RoutedToOffice', array($UserOffice, 'Proponent'), )
+            ->whereNotIn('projectactivity.Status', array('Denied', 'Approved'));
+        } else if($StatusFilter == 'All'){
+            $project->whereIn('projectactivity.RoutedToOffice', array($UserOffice, 'Proponent'), )
+            ->where('project.ProjectName', 'LIKE', '%' . $Search . '%' );
         }
 
-        
-            // ->where('project.CreatedDate', '>=', '2021-01-01')
-            // ->where('project.CreatedDate', '<=', $tomorrow)
-        // ->where('project.CreatedBy', '=', $UserName)
-
-        $project->groupBy('project.GUID')
+        $project->where('project.Stage', '>', 0)
+        ->groupBy('project.GUID')
         ->orderByRaw('projectactivity.UpdatedDate DESC')
         ->get();
 
         return DataTables::of($project)
         ->addColumn('Details', function($project) use($UserRole){
-            if($project->Stage > 0){
-                $details = '<a class="text-uppercase" href="ProjectApp/'.$project->ProjectGUID.'/'.$project->ActivityGUID.'">'. $project->ProjectName.'</a>';
+            if($project->Status == 'Archived' || $project->Status == 'Approved'){
+                $details = '<small><a class="text-uppercase" href="ProjectComp?GUID='.$project->ProjectGUID.'&AGUID='.$project->ActivityGUID.'">'. $project->ProjectName.'</a>';
+
+                // $details = '<a class="text-uppercase pointer" style="cursor:pointer" href="ProjectComp?GUID='.$project->ProjectGUID.'>'. $project->ProjectName.'</a>';
             }else{
                 if($UserRole != 'Evaluator'){
-                    $details = '<a class="text-uppercase pointer" style="cursor:pointer" onclick="NewDocument('. "'" .$project->ProjectGUID. "'".')">'. $project->ProjectName.'</a>';
+                    $details = '<small><a class="text-uppercase" href="ProjectView?GUID='.$project->ProjectGUID.'&AGUID='.$project->ActivityGUID.'">'. $project->ProjectName.'</a>';
                 }else{
-                    $details = '<a class="text-uppercase pointer" style="cursor:pointer" onclick="NewDocument('. "'" .$project->ProjectGUID. "'".')">'. $project->ProjectName.'</a>';
+                    $details = '<small><a class="text-uppercase" href="ProjectView?GUID='.$project->ProjectGUID.'&AGUID='.$project->ActivityGUID.'">'. $project->ProjectName.'</a>';
                 }
             }
 
-            $details .= '<br><p class="text-uppercase">'.$project->Address.', '. $project->Municipality.', '. $project->Province.', '. $project->Region .'</b><br/>';
+            $details .= '<br><p class="text-uppercase">'.$project->Address.', '. $project->Municipality.', '. $project->Province.', '. $project->Region .'</b><br/></small>';
             return $details;
         })
         ->addColumn('Status', function($project){
-            $details = '<i style="color:slategray;">With '.$project->RoutedToOffice.' - '.$project->Status.' </i>';
+            $details = '<small><i style="color:slategray;">With '.$project->RoutedToOffice.' - '.$project->Status.' </i></small>';
 
             return $details;
         })
@@ -505,6 +517,125 @@ class EccApplicationsController extends Controller
     public function documents(Request $req)
     {
         return view('secured.ecc_applications.document', compact('req'));
+    }
+
+    public function searchDocuments(Request $req)
+    {
+        return view('secured.ecc_applications.search-page', compact('req'));
+    }
+
+    public function project_comp(Request $req)
+    {
+
+        $project = Project::where('project.GUID', '=', $req->GUID)
+        // ->where('project.Stage', '>', 0 )
+        ->Join('projectactivity', function ($join) {
+            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+            // $join->on('projectactivity.CreateDate','>=', DB::raw("'2012-05-01'"));
+
+            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
+                join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+        })
+        ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
+        ->select(
+            'project.Purpose',
+            'project.Address AS Address', 
+            'project.Municipality  AS Municipality', 
+            'project.Province AS Province', 
+            'project.Address', 
+            'project.CreatedBy AS CreatedBy', 
+            'project.GUID AS GUID', 
+            'project.PreviousECCNo',
+            'proponent.ProponentName',
+            'project.ProjectName', 
+            'project.Region  AS Region', 
+            'project.AcceptedBy',
+            'project.AcceptedDate',
+
+            'projectactivity.RoutedTo', 
+            'projectactivity.RoutedFrom', 
+
+            'projectactivity.RoutedToOffice', 
+            'projectactivity.RoutedFromOffice', 
+
+            'projectactivity.CreatedDate', 
+            'projectactivity.Status', 
+            'projectactivity.Details AS Remarks', 
+            'projectactivity.GUID AS ActivityGUID',
+            'projectactivity.FromDate AS FromDate',
+            'projectactivity.UpdatedDate AS UpdatedDate',
+            
+        )
+        ->first();
+
+        $UserRole = Session::get('data')['UserRole'];
+        $UserName = Session::get('data')['UserName'];
+
+        $attachments = Attachment::where('UserRole', '=', $UserRole)
+        ->orderByRaw('Sorter ASC')
+        ->get();
+
+        return view('secured.ecc_applications.casehandler_project_app', compact('project', 'attachments'));
+    }
+
+    public function project_view(Request $req)
+    {
+
+        $project = Project::where('project.GUID', '=', $req->GUID)
+        // ->where('project.Stage', '>', 0 )
+        ->Join('projectactivity', function ($join) {
+            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+            // $join->on('projectactivity.CreateDate','>=', DB::raw("'2012-05-01'"));
+
+            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
+                join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+        })
+        ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
+        ->select(
+            'project.Purpose',
+            'project.Address AS Address', 
+            'project.Municipality  AS Municipality', 
+            'project.Province AS Province', 
+            'project.Address', 
+            'project.CreatedBy AS CreatedBy', 
+            'project.GUID AS GUID', 
+            'project.PreviousECCNo',
+            'proponent.ProponentName',
+            'project.ProjectName', 
+            'project.Region  AS Region', 
+            'project.AcceptedBy',
+            'project.AcceptedDate',
+
+            'projectactivity.RoutedTo', 
+            'projectactivity.RoutedFrom', 
+
+            'projectactivity.RoutedToOffice', 
+            'projectactivity.RoutedFromOffice', 
+
+            'projectactivity.CreatedDate', 
+            'projectactivity.Status', 
+            'projectactivity.Details AS Remarks', 
+            'projectactivity.GUID AS ActivityGUID',
+            'projectactivity.FromDate AS FromDate',
+            'projectactivity.UpdatedDate AS UpdatedDate',
+            
+        )
+        ->first();
+
+        $UserRole = Session::get('data')['UserRole'];
+        $UserName = Session::get('data')['UserName'];
+
+        $attachments = Attachment::where('UserRole', '=', $UserRole)
+        ->orderByRaw('Sorter ASC')
+        ->get();
+
+        if($UserRole == 'Applicant'){
+            return view('secured.ecc_applications.project_view', compact('project', 'attachments'));
+        } else {
+           return view('secured.ecc_applications.project_view', compact('project', 'attachments')); 
+        }
+
+        
     }
 
 }

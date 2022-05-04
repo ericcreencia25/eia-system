@@ -34,16 +34,16 @@
           </div>
           <div class="box-body">
           <div class="box-header">
-                Listed below are the ECC Applications pending with you for appropriate action. Click the project name/address to load the application.
+            Listed below are the ECC Applications pending with you for appropriate action. Click the project name/address to load the application.
               </div>
               <!-- /.box-header -->
               <div class="box-body no-padding">
                 <table class="table table-bordered" id="CaseHandlerForActionTable" style="width: 100%;  display: table; table-layout: fixed;">
                   <thead>
                       <th style="width: 35%">Details</th>
-                      <th style="width: 20%">Status</th>
+                      <th style="width: 15%">Status</th>
                       <th style="width: 35%">Remarks</th>
-                      <th style="width: 10%">Total days incurred to date </th>
+                      <th style="width: 15%">Total days incurred to date </th>
                   </thead>
                   <tbody></tbody>
                 </table> 

@@ -47,18 +47,27 @@
         <div class="box-header">
           <div class="col-md-12">
             <!-- <div class="col-md-4"> -->
-              <ul class="chart-legend clearfix pull-right"><label>Legend:</label> 
+              <!-- <ul class="chart-legend clearfix pull-right"><label>Legend:</label> 
                 <li><i class="fa fa-square text-yellow"></i> CNC Application</li>
                 <li><i class="fa fa-square text-light-blue"></i> IEE Checklist</li>
                 <li><i class="fa fa-square text-green"></i> EIS</li>
-              </ul>
+              </ul> -->
             <!-- </div> -->
           </div>
         </div>
         <!-- /.box-header -->
         <div class="box-body no-padding">
-          <!-- <input type="text" id="searchInput" placeholder="Type Keywords..."> -->
-          <input class="form-control form-control-lg col-xs-4" type="text" placeholder="Type Keywords..." id="searchInput">
+          <!-- <div class="box-header with-border">
+            <h5 class="box-title">Project Grouping Matrix for Determination of EIA Report Types for New Single & Co-Located Projects</h5>
+          </div> -->
+          <div class="input-group col-xs-4 pull-right" style="padding-bottom: 10px">
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-primary" disabled>Search</button>
+            </div>
+
+            <input class="form-control" type="text" placeholder="Type Keywords of EIA Report Types..." id="searchInput">
+          </div>
+          
 
           <table class="table" id="projectType" style="width: 100%;  display: table;">
             <thead style=" background-color: #f5f6f8">

@@ -91,9 +91,9 @@
                 </div>
               </form> -->
                <li>
-              <form method="GET" action="{{ url("documents") }}" class="sidebar-form" style="width: 300px;">
+              <form method="GET" action="{{ url("searchDocuments") }}" class="sidebar-form" style="width: 300px;">
                 <div class="input-group">
-                  <input type="text" name="search" class="form-control" placeholder="Search Applications..."  style="background: white;" value="{{ isset($req) ? $req['search'] : '' }}">
+                  <input type="text" name="search" class="form-control" placeholder="Search Applications..."  style="background: white;" value="{{ isset($req) ? $req['search'] : '' }}" id="search-input">
                   <span class="input-group-btn">
                     <button type="submit" id="search-btn" class="btn btn-flat"  style="background: white;"><i class="fa fa-search"></i>
                     </button>
@@ -244,8 +244,13 @@
 
 
 <script>
+  window.onload = function () {
+    var loadTime = window.performance.timing.domContentLoadedEventEnd-window.performance.timing.navigationStart; 
+    console.log('Page load time is '+ loadTime);
+}
 
   $(document).ready(function(){
+
     $("#newApplication").click(function(){
       // var href = "NewDocument/";
       ResetSession();

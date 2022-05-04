@@ -16,19 +16,36 @@
         min-height: 400px;
       }
 
+
+  .feedback {
+    background-color : #205081;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    border-color: #46b8da;
+
+    position:fixed;
+    bottom:30px;
+    right:50px;
+  }
+
+  #mybutton {
+    position: fixed;
+    bottom: -4px;
+    right: 10px;
+  }
+
 </style>
 
 @section('header')
 <section class="content-header">
-  <center>
-    <h2><b>
-      EIA Dashboard
-      <small></small>
-    </b></h2>
-  </center>
-        <!-- <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="#"><i class="fa fa-cog"></i>For Action</a></li>
-        </ol -->
+      <h1 style="padding-left: 30px;"><b> EIA Dashboard
+        <!-- <small>13 new messages</small> --></b>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+        <!-- <li class="active">Mailbox</li> -->
+      </ol>
     </section>
 @stop
 
@@ -46,12 +63,12 @@
         <div class="box-header" id="headingOne">
           <h5 class="mb-0">
             <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-              Company/Proponent Details  
+              Company Details  
             </button>
 
+            <!-- <img class="pointer" id="comparison-button" src="../img/compare.png" style="width:38px;"> -->
+            <button class="btn btn-default" id="comparison-button"><span class="glyphicon glyphicon-eye-open"></span></button>
             <span id="company-status"></span>
-
-            <img class="pointer" id="comparison-button" src="../img/compare.png" style="width:38px;">
           </h5>
         </div>
 
@@ -146,7 +163,7 @@
       <div class="box-body">
         <div class="box-header">
           Listed below are the ECC Applications pending with you for appropriate action. Click the project name/address to load the application.
-        </di v>
+        </div>
         <!-- /.box-header -->
         <div class="box-body no-padding">
           <!-- <input type="text" id="searchInput" placeholder="Type Keywords..."> -->
@@ -162,12 +179,10 @@
       </div>
     </div>
 
-    <div class="box-header with-border">
-        <!-- <h3 class="box-title"></h3> -->
-        <a href="{{ url("/search/project-type") }}" class="btn btn-block btn-social btn-bitbucket btn-lg" style="text-align:center">
-          APPLY FOR PERMIT
+    <!-- <div class="box-header with-border">
+        <a href="{{ url("/search/project-type") }}" class="btn btn-block btn-social btn-bitbucket btn-lg" style="text-align:center">APPLY FOR PERMIT
         </a>
-      </div>
+      </div> -->
 
   </section>
 </div>
@@ -178,7 +193,7 @@
       <div class="modal-header" style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span></button>
-          <h5 class="modal-title"></h5>
+          <h5 class="modal-title">Note: Bind your company first. Before applying for permit.</h5>
         </div>
         <div class="modal-body">
           <div class="box-body">
@@ -204,35 +219,26 @@
                   </div> -->
 
                   <div class="input-group input-group-sm">
-                    <input type="text" class="form-control" id="searchInput" placeholder="search keyword for company name">
+                    <input type="text" class="form-control" id="searchInput" placeholder="search keyword for company name" readonly="readonly">
                         <span class="input-group-btn">
-                          <button type="button" class="btn btn-info btn-flat" id="searchButton" title="search keyword for company name"><i class="fa fa-search"></i></button>
+                          <button type="button" class="btn btn-info btn-flat" id="searchButton" title="search keyword for company name" disabled><i class="fa fa-search"></i></button>
                           <button type="button" class="btn btn-info btn-flat" id="clear-input" title="clear"><i class="fa fa-refresh"></i></button>
                         </span>
                   </div>
 
-                  <!-- <div class="has-feedback">
-                    <input type="text" class="form-control input-sm" placeholder="Search Mail" id="searchInput">
-                  </div>
-
-                  <span class="input-group-btn">
-                    <button type="button" class="btn btn-info btn-flat" id="clear-input"><span class="glyphicon glyphicon-search form-control-feedback"></span></button>
-                  </span>
-
-                  <span class="input-group-btn">
-                    <button type="button" class="btn btn-info btn-flat" id="clear-input"><i class="fa fa-refresh"></i></button>
-                  </span> -->
-                <!-- </div> -->
-
-                <table class="table" id="searchCompany">
+                  <table class="table" id="searchCompany" style="padding-top: 5px">
+                   <thead>
+                    <th><small>Related Company results:</small></th>
+                    <th></th>
+                  </thead>
                 </table>
 
               </div>
 
               <div class="col-md-8" style="padding-left: 20px;border-left: 1px solid #d2d6de;">
-                <div class="form-group col-md-12 no-padding"><h3>From ECC <span id="company-status-modal"></span></h3></div>
+                <div class="form-group col-md-12 no-padding"><h3>From ECC:  <span id="company-status-modal"></span></h3></div>
 
-                <div class="form-group col-md-12 no-padding">
+                <div class="form-group col-md-12 no-padding" hidden>
                   <label for="exampleInputEmail1">ID: (Auto-generated)</label>
                   <input type="text" class="form-control" id="proponent_guid_proponent" placeholder="ID: (Auto-generated)" disabled>
                 </div>
@@ -242,29 +248,46 @@
                   <input type="text" class="form-control" id="company_name_proponent" placeholder="Company  Name" disabled>
                 </div>
 
-                <div class="form-group col-md-6 no-padding">
-                  <label for="">Email</label>
-                  <input type="text" class="form-control" id="email_proponent" placeholder="Email" disabled>
-                </div>
-
-                <div class="form-group col-md-6 no-padding">
-                  <label for="">Contact No.</label>
-                  <input type="text" class="form-control" id="contact_no_proponent" placeholder="Contact No." disabled>
-                </div>
-
                 <div class="form-group col-md-12 no-padding">
                   <label for="">Address</label>
                   <input type="text" class="form-control" id="address_proponent" placeholder="Address" disabled>
                 </div>
 
-                <div class="form-group col-md-12 no-padding">
+                <div class="form-group col-md-8 no-padding">
                   <label for="">CEO/President/Owner</label>
                   <input type="text" class="form-control" id="contact_person_proponent" placeholder="CEO/President/Owner" disabled>
                 </div>
+
+                <div class="form-group col-md-4 no-padding">
+                  <label for="">Contact No.</label>
+                  <input type="text" class="form-control" id="contact_no_proponent" placeholder="Contact No." disabled>
+                </div>
+
+                <div class="form-group col-md-6 no-padding">
+                  <label for="">Email</label>
+                  <input type="text" class="form-control" id="email_proponent" placeholder="Email" disabled>
+                </div>
+
+                <div class="form-group col-md-3 no-padding">
+                  <label for="">SEC Registration No.</label>
+                  <input type="text" class="form-control" id="sec_registration" placeholder="SEC Registration No." disabled>
+                </div>
+
+                <div class="form-group col-md-3 no-padding">
+                  <label for="">DTI Registration No.</label>
+                  <input type="text" class="form-control" id="dti_registration" placeholder="DTI Registration No." disabled>
+                </div>
+
+                
+
               </div>
+
               <center>
-                <button class="btn btn-success" id="bind">BIND</button>
-                <button class="btn btn-danger" id="unbind">UNBIND</button>
+                <div class="btn-group">
+                  <button class="btn btn-success" style="width: 130px" id="bind">BIND</button>
+                  <button class="btn btn-danger" style="width: 130px" id="unbind">UNBIND</button>
+                </div>
+                
               </center>
             </div>
           </div>
@@ -272,6 +295,10 @@
       </div>
     </div>
   </div>
+
+  <div id="mybutton">
+    <a class="feedback" href="{{ url("/search/project-type") }}">APPLY FOR PERMIT</a>
+</div>
 @stop
 <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
@@ -453,6 +480,8 @@ $(document).ready(function(){
     $("#contact_no_proponent").val('');
     $("#address_proponent").val('');
     $('#contact_person_proponent').val('');
+    $('#sec_registration').val('');
+    $('#dti_registration').val('');
   })
 
   Swal.bindClickHandler()
@@ -515,6 +544,8 @@ function companyData()
 
       
       getBindedData(response['emb_id'], response['company_name']);
+
+      $("#searchInput").val(response['company_name']);
     }
   });
 
@@ -524,8 +555,39 @@ function companyData()
 
 function searchCompany()
 {
+  var search = $("#searchInput").val();
+
+  $('#searchCompany').DataTable({
+        processing:true,
+        ordering: false,
+        scrollY: 250,
+        deferRender: true,
+        scroller:true,
+        searching : true,
+        destroy: true,
+        ordering: false,
+        bPaginate: false,
+        bLengthChange: false,
+        bFilter: true,
+        bInfo: false,
+        bAutoWidth: false,
+        ajax: {
+          "url": "{{route('searchCompany')}}",
+          "type": "POST",
+          "data": {
+            search : search,
+            _token: '{{csrf_token()}}' ,
+          },
+        },
+        columns: [
+        {data: 'ProponentName', name: 'ProponentName'},
+        {data: 'Action', name: 'Action'},
+        ]
+      });
+
+
   $("#searchButton").on('click', function(){
-    var search = $("#searchInput").val();
+    var search = $("#searchInput").val(); 
 
     if(search.length < 3){
       alert('Need 3 or more letters for the keywords');
@@ -597,6 +659,8 @@ function ComparisonData(Name)
       $('#contact_no_proponent').val(response['MobileNo']);
       $('#address_proponent').val(response['MailingAddress'].toUpperCase())
       $('#contact_person_proponent').val(response['ContactPerson']);
+      $('#sec_registration').val(response['SECRegistrationNo']);
+      $('#dti_registration').val(response['DTIRegistrationNo']);
     }
   }); 
 }
@@ -623,6 +687,10 @@ function getBindedData(emb_id, company_name)
           $('#company-status-modal').attr('class', 'badge bg-red');
           $('#company-status-modal').text('UNBIND');
 
+          $('#comparison-modal').modal();
+
+          searchCompany();
+
         } else {
 
           $('#company-status').removeAttr('class');
@@ -633,9 +701,11 @@ function getBindedData(emb_id, company_name)
           $('#company-status-modal').attr('class', 'badge bg-green');
           $('#company-status-modal').text('BINDED');
 
+          ComparisonData(response['ProponentName']);
+
         }
 
-        ComparisonData(response['ProponentName']);
+        
       }
     });
 }

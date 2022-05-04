@@ -77,7 +77,7 @@
         $("#check_step_7").on('click', function() {
             for(let ctr = 1; ctr <= 17; ctr++){
                 var count_file = "#count_files_" + ctr;
-                if($(count_file).text() == 0){
+                if($(count_file).data("id") == 0){
                     error_message.push(ctr);
                 }
             }  
@@ -162,8 +162,8 @@
                         })
                     },
                     success: function(response){
-
-                        $('#overlay').fadeOut(2000, () => {
+                        if(response['success'] == 1){
+                            $('#overlay').fadeOut(2000, () => {
                              Swal.fire({
                                 icon: 'success',
                                 title: response['message'],
@@ -173,13 +173,18 @@
                             }).then((result) => {
                               /* Read more about handling dismissals below */
                               if (result.dismiss === Swal.DismissReason.timer) {
-                                location.reload();
+                                location.reload();  
                               }
                             });
                           });
+
+                        } else {
+                            alert("error : " + JSON.stringify(response['error']) );
+                        }
+                        
                     },
                     error: function(response){
-                        console.log("error : " + JSON.stringify(response) );
+                        alert("error : " + JSON.stringify(response) );
                     }
                 });
               }

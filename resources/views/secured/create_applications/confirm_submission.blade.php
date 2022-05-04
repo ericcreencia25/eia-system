@@ -44,10 +44,10 @@
         </div>
       </div>
     </div>
-    <div id="overlay" style="display:none;">
+    <!-- <div id="overlay" style="display:none;">
       <div class="spinner"></div><br/>
       <h3>Please wait while saving your data...</h3>
-    </div>
+    </div> -->
 <script>
 
 $(document).ready(function(){
@@ -80,6 +80,7 @@ $(document).ready(function(){
   });
 
   $("#confirm_submission").on('click', function() {
+
     Swal.fire({
       title: 'Are you sure?',
       text: "Are you sure you want to submit? ",
@@ -101,12 +102,25 @@ $(document).ready(function(){
             _token: '{{csrf_token()}}',
           },  
           beforeSend: function() {
-            $('#overlay').show();
+            let timerInterval
+
+            Swal.fire({
+              // title: 'Auto close alert!',
+              html: 'Please wait while saving your data...',
+              timer: 2000,
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading()
+              },
+              willClose: () => {
+                clearInterval(timerInterval)
+              }
+            })
           },  
           success: function(response){
-            $('#overlay').fadeOut(2000, () => {
+            // $('#overlay').fadeOut(2000, () => {
               // var response = 'R07';
-              var text = '<small>Your application was forwarded FOR SCREENING to'+ response +'</small><br><br>';
+              var text = '<small>Your application was forwarded FOR SCREENING to '+ response +'</small><br><br>';
               text += 'For complaints and suggestions, you may send your letter to:<br>';
               text += '<b>ENGR. WILLIAM P. CUÑADO</b><br>';
               text += 'OIC-EMB Director<br>';
@@ -126,7 +140,7 @@ $(document).ready(function(){
                   window.location.href='/default';
                 }
               });
-            });
+            // });
           }
         });
       }

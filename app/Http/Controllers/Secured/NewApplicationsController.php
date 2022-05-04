@@ -398,9 +398,9 @@ class NewApplicationsController extends Controller
             //                     Files: <span id="count_files_'.$project_ID->ID.'" title="Files Attached">'.$count.'</span>
             //                 </div>';
             if($count == 1){
-                $details = '<center><img id="" src="../img/checkroundedblue.jpg" style="width:30px; padding-top: 5px">';
+                $details = '<center><img id="count_files_'.$project_ID->ID.'" src="../img/checkroundedblue.jpg" style="width:30px; padding-top: 5px" data-id="1">';
             }else{
-                $details = '';
+                $details = '<center><img id="count_files_'.$project_ID->ID.'" style="width:30px; padding-top: 5px" data-id="0">';
             }
 
             return $details;

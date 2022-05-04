@@ -68,6 +68,12 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::get('/documents', [EccApplicationsController::class, 'documents'])->name('documents');
 
+    Route::get('/searchDocuments', [EccApplicationsController::class, 'searchDocuments'])->name('searchDocuments');
+
+    Route::get('/ProjectComp', [EccApplicationsController::class, 'project_comp'])->name('project_comp');
+
+    Route::get('/ProjectView', [EccApplicationsController::class, 'project_view'])->name('project_view');
+
     // Route::view('documents', 'secured.ecc_applications.document');
 
 //// FOR ACTIONS CONTROLLER

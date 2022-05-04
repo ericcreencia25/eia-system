@@ -58,6 +58,7 @@
                     </div>
                     
                     <div>
+                        @if(Session::get('data')['UserRole'] != 'Applicant')
                         <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;  cursor:pointer;">APPLICATION REQUIREMENTS
                         </div>
                         <div>
@@ -119,7 +120,7 @@
 
                                                     </select>
                                                 </div>
-                                                <div class="col-md-1"><button class="btn btn-default" id="AddRequirements">Add</button></div>
+                                                <div class="col-md-1"><button class="btn btn-default" id="AddRequirements" disabled>Add</button></div>
                                             </div>
                                         </th>
                                     </tr>
@@ -133,23 +134,26 @@
                             </span>
                         </div>
 
+                        @if(Session::get('data')['UserRole'] != 'Applicant')
+                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_evaluation_report" disabled>Generate Evaluation Report</button>
 
-                        <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_evaluation_report">Generate Evaluation Report</button>
 
+                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_order_of_payment" disabled>Generate Order of Payment</button>
 
-                        <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_order_of_payment">Generate Order of Payment</button>
+                            @if($project['AcceptedBy'] == NULL && $project['AcceptedDate'] == NULL)
+                                <button type="button" class="btn btn-default btn-flat" style="width: 200px" disabled>Accept Application</button>
 
-                        @if($project['AcceptedBy'] == NULL && $project['AcceptedDate'] == NULL)
-                        <button type="button" class="btn btn-default btn-flat" style="width: 200px" onclick="acceptApplication()">Accept Application</button>
+                            @else
+                                <button type="button" class="btn btn-default btn-flat" style="width: 200px" disabled>Accept Application</button>
+                            @endif
 
-                        @else
-                        <button type="button" class="btn btn-default btn-flat" style="width: 200px" onclick="acceptApplication()" disabled>Accept Application</button>
+                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_draft_certificate" disabled>Draft Certificate</button>
+
+                            <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_denial_letter" disabled>Draft Denial Letter</button>
+
                         @endif
 
-                        <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_draft_certificate">Draft Certificate</button>
-
-                        <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_denial_letter">Draft Denial Letter</button>
-
+                    @endif
                         <!--Endorse Application -->
                         <div style="padding-top:20px; padding-bottom:20px;">
                             <b>Recent Activity/Comments:</b> 
@@ -157,134 +161,10 @@
                             <span id="name_date"></span>
                         </div>
                         <!---IF ELSE --->
-                        @if(strtolower($project['RoutedTo']) == strtolower(Session::get('data')['UserName']))
-                        <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">ENDORSE APPLICATION
-                        </div>
-                        <b>1. Attach the required documents</b>
-                        <div style="padding-bottom:10px; padding-top:10px;">
-                            <span style="font-size:smaller;">Select from the list or specify the description of the document and browse to locate the electronic copy. Click the upload icon to attach the file. Size of the file should be no larger than 
-                                <span id="" style="color:Red;font-weight:bold;">10</span>&nbsp; <span><strong>MEGABYTES in PDF format</strong></span>.
-                            </span></div>
-                        </div>
-                        <table cellspacing="0" cellpadding="5" width="100%">
-                            <tbody>
-                                <tr>
-                                    <td style="width:600px;">
-                                        <select class="form-control" id="Attachments">
-                                            @foreach($attachments as $attach)
-                                            <option value="{{$attach->Description}}">
-                                                {{$attach->Description}}
-                                            </option> 
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td style="width: 10px"></td>
-                                    <td style="vertical-align:top;width:500px;">
-                                        <input type="file" style="border-width:0px;border-style:None;font-size:Medium;" id="InputFile"> 
-                                    </td>
-                                    <td style="width:80px; vertical-align:top;">
-                                        <button type="button" class="btn btn-default btn-sm" name="submit" id="Uploads">
-                                            <img src="../../img/upload.png" style="width:15px;" />
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr id="Other_attachment" hidden="hidden">
-                                    <td>
-                                        <input type="text" class="form-control" id="Others">
-                                    </td>
-                                </tr>
-                            </tr>
-                            <tr id="UploadedFile">
-                                
-                            </tr>
-                        </tbody></table>
-                        <br>
-                        <br>
-                        <b> 2. Routing </b>
-                        <div style="padding-bottom:10px; padding-top:10px;">
-                            <span style="font-size:smaller;">Select the destination, action required and provide the remarks.
-                            </span>
-                        </div>
-                        <table style="width:100%; vertical-align:top;" cellpadding="0" cellspacing="0" class="tablecs">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="col-md-12">
-                                            <div class="col-md-2">Destination</div>
-                                            <div class="col-md-5">
-                                                <select class="form-control" id="destination"> 
-                                                    <option value="Proponent">
-                                                        Proponent
-                                                    </option> 
-                                                    <option value="{{ $project['Region']}}">
-                                                        {{ $project['Region']}}
-                                                    </option>  
-                                                </select>
-                                            </div>
-                                            <div class="col-md-5">
-                                                <select class="form-control" id="user_list">
-                                                    <option value="{{$project['CreatedBy']}}">
-                                                        {{$project['CreatedBy']}} (Applicant)
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="col-md-12">
-                                            <div class="col-md-2">Action Required</div>
-                                            <div class="col-md-10">
-                                                <select class="form-control" id="ActionRequired">
-                                                    <!-- <option value="For Submission of Basic Requirements"> For Submission of Basic Requirements</option>
-                                                    <option value="For Submission of Additional Information">For Submission of Additional Information</option>
-                                                    <option value="For Clarification of Information">For Clarification of Information</option>
-                                                    <option value="For Payment of ECC Application">For Payment of ECC Application</option> -->
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="col-md-12">
-                                            <div class="col-md-2">Remarks</div>
-                                            <div class="col-md-10">
-                                                <textarea id="RoutingRemarks"rows="2" cols="20" style="font-family:Tahoma;font-size:Medium;height:100px;width:100%;"></textarea>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="col-md-12">
-                                            <div class="col-md-2"></div>
-                                            <div class="col-md-2">
-                                                <input type="checkbox" id="IncludeAttachment" checked> Include attachments
-                                            </div>
-                                            <div class="col-md-2"></div>
-                                            <div class="col-md-4">
-                                                <span id="" style="color:Red;font-size:smaller">Make sure local <a href="{{ url("holidays") }}"><u>holidays</u></a> were already entered before routing</span>    
-                                            </div>
-                                            <div class="col-md-2">
-                                                <button class="btn btn-flat btn-default" id="Endorse">Endorse</button>
-                                                <button class="btn btn-flat btn-default">Cancel</button>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <br>
-                        <br>
-                        <br>
-                    </div>
-                    @endif
-                    <!--Routing History-->
+                                            <!--Routing History-->
                     <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">ROUTING HISTORY
                     </div>
-                    <table class="table table-bordered" id="RoutingHistoryTable">
+                    <table class="table table-striped" id="RoutingHistoryTable">
                       <thead>
                           <th style="width: 300px">Routing</th>
                           <th style="width: 50px">Accumulated Days</th>
@@ -295,12 +175,11 @@
                           <th style="width: 50px"><button class="btn btn-block btn-flat disabled"><i class="fa fa-folder-o"></i></button></th>
                       </thead>
                       <tbody></tbody>
-                    </table>
-                    
+                    </table> 
                     <!-- Attachments-->
                     <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">ATTACHMENTS
                     </div>
-                    <table class="table table-bordered" id="attachments_list">
+                    <table class="table table-striped" id="attachments_list">
                       <thead>
                           <th>Description</th>
                           <th style="width:200px">Posted on</th>
@@ -312,7 +191,7 @@
 
                     <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">PROCESSING DAYS
                     </div>
-                    <table class="table table-bordered" id="processing_days">
+                    <table class="table table-striped" id="processing_days">
                       <thead>
                           <th>Routing</th>
                           <th style="width:150px">Elapsed</th>
@@ -353,7 +232,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="box-body no-padding">
-                                <table class="table table-bordered" id="list-of-attachments" style="width: 100%;  display: table; table-layout: fixed;" >
+                                <table class="table table-striped" id="list-of-attachments" style="width: 100%;  display: table; table-layout: fixed;" >
                                     <thead>
                                         <th hidden></th>
                                     </thead>
@@ -444,44 +323,33 @@ $(document).ready(function() {
     var data = localStorage.getItem("ReqStorage");
     var ReqStorage = data ? JSON.parse(data) : [];
 
-    console.log(stored1);
-
     if(stored1.length > 0) {
         $("#destination").val(stored1[0]['destination']);
         
 
-        if(stored1[0]['destination'] == 'Proponent'){
-            var option1 = '<option value="'+stored1[0]['selected_user']+'" selected>' + stored1[0]['selected_user'] +'</option>'
-            $("#user_list").html(option1);
-
-            var option = '<option value="">-----</option>';
-            option += '<option value="For Submission of Basic Requirements" selected> For Submission of Basic Requirements</option>'; 
-            option += '<option value="For Submission of Additional Information">For Submission of Additional Information</option>';
-            option += '<option value="For Clarification of Information">For Clarification of Information</option>';
-            option += '<option value="For Payment of ECC Application">For Payment of ECC Application</option>';
-            $("#ActionRequired").html(option);
-
-        }else{
-            $("#user_list").html('');
-            $("#user_list").append('<option value="" selected>--User Lists of Evaluator--</option>');
+        var option = '<option value="For Review"> For Review</option>'; 
+            option += '<option value="For Evaluation">For Evaluation</option>';
+            $("#user_office").html(option);
 
             UserListsOnRegion();
 
-            $.ajax({
-                url: "{{route('getActionRequired')}}",
-                type: 'POST',
-                data: {
-                    selected_user : stored1[0]['selected_user'],
-                    ActionRequired : stored1[0]['ActionRequired'],
-                    _token: '{{csrf_token()}}',
-                },
-                success: function(result){
-                    $("#ActionRequired").html(result);
-                }
-                // $("#ActionRequired").val(stored1[0]['ActionRequired']);
-            });
-        } 
+            $("#user_list").html('');
 
+        $.ajax({
+            url: "{{route('getActionRequired')}}",
+            type: 'POST',
+            data: {
+                selected_user : stored1[0]['selected_user'],
+                ActionRequired : stored1[0]['ActionRequired'],
+                _token: '{{csrf_token()}}',
+            },
+            success: function(result){
+                $("#ActionRequired").html(result);
+            }
+            // $("#ActionRequired").val(stored1[0]['ActionRequired']);
+        });
+
+        
     }
   
     var ProjectName = "{{ $project['ProjectName']}}";
@@ -505,8 +373,7 @@ $(document).ready(function() {
           _token: '{{csrf_token()}}' ,
         },
         success: function(response){
-            $("#Uploads").removeAttr("disabled");
-
+            $("#Uploads").removeAttr("disabled"); 
             if(response != ''){
                 var url=window.location.origin;
                 var filepath = response['FilePath'];
@@ -518,7 +385,7 @@ $(document).ready(function() {
                 details += '<span class="mailbox-attachment-icon"><i class="fa fa-file-pdf-o"></i>';
                 details += '</span>';
                 details += '<div class="mailbox-attachment-info">';
-                details += '<a href="'+ link +'" class="mailbox-attachment-name" target="_blank" id="filesCheck"><i class="fa fa-paperclip"></i>'+  response['Description']  +'</a>';
+                details += '<a href="'+ link +'" class="mailbox-attachment-name" target="_blank" id="filesCheck"><i class="fa fa-paperclip"></i>'+  response['Description']  +'.pdf </a>';
                 details += '<span class="mailbox-attachment-size" title="Delete File">' + response['FileSizeInKB'] + ' KB<a class="btn btn-default btn-xs pull-right" onclick="deleteUploadedFile('+"'"+response['ID']+"'"+')"><i class="fa  fa-trash-o"></i></a></span>';
                 details += '</div></li></ul></td>';
 
@@ -528,7 +395,7 @@ $(document).ready(function() {
 
             }
         }
-    });
+      });
 
     if(check == ''){
         $.ajax({
@@ -714,39 +581,23 @@ $(document).ready(function() {
         var destination = $("#destination :selected").val();
         
         if(destination == 'Proponent') {
-            // var option = '<option value="For Submission of Basic Requirements"> For Submission of Basic Requirements</option>'; 
-            // option += '<option value="For Submission of Additional Information">For Submission of Additional Information</option>';
-            // option += '<option value="For Clarification of Information">For Clarification of Information</option>';
-            // option += '<option value="For Payment of ECC Application">For Payment of ECC Application</option>';
-            $("#ActionRequired").html('');
+            var option = '<option value="For Submission of Basic Requirements"> For Submission of Basic Requirements</option>'; 
+            option += '<option value="For Submission of Additional Information">For Submission of Additional Information</option>';
+            option += '<option value="For Clarification of Information">For Clarification of Information</option>';
+            option += '<option value="For Payment of ECC Application">For Payment of ECC Application</option>';
+            $("#user_office").html(option);
 
             var users = '<option value="'+ CreatedBy  +'">'+ CreatedBy +'</option>'; 
 
             $("#user_list").html(users);
         } else {
-            // var option = '<option value="For Review"> For Review</option>'; 
-            // option += '<option value="For Evaluation">For Evaluation</option>';
-            // $("#ActionRequired").html(option);
-            $("#ActionRequired").html('');
-            $("#user_list").html('');
-            $("#user_list").append('<option value="" selected>--User Lists of Evaluator--</option>');
+            var option = '<option value="For Review"> For Review</option>'; 
+            option += '<option value="For Evaluation">For Evaluation</option>';
+            $("#user_office").html(option);
 
             UserListsOnRegion();
-            
-            // $.ajax({
-            //     url: "{{route('getActionRequired')}}",
-            //     type: 'POST',
-            //     data: {
-            //         selected_user : $("#user_list :selected").val(),
-            //         ActionRequired : '',
-            //         _token: '{{csrf_token()}}',
-            //     },
-            //     success: function(result){
-            //         console.log(result);
-            //         $("#ActionRequired").html(result);
-            //     }
-            //     // $("#ActionRequired").val(stored1[0]['ActionRequired']);
-            // });
+
+            $("#user_list").html('');
         }
 
         var selected_user = $("#user_list :selected").val();
@@ -783,14 +634,7 @@ $(document).ready(function() {
         ///put additional requirements into local storage
         localStorage.setItem("ReqStorage1", JSON.stringify(ReqStorage1));
 
-        if(destination == 'Proponent'){
-            var option = '<option value="For Submission of Basic Requirements"> For Submission of Basic Requirements</option>'; 
-            option += '<option value="For Submission of Additional Information">For Submission of Additional Information</option>';
-            option += '<option value="For Clarification of Information">For Clarification of Information</option>';
-            option += '<option value="For Payment of ECC Application">For Payment of ECC Application</option>';
-            $("#ActionRequired").html(option);
-        } else {
-            $.ajax({
+        $.ajax({
             url: "{{route('getActionRequired')}}",
             type: 'POST',
             data: {
@@ -802,9 +646,6 @@ $(document).ready(function() {
                 $("#ActionRequired").html(result);
             }
         });
-        }
-
-        
     });
 
     $("#ActionRequired").on('change', function() {
@@ -881,8 +722,6 @@ $(document).ready(function() {
         ///undefined
         var filesCheck = $('#filesCheck').text();
 
-        var ActionFiles = ActionRequired + ':' + filesCheck;
-
         var stored = localStorage.getItem("ReqStorage");
         stored = JSON.parse(stored || '[]');
         localStorage.setItem("ReqStorage", JSON.stringify(ReqStorage));
@@ -906,7 +745,7 @@ $(document).ready(function() {
             });
         }
 
-        if(ActionRequired === 'For Payment of ECC Application' && filesCheck != 'Order of Payment - Application') {
+        if(ActionRequired === 'For Payment of ECC Application' && filesCheck != 'Order of Payment - Application.pdf') {
             Swal.fire({
                 icon: 'error',
                 title: 'Notifications!',
@@ -926,7 +765,7 @@ $(document).ready(function() {
               });
         }
 
-        if(ActionRequired === 'For Recommendation' && filesCheck != 'Draft ECC') {
+        if(ActionRequired === 'For Recommendation' && filesCheck != 'Draft ECC.pdf') {
             Swal.fire({
                 icon: 'error',
                 title: 'Notifications!',
@@ -936,7 +775,7 @@ $(document).ready(function() {
               });
         }
 
-        if(ActionRequired === 'For Recommendation' && filesCheck != 'Draft Denial Letter') {
+        if(ActionRequired === 'For Recommendation' && filesCheck != 'Draft Denial Letter.pdf') {
             Swal.fire({
                 icon: 'error',
                 title: 'Notifications!',
@@ -966,7 +805,7 @@ $(document).ready(function() {
               });
         }
 
-        if(ActionFiles != 'For Approval:Draft ECC') {
+        if(ActionRequired === 'For Approval' && filesCheck != 'Draft ECC.pdf') {
             Swal.fire({
                 icon: 'error',
                 title: 'Notifications!',
@@ -976,9 +815,7 @@ $(document).ready(function() {
               });
         }
 
-        console.log(ActionFiles);
-        
-        if(ActionFiles != 'For Denial:Draft Denial Letter') {
+        if(ActionRequired === 'For Denial' && filesCheck != 'Draft Denial Letter.pdf') {
             Swal.fire({
                 icon: 'error',
                 title: 'Notifications!',
@@ -1483,6 +1320,7 @@ function UserListsOnRegion()
 {
     // user_list
     // var selectedUser = stored1[0]['selected_user'];
+
     if(stored1.length > 0){
         var selectedUser = stored1[0]['selected_user'];
     } else {

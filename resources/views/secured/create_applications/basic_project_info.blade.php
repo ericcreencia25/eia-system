@@ -401,7 +401,7 @@ div.col-md-6 {
 
       // });
 
-      $("#step_6").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+      $("#step_6").css({"background-color":"#00a65a", "color": "#ffffff"});
 
       $("#li_step_6").attr("class", "able");
       $("#step_6").attr("data-toggle", "tab");
@@ -421,7 +421,7 @@ div.col-md-6 {
       $("#step_5").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 
       ///step 6
-      $("#step_6").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+      $("#step_6").css({"background-color":"#00a65a", "color": "#ffffff"});
 
       $("#li_step_6").attr("class", "able");
       $("#step_6").attr("data-toggle", "tab");

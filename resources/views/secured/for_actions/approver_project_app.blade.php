@@ -528,7 +528,7 @@ function ProcessApplication(Status, text)
                                         /* Read more about handling dismissals below */
                                         if (result.dismiss === Swal.DismissReason.timer) {
                                             // location.reload();
-                                            // window.location.href='/default';
+                                            window.location.href='/default';
                                         }
                                     });
                                 });
@@ -584,7 +584,7 @@ function ProcessApplication(Status, text)
                                         /* Read more about handling dismissals below */
                                         if (result.dismiss === Swal.DismissReason.timer) {
                                             // location.reload();
-                                            // window.location.href='/default';
+                                            window.location.href='/default';
                                         }
                                     });
                                 });

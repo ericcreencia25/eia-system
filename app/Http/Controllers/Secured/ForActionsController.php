@@ -35,6 +35,8 @@ use PDF;
 use \ConvertApi\ConvertApi;
 
 
+
+
 class ForActionsController extends Controller
 {
     public function index()
@@ -271,16 +273,11 @@ class ForActionsController extends Controller
     {   
         $ActivityGUID = $req['ActivityGUID'];
         $ProjectGUID = $req['ProjectGUID'];
-        // $project = ProjectActivityAttachment::select('FilePath', 'Description', 'CreatedDate', 'CreatedBy')
-        // ->where('ActivityGUID', '=', $ActivityGUID)
-
-        // ->get();
 
         $project = ProjectActivity::where('projectactivity.ProjectGUID', '=', $ProjectGUID)
         ->Join('projectactivityattachment', function($join)
         {
             $join->on('projectactivityattachment.ActivityGUID', '=', 'projectactivity.GUID');
-            // $join->on('projectactivityattachment.Description', '=', 'projectrequirement.Description');
         })
         ->select(
             'projectactivity.GUID', 
@@ -306,7 +303,7 @@ class ForActionsController extends Controller
         })
         ->addColumn('CreatedDate', function($project){
             $date = date("F j, Y g:i a", strtotime($project->CreatedDate));
-            // $details = '<small>'. $project->Remarks.' - <i>'.$project->RoutedFrom .' on '. $date .'</i></small>';
+
             return $date;
         })
         ->rawColumns(['Details', 'CreatedDate'])
@@ -348,14 +345,11 @@ class ForActionsController extends Controller
             )
             ->Join('projectactivity', function ($join) {
                 $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
-                // $join->on('projectactivity.CreateDate','>=', DB::raw("'2012-05-01'"));
 
                 $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
                     join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
             })
             ->where('project.Region', '=', $UserOffice)
-            // ->where('project.UpdatedDate', '>=', $StartDate)
-            // ->where('project.UpdatedDate', '<=', $EndDate)
             ->where('projectactivity.RoutedTo', '=', $UserName)
             ->where('projectactivity.RoutedToOffice', '=', $UserOffice)
             ->whereIn('Status', array('For Approval', 'For Denial'))
@@ -364,6 +358,7 @@ class ForActionsController extends Controller
             ->get();
 
         } else {
+
             $projects = Project::select(
                 'project.Address AS Address',
                 'project.Municipality  AS Municipality', 
@@ -386,14 +381,11 @@ class ForActionsController extends Controller
             )
             ->Join('projectactivity', function ($join) {
                 $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
-                // $join->on('projectactivity.CreateDate','>=', DB::raw("'2012-05-01'"));
 
                 $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
                     join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
             })
             ->where('project.Region', '=', $UserOffice)
-            // ->where('project.UpdatedDate', '>=', $StartDate)
-            // ->where('project.UpdatedDate', '<=', $EndDate)
             ->where('projectactivity.RoutedTo', '=', $UserName)
             ->where('projectactivity.RoutedToOffice', '=', $UserOffice)
             // ->whereNotIn('Status', array('Approved', 'Denied'))
@@ -402,55 +394,38 @@ class ForActionsController extends Controller
             ->get();
         }
 
-        // $project = collect([]);
-        // $projects->each(function($proj) use ($project, $UserName){
-        //     if( $proj->Status == 'Approved' || $proj->Status == 'Denied'){}
-        //         else{
-        //                 if($proj->RoutedTo == $UserName){
-        //                     $project->push($proj);    
-        //                 }
-        //             }
-        //     });
+
 
         return DataTables::of($projects)
         ->addColumn('Details', function($project) use ($UserRole){
             if($project->Stage > 0){
-                $details = '<a class="text-uppercase" href="ProjectApp/'.$project->ProjectGUID.'/'.$project->ActivityGUID.'">'. $project->ProjectName.'</a>';
+                $details = '<small><a class="text-uppercase" href="ProjectApp/'.$project->ProjectGUID.'/'.$project->ActivityGUID.'">'. $project->ProjectName.'</a>';
             }else{
                 if($UserRole != 'Evaluator'){
-                    $details = '<a class="text-uppercase" href="NewApplications/'.$project->ProjectGUID.'/'.$project->ActivityGUID.'">'. $project->ProjectName.'</a>';
+                    $details = '<small><a class="text-uppercase" href="NewApplications/'.$project->ProjectGUID.'/'.$project->ActivityGUID.'">'. $project->ProjectName.'</a>';
                 }else{
-                    $details = '<a class="text-uppercase" href="ProjectApp/'.$project->ProjectGUID.'/'.$project->ActivityGUID.'">'. $project->ProjectName.'</a>';
+                    $details = '<small><a class="text-uppercase" href="ProjectApp/'.$project->ProjectGUID.'/'.$project->ActivityGUID.'">'. $project->ProjectName.'</a>';
                 }
             }
             
-            $details .= '<br><p class="text-uppercase">'.$project->Address.', '. $project->Municipality.', '. $project->Province.', '. $project->Region .'</p><br/>';
+            $details .= '<br><p class="text-uppercase">'.$project->Address.', '. $project->Municipality.', '. $project->Province.', '. $project->Region .'</p><br/></small>';
             return $details;
         })
         ->addColumn('Status', function($project){
-            $details = '<i style="color:slategray;">'. $project->Status.'</i>';
+            $details = '<small><i style="color:slategray;">'. $project->Status.'</i></small>';
             return $details;
         })
         ->addColumn('Remarks', function($project){
-            // $projectactivity = ProjectActivity::on('mysql')->where('projectactivity.ProjectGUID', '=', $project->ProjectGUID)
-            // ->orderByRaw('ID Desc')
-            // ->first();
 
             $date = date("F j, Y g:i a", strtotime($project->UpdatedDate));
             $details = '<small>'. $project->Remarks.' - <i>'.$project->RoutedFrom .' on '. $date .'</i></small>';
             return $details;
         })
         ->addColumn('IncurredDate', function($project){
-            //  $projectactivity = ProjectActivity::on('mysql')->where('projectactivity.ProjectGUID', '=', $project->ProjectGUID)
-            // ->orderByRaw('ID Desc')
-            // ->first();
 
-            // $start_date = date("d-m-Y", strtotime($projectactivity->UpdatedDate));
-            // $end_date = date('d-m-Y');
             $start_date = $project->UpdatedDate;
             $end_date = date('Y-m-d');
 
-            // $dateDiff = $this->dateDiffInDays($start_date, $end_date);
             $dateDiff = $this->Count_Days_Without_Weekends($start_date, $end_date);
 
             if($dateDiff > 21){
@@ -480,17 +455,6 @@ class ForActionsController extends Controller
         }
     return $run_days;
     }
-
-
-    // public function dateDiffInDays($date1, $date2) 
-    // {
-    // // Calculating the difference in timestamps
-    //     $diff = strtotime($date2) - strtotime($date1);
-      
-    // // 1 day = 24 hours
-    // // 24 * 60 * 60 = 86400 seconds
-    //     return abs(round($diff / 86400));
-    // }
 
     public function getListOfAttachments(Request $req)
     {   
@@ -1129,7 +1093,7 @@ class ForActionsController extends Controller
         ->where('ProjectGUID', '=', $ProjectGUID)
         ->get();
 
-        $todate = date('m/d/Y H:i:s A');
+        $todate = date('m/d/Y h:i:s A');
 
         $pdf = PDF::loadView('pdf.evaluation_report', compact('project', 'todate'));
         $pdf->output();
@@ -1137,7 +1101,7 @@ class ForActionsController extends Controller
         $NewGUID = Uuid::generate()->string;
         $GUID = Str::upper($NewGUID);
 
-        $todate = date('m/d/Y H:i:s A');
+        $todate = date('m/d/Y h:i:s A');
 
         $Date = date('m/d/Y');
 
@@ -1370,8 +1334,8 @@ class ForActionsController extends Controller
 
         $templateProcessor = new TemplateProcessor('word-template/ECC.docx');
 
-        $templateProcessor->setValue('projectname', $project->ProjectName);
-        $templateProcessor->setValue('proponentname', $project->ProponentName);
+        $templateProcessor->setValue('projectname', htmlspecialchars($project->ProjectName));
+        $templateProcessor->setValue('proponentname', htmlspecialchars($project->ProponentName));
         $templateProcessor->setValue('representativedesignation', $project->Designation);
         $templateProcessor->setValue('proponentaddress', $project->MailingAddress);
         $templateProcessor->setValue('projectaddress', $project->Address);
@@ -1381,7 +1345,7 @@ class ForActionsController extends Controller
         $templateProcessor->setValue('region', $project->Region);
         $templateProcessor->setValue('projectarea', $project->LandAreaInSqM . " square meters ");
         $templateProcessor->setValue('province', $project->Province);
-        $templateProcessor->setValue('municipality ', $project->Municipality);
+        $templateProcessor->setValue('municipality', $project->Municipality);
         $templateProcessor->setValue('representative', $project->Representative);
 
         $templateProcessor->setValue('embaddress', $project->EMBAddress);
@@ -1522,8 +1486,8 @@ class ForActionsController extends Controller
 
         $templateProcessor = new TemplateProcessor('word-template/Denial.docx');
 
-        $templateProcessor->setValue('projectname', $project->ProjectName);
-        $templateProcessor->setValue('proponentname', $project->ProponentName);
+        $templateProcessor->setValue('projectname', htmlspecialchars($project->ProjectName));
+        $templateProcessor->setValue('proponentname', htmlspecialchars($project->ProponentName));
         $templateProcessor->setValue('representativedesignation', $project->Designation);
         $templateProcessor->setValue('proponentaddress', $project->MailingAddress);
         $templateProcessor->setValue('projectaddress', $project->Address);
@@ -1649,10 +1613,14 @@ class ForActionsController extends Controller
         ->where('Active', 1)
         ->get();   
 
+        $counter = 0;
         $array = [];
         foreach ($actionrequiredperson as $key => $arp) {
             $data = [];
+            $counter++;
             if($arp['Action'] == $ActionRequired){
+                $data = '<option value="'.$arp['Action'].'" selected> '.$arp['Action'].'</option>';
+            } elseif($counter == 1){
                 $data = '<option value="'.$arp['Action'].'" selected> '.$arp['Action'].'</option>';
             } else {
                 $data = '<option value="'.$arp['Action'].'"> '.$arp['Action'].'</option>';
@@ -1923,8 +1891,8 @@ class ForActionsController extends Controller
 
         $templateProcessor->setValue('referenceno', $ReferenceNo);
 
-        $templateProcessor->setValue('projectname', $project->ProjectName);
-        $templateProcessor->setValue('proponentname', $project->ProponentName);
+        $templateProcessor->setValue('projectname', htmlspecialchars($project->ProjectName));
+        $templateProcessor->setValue('proponentname', htmlspecialchars($project->ProponentName));
         $templateProcessor->setValue('representativedesignation', $project->Designation);
         $templateProcessor->setValue('proponentaddress', $project->MailingAddress);
         $templateProcessor->setValue('projectaddress', $project->Address);
