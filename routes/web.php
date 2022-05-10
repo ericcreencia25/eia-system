@@ -13,7 +13,7 @@ use Webpatser\Uuid\Uuid;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Web Routes 
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
@@ -31,7 +31,6 @@ use Webpatser\Uuid\Uuid;
 Route::get('/welcome', [AspnetUserController::class, 'index'])->name('index');
 
 // Route::view('forTesting/HazardHunterPH', 'georisk');
-
 
 
 // Auth::routes();
@@ -273,6 +272,8 @@ Route::group(['middleware'=>'web'], function(){
     Route::get('/search/project-type', [NewApplicationsController::class, 'searchProjectType'])->name('searchProjectType');
 
     Route::post('/addBindData', [NewApplicationsController::class, 'addBindData'])->name('addBindData');
+
+    Route::post('/addCompanyDetailsECC', [NewApplicationsController::class, 'addCompanyDetailsECC'])->name('addCompanyDetailsECC');
 
     Route::post('/unBindData', [NewApplicationsController::class, 'unBindData'])->name('unBindData');
 
