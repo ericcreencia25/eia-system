@@ -74,80 +74,104 @@
 
         <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
           <div class="box-body no-padding">
-            <div class="col-md-12">
-              <div class="col-md-4">
+            <div class="col-md-12" style="padding: 3px">
+              <div class="col-md-4" style="padding: 1px">
+                <button class="btn btn-primary btn-block" id="bind-company-details">Bind this company details  <span class="glyphicon glyphicon-share"></span></button>
+                <br>
                 <div id="map"></div>
-              </div>
-              <div class="col-md-4">
-                <div class="box-body">
-                  <div class="form-group">
-                    <label for="exampleInputEmail1">Company name</label>
-                    <input type="text" class="form-control" id="company_name" placeholder="Company  Name" disabled>
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">EMB ID</label>
-                    <input type="text" class="form-control" id="emb_id" placeholder="EMB ID" disabled>
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Establishment Name</label>
-                    <input type="text" class="form-control" id="establishment_name" placeholder="Establishment Name" disabled>
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Date Established</label>
-                    <input type="text" class="form-control" id="date_established" placeholder="Date Established" disabled>
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Email</label>
-                    <input type="text" class="form-control" id="email" placeholder="Email" disabled>
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Contact No.</label>
-                    <input type="text" class="form-control" id="contact_no" placeholder="Contact No." disabled>
-                  </div>
-                  <label for="">Coordinates (Longitude, Latitude)</label>
-                  <div class="form-group">
-                    
-                    <div class="col-xs-6 no-padding">
+                <br>
+                <div class="form-group" style="padding: 1px">
+                    <label for="">Coordinates (Longitude, Latitude)</label>
+                    <div class="col-xs-6" style="padding: 1px">
                       <input type="text" class="form-control" id="longitude" placeholder="Longitude" disabled>
                     </div>
-                    <div class="col-xs-6 no-padding">
+                    <div class="col-xs-6" style="padding: 1px">
                       <input type="text" class="form-control" id="latitude" placeholder="Latitude" disabled>
                     </div>
                   </div>
-                  
-                </div>
               </div>
 
-              <div class="col-md-4">
+              <div class="col-md-4" style="padding: 1px">
                 <div class="box-body">
-                  <div class="form-group">
-                    <label for="exampleInputEmail1">House No.</label>
-                    <input type="text" class="form-control" id="house_no" placeholder="House No." disabled>
+                  <div class="form-group" style="padding: 1px">
+                    <label for="exampleInputEmail1">Company name</label>
+                    <input type="text" class="form-control" id="company_name" placeholder="Company  Name" disabled>
                   </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Street</label>
-                    <input type="text" class="form-control" id="street" placeholder="Street" disabled>
+                  <div class="form-group" style="padding: 1px">
+                    <label for="exampleInputPassword1">EMB ID</label>
+                    <input type="text" class="form-control" id="emb_id" placeholder="EMB ID" disabled>
                   </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Barangay Name</label>
-                    <input type="text" class="form-control" id="barangay_name" placeholder="Barangay Name" disabled>
+                  <div class="form-group" style="padding: 1px">
+                    <label for="exampleInputPassword1">Establishment Name</label>
+                    <input type="text" class="form-control" id="establishment_name" placeholder="Establishment Name" disabled>
                   </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">City Name</label>
-                    <input type="text" class="form-control" id="city_name" placeholder="City Name" disabled>
+                  <div class="form-group" style="padding: 1px">
+                    <label for="exampleInputPassword1">Date Established</label>
+                    <input type="text" class="form-control" id="date_established" placeholder="Date Established" disabled>
                   </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Province Name</label>
-                    <input type="text" class="form-control" id="province_name" placeholder="Province Name" disabled>
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Region Name</label>
-                    <input type="text" class="form-control" id="region_name" placeholder="Region Name" disabled>
-                  </div>
-                  <div class="form-group">
+
+                  <div class="form-group" style="padding: 1px">
                     <label for="exampleInputPassword1">CEO/President/Owner</label>
                     <input type="text" class="form-control" id="contact_person" placeholder="CEO/President/Owner" disabled>
                   </div>
+
+                  <div class="form-group" style="padding: 1px">
+                    <label for="exampleInputPassword1">Email</label>
+                    <input type="text" class="form-control" id="email" placeholder="Email" disabled>
+                  </div>
+
+                  <div class="form-group col-md-6" style="padding: 1px">
+                    <label for="exampleInputPassword1">Landline No.</label>
+                    <input type="text" class="form-control" id="contact_no" placeholder="Contact No." disabled>
+                  </div>
+
+                  <div class="form-group col-md-6" style="padding: 1px">
+                    <label for="exampleInputPassword1">Mobile No.</label>
+                    <input type="text" class="form-control" id="mobile_no" placeholder="CEO/President/Owner" disabled>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="col-md-4" style="padding: 1px">
+                <div class="box-body">
+
+                  <div class="form-group col-md-4" style="padding: 1px">
+                    <label for="exampleInputEmail1">House No.</label>
+                    <input type="text" class="form-control" id="house_no" placeholder="House No." disabled>
+                  </div>
+                  <div class="form-group col-md-8" style="padding: 1px">
+                    <label for="exampleInputPassword1">Street</label>
+                    <input type="text" class="form-control" id="street" placeholder="Street" disabled>
+                  </div>
+                  <div class="form-group" style="padding: 1px">
+                    <label for="exampleInputPassword1">Barangay Name</label>
+                    <input type="text" class="form-control" id="barangay_name" placeholder="Barangay Name" disabled>
+                  </div>
+                  <div class="form-group" style="padding: 1px">
+                    <label for="exampleInputPassword1">City Name</label>
+                    <input type="text" class="form-control" id="city_name" placeholder="City Name" disabled>
+                  </div>
+                  <div class="form-group" style="padding: 1px">
+                    <label for="exampleInputPassword1">Province Name</label>
+                    <input type="text" class="form-control" id="province_name" placeholder="Province Name" disabled>
+                  </div>
+                  <div class="form-group" style="padding: 1px">
+                    <label for="exampleInputPassword1">Region Name</label>
+                    <input type="text" class="form-control" id="region_name" placeholder="Region Name" disabled>
+                  </div>
+                  
+
+                  <div class="form-group" style="padding: 1px">
+                    <label for="exampleInputPassword1">SEC Registration No.</label>
+                    <input type="text" class="form-control" id="sec_registration_no" placeholder="SEC Registration No." disabled>
+                  </div>
+
+                  <div class="form-group" style="padding: 1px">
+                    <label for="exampleInputPassword1">DTI Registration No.</label>
+                    <input type="text" class="form-control" id="dti_registration_no" placeholder="DTI Registration No." disabled>
+                  </div>
+
                 </div>
               </div>
             </div>
@@ -193,7 +217,7 @@
       <div class="modal-header" style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span></button>
-          <h5 class="modal-title">Note: Bind your company first. Before applying for permit.</h5>
+          <h5 class="modal-title"><center>Note: Bind your company first. Before applying for permit.</center></h5>
         </div>
         <div class="modal-body">
           <div class="box-body">
@@ -236,44 +260,44 @@
               </div>
 
               <div class="col-md-8" style="padding-left: 20px;border-left: 1px solid #d2d6de;">
-                <div class="form-group col-md-12 no-padding"><h3>From ECC:  <span id="company-status-modal"></span></h3></div>
+                <div class="form-group col-md-12"><h4>From ECC:  <span id="company-status-modal"></span></h4></div>
 
-                <div class="form-group col-md-12 no-padding" hidden>
+                <div class="form-group col-md-12=" hidden>
                   <label for="exampleInputEmail1">ID: (Auto-generated)</label>
                   <input type="text" class="form-control" id="proponent_guid_proponent" placeholder="ID: (Auto-generated)" disabled>
                 </div>
                 
-                <div class="form-group col-md-12 no-padding">
+                <div class="form-group col-md-12" style="padding: 5px">
                   <label for="exampleInputEmail1">Company name</label>
                   <input type="text" class="form-control" id="company_name_proponent" placeholder="Company  Name" disabled>
                 </div>
 
-                <div class="form-group col-md-12 no-padding">
+                <div class="form-group col-md-12" style="padding: 5px">
                   <label for="">Address</label>
                   <input type="text" class="form-control" id="address_proponent" placeholder="Address" disabled>
                 </div>
 
-                <div class="form-group col-md-8 no-padding">
+                <div class="form-group col-md-8" style="padding: 5px">
                   <label for="">CEO/President/Owner</label>
                   <input type="text" class="form-control" id="contact_person_proponent" placeholder="CEO/President/Owner" disabled>
                 </div>
 
-                <div class="form-group col-md-4 no-padding">
+                <div class="form-group col-md-4" style="padding: 5px">
                   <label for="">Contact No.</label>
                   <input type="text" class="form-control" id="contact_no_proponent" placeholder="Contact No." disabled>
                 </div>
 
-                <div class="form-group col-md-6 no-padding">
+                <div class="form-group col-md-6" style="padding: 5px">
                   <label for="">Email</label>
                   <input type="text" class="form-control" id="email_proponent" placeholder="Email" disabled>
                 </div>
 
-                <div class="form-group col-md-3 no-padding">
+                <div class="form-group col-md-3" style="padding: 5px">
                   <label for="">SEC Registration No.</label>
                   <input type="text" class="form-control" id="sec_registration" placeholder="SEC Registration No." disabled>
                 </div>
 
-                <div class="form-group col-md-3 no-padding">
+                <div class="form-group col-md-3" style="padding: 5px">
                   <label for="">DTI Registration No.</label>
                   <input type="text" class="form-control" id="dti_registration" placeholder="DTI Registration No." disabled>
                 </div>
@@ -296,9 +320,8 @@
     </div>
   </div>
 
-  <div id="mybutton">
-    <a class="feedback" href="{{ url("/search/project-type") }}">APPLY FOR PERMIT</a>
-</div>
+  <div id="button-apply"></div>
+  
 @stop
 <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
@@ -433,8 +456,23 @@ $(document).ready(function(){
             _token: '{{csrf_token()}}' ,
           },  
           success: function(response){
-            Swal.fire(response, '', 'info')
-            location.reload();
+            // Swal.fire(response, '', 'info')
+
+            Swal.fire({
+              title: response,
+              showDenyButton: false,
+              showCancelButton: false,
+              confirmButtonText: 'Confirm',
+              denyButtonText: `Don't save`,
+            }).then((result) => {
+              /* Read more about isConfirmed, isDenied below */
+              if (result.isConfirmed) {
+                location.reload();
+              } else {
+                location.reload();
+              }
+            })
+            
           }
         });
       }
@@ -465,8 +503,22 @@ $(document).ready(function(){
             _token: '{{csrf_token()}}' ,
           },  
           success: function(response){
-            Swal.fire(response, '', 'info')
-            location.reload();
+
+            Swal.fire({
+              title: response,
+              showDenyButton: false,
+              showCancelButton: false,
+              confirmButtonText: 'Confirm',
+              denyButtonText: `Don't save`,
+            }).then((result) => {
+              /* Read more about isConfirmed, isDenied below */
+              if (result.isConfirmed) {
+                location.reload();
+              } else {
+                location.reload();
+              }
+            })
+
           }
         });
       }
@@ -483,6 +535,70 @@ $(document).ready(function(){
     $('#sec_registration').val('');
     $('#dti_registration').val('');
   })
+
+  $("#bind-company-details").on('click', function() {
+    var company_name = $("#company_name").val();
+    var emb_id = $("#emb_id").val();
+    var establishment_name = $("#establishment_name").val();
+    var contact_no = $("#contact_no").val();
+    var email = $("#email").val();
+    var contact_person = $("#contact_person").val();
+    var mobile_no = $("#mobile_no").val();
+
+    var address = $("#house_no").val() + ' ' + $("#street").val() + ' ' + $("#barangay_name").val() + ', ' + $("#city_name").val() + ', ' + $("#province_name").val();
+
+    var sec_registration_no = $("#sec_registration_no").val();
+    var dti_registration_no = $("#dti_registration_no").val();
+
+
+    Swal.fire({
+      title: 'Do you want to bind this company details?',
+      showDenyButton: false,
+      showCancelButton: true,
+      confirmButtonText: 'Confirm',
+      denyButtonText: `Don't save`,
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        $.ajax({
+          url: "{{route('addCompanyDetailsECC')}}",
+          type: 'POST',
+          data: {
+            company_name : company_name,
+            emb_id : emb_id,
+            establishment_name : establishment_name,
+            contact_no : contact_no,
+            mobile_no : mobile_no,
+            email : email,
+            contact_person : contact_person,
+            address : address,
+            sec_registration_no : sec_registration_no,
+            dti_registration_no : dti_registration_no,
+            _token: '{{csrf_token()}}' ,
+          },  
+          success: function(response){
+            // Swal.fire(response, '', 'info')
+             Swal.fire({
+              title: response,
+              showDenyButton: false,
+              showCancelButton: false,
+              confirmButtonText: 'Confirm',
+              denyButtonText: `Don't save`,
+            }).then((result) => {
+              /* Read more about isConfirmed, isDenied below */
+              if (result.isConfirmed) {
+                location.reload();
+              } else {
+                location.reload();
+              }
+            })
+            
+          }
+        });
+      }
+    })
+
+  });
 
   Swal.bindClickHandler()
 
@@ -525,6 +641,7 @@ function companyData()
     url: "{{route('companyData')}}",
     type: 'GET',
     success: function(response){
+      console.log(response);
       mapView(parseFloat(response['latitude']), parseFloat(response['longitude']))
       $("#company_name").val(response['company_name']);
       $("#emb_id").val(response['emb_id']);
@@ -532,6 +649,9 @@ function companyData()
       $("#longitude").val(response['longitude']);
       $("#latitude").val(response['latitude']);
       $("#contact_no").val(response['contact_no']);
+
+      $("#mobile_no").val(response['ceo_contact_num']);
+
       $("#email").val(response['email']);
 
       $("#house_no").val(response['house_no']);
@@ -541,6 +661,9 @@ function companyData()
       $("#province_name").val(response['province_name']);
       $("#region_name").val(response['region_name']);
       $('#contact_person').val(response['ceo_fname'] + ' ' + response['ceo_sname'])
+
+      $('#dti_registration_no').val(response['dti_registration'])
+      $('#sec_registration_no').val(response['sec_registration'])
 
       
       getBindedData(response['emb_id'], response['company_name']);
@@ -689,6 +812,8 @@ function getBindedData(emb_id, company_name)
 
           $('#comparison-modal').modal();
 
+          $("#bind-company-details").removeAttr('disabled');
+
           searchCompany();
 
         } else {
@@ -701,7 +826,11 @@ function getBindedData(emb_id, company_name)
           $('#company-status-modal').attr('class', 'badge bg-green');
           $('#company-status-modal').text('BINDED');
 
+          $('#button-apply').html('<div id="mybutton"><a class="feedback" href="{{ url("/search/project-type") }}">APPLY FOR PERMIT</a></div>');
+
           ComparisonData(response['ProponentName']);
+
+          $("#bind-company-details").attr('disabled', 'disabled');
 
         }
 

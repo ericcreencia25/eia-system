@@ -51,7 +51,7 @@
                         <b>Recent Activity:</b> <a  href="" style="text-decoration:none;" id="remarks"></a> 
                     </div>
 
-                @if($project['RoutedTo'] == Session::get('data')['UserName'])
+                @if($project->RoutedTo == Session::get('data')['UserName'])
                     
                     <div id="ContentPlaceHolder1_dvRouting">
                         <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;  cursor:pointer;">RETURN THIS APPLICATION TO EMB</div>
@@ -65,7 +65,7 @@
                             <tbody><tr>
                                 <td style="width:600px;">
                                     <select class='form-control' id='activitiyAttachments' name='activitiyAttachments'>
-                                        @if($project['Status'] == 'Approved')
+                                        @if($project->Status == 'Approved')
                                             <option value="Notarized ECC">
                                                Notarized ECC
                                             </option> 
@@ -81,11 +81,11 @@
                                         @endforeach
                                     </select> -->
                                 </td>
-                                <td style="vertical-align:top;width:500px;">
-                                    <input type="file" style="border-width:0px;border-style:None;font-size:Medium;width:98%;" id="InputFile"> 
+                                <td style="width:250px;">
+                                    <input type="file" style="border-width:0px;border-style:None;font-size:Medium; width: 300px;" id="InputFile"> 
                                 </td>
                                 <td style="width:80px; vertical-align:top;">
-                                    <button type="button" class="btn btn-default btn-sm" name="submit" id="Uploads"><img src="../../img/upload.png" style="width:15px;" /></button>
+                                    <button type="button" class="btn btn-default btn-md" name="submit" id="Uploads" style="width: 200px"><img src="../../img/upload.png" style="width:15px;" /></button>
                                 </td>
                             </tr>
                         </tbody></table>
@@ -182,19 +182,19 @@
 <script src="../../adminlte/dist/js/demo.js"></script>
 
 <script>
-var GUID = "{{$project['GUID']}}";
-var ActivityGUID = "{{$project['ActivityGUID']}}";
-var CreatedBy = "{{$project['CreatedBy']}}";
+var GUID = "{{$project->GUID}}";
+var ActivityGUID = "{{$project->ActivityGUID}}";
+var CreatedBy = "{{$project->CreatedBy}}";
 
 
 
 $(document).ready(function(){
-    var ProjectName = "{{ $project['ProjectName']}}";
-    var ProjectAddress = "{{$project['Address']}}";
-    var ProjectMunicipality = "{{$project['Municipality']}}";
-    var ProjectProvince = "{{$project['Province']}}";
-    var ProjectPurpose = "{{$project['Purpose']}}";
-    var PreviousECCNo = "{{$project['PreviousECCNo']}}";
+    var ProjectName = "{{ $project->ProjectName}}";
+    var ProjectAddress = "{{$project->Address}}";
+    var ProjectMunicipality = "{{$project->Municipality}}";
+    var ProjectProvince = "{{$project->Province}}";
+    var ProjectPurpose = "{{$project->Purpose}}";
+    var PreviousECCNo = "{{$project->PreviousECCNo}}";
 
     if(ProjectPurpose == "New Application"){
         var Purpose = "New ECC Application";
@@ -395,13 +395,13 @@ $(document).ready(function(){
       });
 
     $("#Return").on('click', function() {
-        var UpdatedDate = "{{$project['UpdatedDate']}}";
-        var Status = "{{$project['Status']}}";
+        var UpdatedDate = "{{$project->UpdatedDate}}";
+        var Status = "{{$project->Status}}";
 
-        var RoutedToOffice = "{{$project['RoutedFromOffice']}}";
-        var RoutedTo = "{{$project['RoutedFrom']}}";
-        var RoutedFromOffice = "{{$project['RoutedToOffice']}}";
-        var RoutedFrom = "{{$project['RoutedTo']}}";
+        var RoutedToOffice = "{{$project->RoutedFromOffice}}";
+        var RoutedTo = "{{$project->RoutedFrom}}";
+        var RoutedFromOffice = "{{$project->RoutedToOffice}}";
+        var RoutedFrom = "{{$project->RoutedTo}}";
 
         var Remarks = $("#Remarks").val();
 

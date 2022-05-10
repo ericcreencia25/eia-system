@@ -18,8 +18,8 @@
                     </div>
                     <div class="col-md-1">
                         @if($project->Status == 'Approved')
-                        <a href="../../qr-code/{{$project['GUID']}}.png" id="pointer"  style="cursor: pointer;" download>
-                        <img title="Click to download QR Code" src="../../qr-code/{{$project['GUID']}}.png" style="width:60px;" alt="" download></a>
+                        <a href="../../qr-code/{{$project->GUID}}.png" id="pointer"  style="cursor: pointer;" download>
+                        <img title="Click to download QR Code" src="../../qr-code/{{$project->GUID}}.png" style="width:60px;" alt="" download></a>
                         @endif
                     </div>
                 </div>
@@ -152,10 +152,11 @@
                 </div>
             </div>
         </div>
+        
         <div id="overlay" style="display:none;">
             <div class="spinner"></div>
             <br/>
-            <h3>Please wait while saving your data...</h3>
+            <h3 style="font-family: Arial, Sans; color: white;" id="overlay-message">Saving your changes. Please be patient</h3>
         </div>
 
 <!-- /.modal -->
@@ -178,28 +179,29 @@
 <script src="../../adminlte/dist/js/demo.js"></script>
 
 <script>
-var GUID = "{{$project['GUID']}}";
-var ActivityGUID = "{{$project['ActivityGUID']}}";
-var CreatedBy = "{{$project['CreatedBy']}}";
+var GUID = "{{$project->GUID}}";
+var ActivityGUID = "{{$project->ActivityGUID}}";
+var CreatedBy = "{{$project->CreatedBy}}";
 
 
 var AdditionalRequirements = [];
 
 $(document).ready(function(){
+
     var data = localStorage.getItem("ReqStorage");
     var ReqStorage = data ? JSON.parse(data) : [];
   
-    var ProjectName = "{{ $project['ProjectName']}}";
-    var ProjectAddress = "{{$project['Address']}}";
-    var ProjectMunicipality = "{{$project['Municipality']}}";
-    var ProjectProvince = "{{$project['Province']}}";
-    var ProjectPurpose = "{{$project['Purpose']}}";
-    var PreviousECCNo = "{{$project['PreviousECCNo']}}";
-    var ProponentName = "{{$project['ProponentName']}}";
+    var ProjectName = "{{ $project->ProjectName}}";
+    var ProjectAddress = "{{$project->Address}}";
+    var ProjectMunicipality = "{{$project->Municipality}}";
+    var ProjectProvince = "{{$project->Province}}";
+    var ProjectPurpose = "{{$project->Purpose}}";
+    var PreviousECCNo = "{{$project->PreviousECCNo}}";
+    var ProponentName = "{{$project->ProponentName}}";
     var check = "{{ Session::has('NewActivityGUID') ? Session::get('NewActivityGUID') : ''}}";
 
-    var AcceptedBy = "{{ $project['AcceptedBy']}}";
-    var AcceptedDate = "{{ $project['AcceptedDate']}}";
+    var AcceptedBy = "{{ $project->AcceptedBy}}";
+    var AcceptedDate = "{{ $project->AcceptedDate}}";
 
     if(check == ''){
         $.ajax({
@@ -320,7 +322,7 @@ $(document).ready(function(){
 
 function revertApplication(ProjectGUID)
 {   
-    var UpdatedDate = "{{$project['UpdatedDate']}}";
+    var UpdatedDate = "{{$project->UpdatedDate}}";
     Swal.fire({
         title: '<small>Are you sure you want to REVERT this application?</small>',
         // text: 'Confirm the REVERT of this application?',
@@ -341,6 +343,8 @@ function revertApplication(ProjectGUID)
                 },
                 beforeSend: function() {
                     $('#overlay').show();
+
+                    $('#overlay-message').html('Reverting your application. Please be patient.')
                 },  
                 success: function(response){
                     $('#overlay').fadeOut(2000, () => {
@@ -477,9 +481,9 @@ function listOfAttachments(ActivityGUID)
 
 function ProcessApplication(Status, text)
 {
-    var UpdatedDate = "{{$project['UpdatedDate']}}";
+    var UpdatedDate = "{{$project->UpdatedDate}}";
     var Project = '<b>' + text + '</b>'; 
-    var Region = "{{$project['Region']}}";
+    var Region = "{{$project->Region}}";
 
     if(Status === 'Denied'){
         Swal.fire({
@@ -515,6 +519,7 @@ function ProcessApplication(Status, text)
                             },
                             beforeSend: function() {
                                 $('#overlay').show();
+                                $('#overlay-message').html('Denying your application. Please be patient.')
                             },  
                             success: function(response){
                                 $('#overlay').fadeOut(2000, () => {
@@ -571,6 +576,7 @@ function ProcessApplication(Status, text)
                             },
                             beforeSend: function() {
                                 $('#overlay').show();
+                                $('#overlay-message').html('Approving your application. Please be patient.')
                             },  
                             success: function(response){
                                 $('#overlay').fadeOut(2000, () => {

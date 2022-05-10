@@ -1,4 +1,18 @@
-<link rel="stylesheet" href="../../adminlte/dist/css/overlay-success.css">
+<!-- <link rel="stylesheet" href="../../adminlte/dist/css/overlay-success.css"> -->
+<style>
+    .modal-dialog {
+        position: absolute;
+        top: 150px;
+        right: 100px;
+        bottom: 0;
+        left: 0;
+        z-index: 10040;
+        overflow: auto;
+        overflow-y: auto;
+    }
+
+</style>
+
 <div class="box-body">
     <div class="callout callout-default" style="background: #ccc; margin-bottom: 0px">
     <div>
@@ -19,6 +33,7 @@
         </table>
     </div>
 </div>
+
 
 <div id="overlay" style="display:none;">
     <div class="spinner"></div>
@@ -85,6 +100,8 @@
             if(error_message.length == 0){
                 $("#li_step_8").attr("class", "able");
                 $("#step_8").attr("data-toggle", "tab");
+                $('#myTab li a')[7].click();
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Proceed to last step.',
@@ -138,6 +155,7 @@
               confirmButtonText: 'Confirm'
             }).then((result) => {
               if (result.isConfirmed) {
+                 // $("#modal-default").modal('show');
                 // AJAX request 
                 $.ajax({
                     url: "{{route('uploadFile')}}",
@@ -146,37 +164,59 @@
                     contentType: false,
                     processData: false,
                     dataType: 'json',
-                    beforeSend: function() {
-                        let timerInterval
-                        Swal.fire({
-                          // title: 'Auto close alert!',
-                          html: 'Uploading attachment...',
-                          timer: 2000,
-                          timerProgressBar: true,
-                          didOpen: () => {
-                            Swal.showLoading()
-                          },
-                          willClose: () => {
-                            clearInterval(timerInterval)
-                          }
-                        })
+                    xhr: function() {
+                        var xhr = new window.XMLHttpRequest();
+
+                        xhr.upload.addEventListener('progress', function(e) {
+
+                            if (e.lengthComputable) {
+                                console.log('Bytes Loaded: ' + e.loaded);
+                                console.log('Total Size: ' + e.total);
+                                console.log('Percentage Uploaded: ' + (e.loaded / e.total));
+
+                                var percent = Math.round((e.loaded / e.total) * 100);
+
+                                $('#progressBar_' + id).attr('aria-valuenow', percent).css('width', percent + '%').text(percent + '%');
+                            }
+                        });
+
+                        return xhr;
+
                     },
+                    // beforeSend: function() {
+                    //     let timerInterval
+                    //     Swal.fire({
+                    //       // title: 'Auto close alert!',
+                    //       html: 'Uploading attachment...',
+                    //       timer: 2000,
+                    //       timerProgressBar: true,
+                    //       didOpen: () => {
+                    //         Swal.showLoading()
+                    //       },
+                    //       willClose: () => {
+                    //         clearInterval(timerInterval)
+                    //       }
+                    //     })
+                    // },
                     success: function(response){
+
                         if(response['success'] == 1){
-                            $('#overlay').fadeOut(2000, () => {
-                             Swal.fire({
+
+                            Swal.fire({
                                 icon: 'success',
-                                title: response['message'],
-                                showConfirmButton: false,
-                                timer: 1500,
-                                width: '850px'
+                              title: response['message'],
+                              showDenyButton: false,
+                              showCancelButton: false,
+                              confirmButtonText: 'Confirm',
+                              // denyButtonText: `Don't save`,
                             }).then((result) => {
-                              /* Read more about handling dismissals below */
-                              if (result.dismiss === Swal.DismissReason.timer) {
-                                location.reload();  
+                              /* Read more about isConfirmed, isDenied below */
+                              if (result.isConfirmed) {
+                                location.reload();
+                              } else if (result.isDenied) {
+                                Swal.fire('Changes are not saved', '', 'info')
                               }
-                            });
-                          });
+                            })
 
                         } else {
                             alert("error : " + JSON.stringify(response['error']) );
@@ -188,6 +228,11 @@
                     }
                 });
               }
+
+              // $('#modal-default').on('hidden.bs.modal', function () {
+              //   location.reload();
+              //     // do something…
+              //   })
             })
         }else{
             Swal.fire({
@@ -209,7 +254,7 @@
 
 
         Swal.fire({
-          title: 'Are you sure?',
+            title: 'Are you sure?',
           text: "You want to remove the updated file?",
           icon: 'warning',
           showCancelButton: true,

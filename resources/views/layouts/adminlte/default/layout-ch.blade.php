@@ -25,6 +25,9 @@
   <link rel="stylesheet" href="../../adminlte-3.1.0/dist/css/adminlte.min.css">
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="../../adminlte-3.1.0/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+
+  <link rel="stylesheet" href="../../adminlte/dist/css/overlay-success.css">
+  
   <!-- Daterange picker -->
   <link rel="stylesheet" href="../../adminlte-3.1.0/plugins/daterangepicker/daterangepicker.css">
   <!-- summernote -->

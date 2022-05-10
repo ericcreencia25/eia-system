@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="../../adminlte/dist/css/alert-modal.css">
-<link rel="stylesheet" href="../../adminlte/dist/css/overlay-success.css">
+<!-- <link rel="stylesheet" href="../../adminlte/dist/css/overlay-success.css"> -->
 <div class="box-body">
   <div class="callout callout-default" style="background: #ccc; margin-bottom: 0px">
   <div>

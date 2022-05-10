@@ -29,8 +29,8 @@
                     </div>
                     <div class="col-md-1">
                         @if($project->Status == 'Approved')
-                        <a href="../../qr-code/{{$project['GUID']}}.png" id="pointer"  style="cursor: pointer;" download>
-                        <img title="Click to download QR Code" src="../../qr-code/{{$project['GUID']}}.png" style="width:60px;" alt="" download></a>
+                        <a href="../../qr-code/{{$project->GUID}}.png" id="pointer"  style="cursor: pointer;" download>
+                        <img title="Click to download QR Code" src="../../qr-code/{{$project->GUID}}.png" style="width:60px;" alt="" download></a>
                         @endif
                     </div>
                 </div>
@@ -82,7 +82,7 @@
                                         <th>
                                             <div class="col-md-12">
                                                 <div class="col-md-11">
-                                                    <select class="form-control" id="Requirements">
+                                                    <select class="form-control" id="Requirements" style="width: 1050px">
                                                         <option selected="selected" value=""></option>
                                                         
                                                         <option value="Area status clearance for quarry project">Area status clearance for quarry project</option>
@@ -119,7 +119,7 @@
 
                                                     </select>
                                                 </div>
-                                                <div class="col-md-1"><button class="btn btn-default" id="AddRequirements">Add</button></div>
+                                                <div class="col-md-1"><button class="btn btn-default" style="width: 100px" id="AddRequirements">Add</button></div>
                                             </div>
                                         </th>
                                     </tr>
@@ -127,8 +127,8 @@
                             </table>
                         <div>
                             <span id="accepted">
-                                @if($project['AcceptedBy'] != NULL)
-                                This application had been accepted by {{$project['AcceptedBy']}} on {{date("m/d/Y h:i:s A", strtotime($project['AcceptedDate']))}}
+                                @if($project->AcceptedBy != NULL)
+                                This application had been accepted by {{$project->AcceptedBy}} on {{date("m/d/Y h:i:s A", strtotime($project->AcceptedDate))}}
                                 @endif
                             </span>
                         </div>
@@ -139,7 +139,7 @@
 
                         <button type="button" class="btn btn-default btn-flat" style="width: 200px" id="generate_order_of_payment">Generate Order of Payment</button>
 
-                        @if($project['AcceptedBy'] == NULL && $project['AcceptedDate'] == NULL)
+                        @if($project->AcceptedBy == NULL && $project->AcceptedDate == NULL)
                         <button type="button" class="btn btn-default btn-flat" style="width: 200px" onclick="acceptApplication()">Accept Application</button>
 
                         @else
@@ -157,7 +157,7 @@
                             <span id="name_date"></span>
                         </div>
                         <!---IF ELSE --->
-                        @if(strtolower($project['RoutedTo']) == strtolower(Session::get('data')['UserName']))
+                        @if(strtolower($project->RoutedTo) == strtolower(Session::get('data')['UserName']))
                         <div style="font-weight:bold;   background-color:#106A9A; color:White; padding:10px;">ENDORSE APPLICATION
                         </div>
                         <b>1. Attach the required documents</b>
@@ -179,11 +179,11 @@
                                         </select>
                                     </td>
                                     <td style="width: 10px"></td>
-                                    <td style="vertical-align:top;width:500px;">
-                                        <input type="file" style="border-width:0px;border-style:None;font-size:Medium;" id="InputFile"> 
+                                    <td style="width:250px;">
+                                        <input type="file" style="border-width:0px;border-style:None;font-size:Medium; width: 300px;" id="InputFile"> 
                                     </td>
-                                    <td style="width:80px; vertical-align:top;">
-                                        <button type="button" class="btn btn-default btn-sm" name="submit" id="Uploads">
+                                    <td style="width:80px;">
+                                        <button type="button" class="btn btn-default btn-md" name="submit" id="Uploads" style="width: 200px">
                                             <img src="../../img/upload.png" style="width:15px;" />
                                         </button>
                                     </td>
@@ -197,7 +197,7 @@
                             <tr id="UploadedFile">
                                 
                             </tr>
-                        </tbody></table>
+                        </tbody></table>    
                         <br>
                         <br>
                         <b> 2. Routing </b>
@@ -216,15 +216,15 @@
                                                     <option value="Proponent">
                                                         Proponent
                                                     </option> 
-                                                    <option value="{{ $project['Region']}}">
-                                                        {{ $project['Region']}}
+                                                    <option value="{{ $project->Region}}">
+                                                        {{ $project->Region}}
                                                     </option>  
                                                 </select>
                                             </div>
                                             <div class="col-md-5">
                                                 <select class="form-control" id="user_list">
-                                                    <option value="{{$project['CreatedBy']}}">
-                                                        {{$project['CreatedBy']}} (Applicant)
+                                                    <option value="{{$project->CreatedBy}}">
+                                                        {{$project->CreatedBy}} (Applicant)
                                                     </option>
                                                 </select>
                                             </div>
@@ -268,9 +268,14 @@
                                                 <span id="" style="color:Red;font-size:smaller">Make sure local <a href="{{ url("holidays") }}"><u>holidays</u></a> were already entered before routing</span>    
                                             </div>
                                             <div class="col-md-2">
-                                                <button class="btn btn-flat btn-default" id="Endorse">Endorse</button>
-                                                <button class="btn btn-flat btn-default">Cancel</button>
+                                                <!-- <button class="btn btn-flat btn-default" id="Endorse">Endorse</button>
+                                                <button class="btn btn-flat btn-default">Cancel</button> -->
+                                                <div class="btn-group">
+                                                  <button class="btn btn-default" style="width: 80px" id="Endorse">Endorse</button>
+                                                  <button class="btn btn-default" style="width: 80px" id="Cancel">Cancel</button>
+                                                </div>
                                             </div>
+                                            
                                         </div>
                                     </td>
                                 </tr>
@@ -402,7 +407,7 @@
             <div id="overlay" style="display:none;">
                 <div class="spinner"></div>
                 <br/>
-                <h3>Please wait while saving your data...</h3>
+                <h3 style="font-family: Arial, Sans; color: white;" id="overlay-message">Saving your changes. Please be patient</h3>
             </div>
 
 <!-- /.modal -->
@@ -425,10 +430,10 @@
 <script src="../../adminlte/dist/js/demo.js"></script>
 
 <script>
-var GUID = "{{$project['GUID']}}";
-var ActivityGUID = "{{$project['ActivityGUID']}}";
-var CreatedBy = "{{$project['CreatedBy']}}";
-var CurrentStatus = "{{$project['Status']}}";
+var GUID = "{{$project->GUID}}";
+var ActivityGUID = "{{$project->ActivityGUID}}";
+var CreatedBy = "{{$project->CreatedBy}}";
+var CurrentStatus = "{{$project->Status}}";
 
 var AdditionalRequirements = [];
 
@@ -444,22 +449,25 @@ $(document).ready(function() {
     var data = localStorage.getItem("ReqStorage");
     var ReqStorage = data ? JSON.parse(data) : [];
 
-    console.log(stored1);
+    // $('#overlay').show();
+
+     console.log(stored1);
 
     if(stored1.length > 0) {
         $("#destination").val(stored1[0]['destination']);
         
 
-        if(stored1[0]['destination'] == 'Proponent'){
-            var option1 = '<option value="'+stored1[0]['selected_user']+'" selected>' + stored1[0]['selected_user'] +'</option>'
-            $("#user_list").html(option1);
 
-            var option = '<option value="">-----</option>';
-            option += '<option value="For Submission of Basic Requirements" selected> For Submission of Basic Requirements</option>'; 
-            option += '<option value="For Submission of Additional Information">For Submission of Additional Information</option>';
-            option += '<option value="For Clarification of Information">For Clarification of Information</option>';
-            option += '<option value="For Payment of ECC Application">For Payment of ECC Application</option>';
-            $("#ActionRequired").html(option);
+        if(stored1[0]['destination'] == 'Proponent'){
+            var option1_stored1 = '<option value="'+stored1[0]['selected_user']+'" selected>' + stored1[0]['selected_user'] +'</option>'
+            $("#user_list").html(option1_stored1);
+
+            // var option = '<option value="">-----</option>';
+            var option_stored1 = '<option value="For Submission of Basic Requirements" selected> For Submission of Basic Requirements</option>'; 
+            option_stored1 += '<option value="For Submission of Additional Information">For Submission of Additional Information</option>';
+            option_stored1 += '<option value="For Clarification of Information">For Clarification of Information</option>';
+            option_stored1 += '<option value="For Payment of ECC Application">For Payment of ECC Application</option>';
+            $("#ActionRequired").html(option_stored1);
 
         }else{
             $("#user_list").html('');
@@ -484,17 +492,17 @@ $(document).ready(function() {
 
     }
   
-    var ProjectName = "{{ $project['ProjectName']}}";
-    var ProjectAddress = "{{$project['Address']}}";
-    var ProjectMunicipality = "{{$project['Municipality']}}";
-    var ProjectProvince = "{{$project['Province']}}";
-    var ProjectPurpose = "{{$project['Purpose']}}";
-    var PreviousECCNo = "{{$project['PreviousECCNo']}}";
-    var ProponentName = "{{$project['ProponentName']}}";
+    var ProjectName = "{{ $project->ProjectName}}";
+    var ProjectAddress = "{{$project->Address}}";
+    var ProjectMunicipality = "{{$project->Municipality}}";
+    var ProjectProvince = "{{$project->Province}}";
+    var ProjectPurpose = "{{$project->Purpose}}";
+    var PreviousECCNo = "{{$project->PreviousECCNo}}";
+    var ProponentName = "{{$project->ProponentName}}";
     var check = "{{ Session::has('NewActivityGUID') ? Session::get('NewActivityGUID') : ''}}";
 
-    var AcceptedBy = "{{ $project['AcceptedBy']}}";
-    var AcceptedDate = "{{ $project['AcceptedDate']}}";
+    var AcceptedBy = "{{ $project->AcceptedBy}}";
+    var AcceptedDate = "{{ $project->AcceptedDate}}";
  
     
     $.ajax({
@@ -714,11 +722,11 @@ $(document).ready(function() {
         var destination = $("#destination :selected").val();
         
         if(destination == 'Proponent') {
-            // var option = '<option value="For Submission of Basic Requirements"> For Submission of Basic Requirements</option>'; 
-            // option += '<option value="For Submission of Additional Information">For Submission of Additional Information</option>';
-            // option += '<option value="For Clarification of Information">For Clarification of Information</option>';
-            // option += '<option value="For Payment of ECC Application">For Payment of ECC Application</option>';
-            $("#ActionRequired").html('');
+            var option = '<option value="For Submission of Basic Requirements"> For Submission of Basic Requirements</option>'; 
+            option += '<option value="For Submission of Additional Information">For Submission of Additional Information</option>';
+            option += '<option value="For Clarification of Information">For Clarification of Information</option>';
+            option += '<option value="For Payment of ECC Application">For Payment of ECC Application</option>';
+            $("#ActionRequired").html(option);
 
             var users = '<option value="'+ CreatedBy  +'">'+ CreatedBy +'</option>'; 
 
@@ -847,6 +855,7 @@ $(document).ready(function() {
             },
             beforeSend: function() {
                 $('#overlay').show();
+
             },
             success: function(response){
                 $('#overlay').fadeOut(2000, () => {
@@ -869,7 +878,7 @@ $(document).ready(function() {
 
 
     $("#Endorse").on('click', function() {
-        var UpdatedDate = "{{$project['UpdatedDate']}}";
+        var UpdatedDate = "{{$project->UpdatedDate}}";
         var Destination = $("#destination").val();
         var UserDestination = $("#user_list").val();
         var ActionRequired = $("#ActionRequired option:selected").val();
@@ -966,7 +975,7 @@ $(document).ready(function() {
               });
         }
 
-        if(ActionFiles != 'For Approval:Draft ECC') {
+        if(ActionRequired == 'For Approval' && filesCheck != 'Draft ECC') {
             Swal.fire({
                 icon: 'error',
                 title: 'Notifications!',
@@ -975,10 +984,8 @@ $(document).ready(function() {
                 width: '850px'
               });
         }
-
-        console.log(ActionFiles);
         
-        if(ActionFiles != 'For Denial:Draft Denial Letter') {
+        if(ActionRequired == 'For Denial' && filesCheck != 'Draft Denial Letter') {
             Swal.fire({
                 icon: 'error',
                 title: 'Notifications!',
@@ -987,7 +994,17 @@ $(document).ready(function() {
                 width: '850px'
               });
         } else {
-            if(IncludeAttachment === true){
+            if(UserDestination == ''){
+
+                Swal.fire({
+                        icon: 'warning',
+                        title: 'Notifications!',
+                        text: 'Must select user destination',
+                        // footer: '<a href="">Why do I have this issue?</a>',
+                        width: '850px'
+                      });
+
+            } else if(IncludeAttachment === true){
                 if(filesCheck != ''){
                     Swal.fire({
                         title: 'Are you sure?',
@@ -996,7 +1013,7 @@ $(document).ready(function() {
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes'
+                        confirmButtonText: 'Confirm'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
@@ -1017,6 +1034,8 @@ $(document).ready(function() {
                                 },  
                                 beforeSend: function() {
                                     $('#overlay').show();
+
+                                    $('#overlay-message').html('Endorsing your application. Please be patient.')
                                 },  
                                 success: function(response){
                                     $('#overlay').fadeOut(2000, () => {
@@ -1075,6 +1094,8 @@ $(document).ready(function() {
                                 },  
                                 beforeSend: function() {
                                     $('#overlay').show();
+
+                                    $('#overlay-message').html('Endorsing your application. Please be patient.')
                                 },  
                                 success: function(response){
                                     $('#overlay').fadeOut(2000, () => {
@@ -1198,6 +1219,8 @@ $(document).ready(function() {
         }
     });
 
+
+
     $("#generate_evaluation_report").on('click', function() {
         // var url = '/dynamic_pdf/EvaluationReport/' + GUID;
 
@@ -1205,7 +1228,7 @@ $(document).ready(function() {
 
         if(filesCheck != ''){
             Swal.fire({
-                    icon: 'info',
+                icon: 'info',
                     title: 'You need to delete the file first.',
                     showConfirmButton: false,
                     timer: 1300,
@@ -1231,7 +1254,7 @@ $(document).ready(function() {
                 Swal.fire(
                   // '|Downloaded!|',
                   'Your file has been opened.',
-                  'success'
+                  // 'success'
                 )
               }
             });
@@ -1270,7 +1293,7 @@ $(document).ready(function() {
                 Swal.fire(
                   // '|Downloaded!|',
                   'Your file has been opened.',
-                  'success'
+                  // 'success'
                 )
               }
             });
@@ -1316,7 +1339,7 @@ $(document).ready(function() {
                     Swal.fire(
                       // '|Downloaded!|',
                       'Your file has been downloaded.',
-                      'success'
+                      // 'success'
                     )
                   }
                 });
@@ -1364,7 +1387,7 @@ $(document).ready(function() {
                     Swal.fire(
                       // '|Downloaded!|',
                       'Your file has been downloaded.',
-                      'success'
+                      // 'success'
                     )
                   }
                 });
@@ -1490,7 +1513,7 @@ function UserListsOnRegion()
     }
 
     // $("#user_list").val(stored1[0]['selected_user']);
-    var Region = "{{$project['Region']}}"; 
+    var Region = "{{$project->Region}}"; 
 
     $.ajax({
         url: "{{route('UserListsOnRegion')}}",
@@ -1667,6 +1690,7 @@ function deleteUploadedFile(ID)
                 },
                 beforeSend: function() {
                     $('#overlay').show();
+                    $('#overlay-message').html('Deleting attachment. Please be patient.')
                 },  
                 success: function(response){
                     $('#overlay').fadeOut(2000, () => {

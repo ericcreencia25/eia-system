@@ -1,6 +1,7 @@
-    #overlay {
-  background: #ffffff;
-  color: #666666;
+#overlay {
+    /*#2a2a2a55*/
+  background: #3f3f3f;
+  color: #3f3f3f;
   position: fixed;
   height: 100%;
   width: 100%;
@@ -10,7 +11,7 @@
   float: left;
   text-align: center;
   padding-top: 25%;
-  opacity: .80;
+  opacity: .90;
 }
 .spinner {
     margin: 0 auto;
@@ -21,6 +22,7 @@
     border-right-color: transparent;
     border-radius: 50%;
 }
+
 @keyframes rotate {
     0% {
         transform: rotate(0deg);

@@ -105,7 +105,7 @@
               <li><a href="">Go to CNC Online</a></li>
               @else
               <li><a href="{{ url("default") }}">For Action <span class="sr-only">(current)</span></a></li>
-              <li><a href='' id="newApplication">New Application</a></li>
+              <!-- <li><a href='' id="newApplication">New Application</a></li> -->
               <li><a href="{{ url("documents") }}">ECC Applications</a></li>
               @endif
             

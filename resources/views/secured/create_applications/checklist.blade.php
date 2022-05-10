@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="../../adminlte/dist/css/overlay-success.css">
+<!-- <link rel="stylesheet" href="../../adminlte/dist/css/overlay-success.css"> -->
 <div class="box-body">
     <div class="callout callout-default" style="background: #ccc; margin-bottom: 0px">
     <div>
@@ -34,15 +34,16 @@
     </table>
 </div>
 <div id="overlay" style="display:none;">
-    <div class="spinner"></div>
-    <br/>
-    <h3>Please wait while saving your data...</h3>
-</div>
+                <div class="spinner"></div>
+                <br/>
+                <h3 style="font-family: Arial, Sans; color: white;" id="overlay-message">Saving your changes. Please be patient</h3>
+            </div>
 <script>
     $(document).ready(function(){
         var url=window.location.pathname;
         var arr=url.split('/');
         var NewGUID=arr[2];
+
 
         $("#save_entry").on('click', function(){
             // $('#overlay').fadeIn().delay(2000).fadeOut();
