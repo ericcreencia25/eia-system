@@ -11,33 +11,30 @@
     <br><br>
 </div>
     <table cellpadding="12" width="100%">
+        
         <tbody>
-            <tr>
-                <td style="border-bottom:Solid 1px Silver;"> 1. <a href="{{url('dynamic_pdf/ProjectInformation')}}" target="_blank" style="text-decoration:none;">Project Description</a></td>
+            <tr style="padding: 10px;">
+                <td style="border-bottom:Solid 1px Silver; padding: 13px;">1. <a href="{{url('dynamic_pdf/ProjectInformation')}}" target="_blank" style="text-decoration:none;">Project Description</a></td>
             </tr>
             <tr>
-                <td style="border-bottom:Solid 1px Silver;">2. <a href="../templates/EPRMPC.pdf" target="_blank" style="text-decoration:none;">Project Components &amp; Operation Information</a> - <i>Fillable Form</i> </td>
+                <td style="border-bottom:Solid 1px Silver;padding: 13px;">2. <a href="../templates/EPRMPC.pdf" target="_blank" style="text-decoration:none;">Project Components &amp; Operation Information</a> - <i>Fillable Form</i> </td>
             </tr>
              <tr>
-                <td style="border-bottom:Solid 1px Silver;"> 3. <a href="../templates/EPRMPCL.pdf" target="_blank" style="text-decoration:none;">Environmental Impact and Management Plan</a> - <i>Fillable Form</i></td>
+                <td style="border-bottom:Solid 1px Silver;padding: 13px;">3. <a href="../templates/CL TEmplates/{{Session::get('step_2')['MgtPlanPDF']}}" target="_blank" style="text-decoration:none;">Initial Environmental Examination (IEE) Checklist Report</a> - <i>Fillable Form</i></td>
             </tr>
              <tr>
-                <td style="border-bottom:Solid 1px Silver;">4. <a href="../templates/EPRMPAB.pdf" target="_blank" style="text-decoration:none;">Abandonement/Decommissioning/Rehabilitation Policies and Generic Guidelines</a> - <i>Fillable Form</i></td>
+                <td style="border-bottom:Solid 1px Silver;padding: 13px;">4. <a href="../templates/EMP TEmplates/{{Session::get('step_2')['Template']}}EMP.pdf" target="_blank" style="text-decoration:none;">Environmental Management Plan (EMP)</a> - <i>Fillable Form</i></td>
             </tr>
               <tr>
-                <td style="border-bottom:Solid 1px Silver;">5. <a href="../templates/PEMAPS.pdf" target="_blank" style="text-decoration:none;">Project Environmental Monitoring &amp; Audit Prioritization Scheme (PEMAPS)</a> - <i>Fillable Form</i></td>
+                <td style="border-bottom:Solid 1px Silver;padding: 13px;">5. <a href="../templates/PEMAPS.pdf" target="_blank" style="text-decoration:none;">Project Environmental Monitoring &amp; Audit Prioritization Scheme (PEMAPS)</a> - <i>Fillable Form</i></td>
             </tr>
              <tr>
-                <td style="border-bottom:Solid 1px Silver;"> 6. <a href="{{url('dynamic_pdf/SwornStatement')}}" target="_blank" style="text-decoration:none;">Sworn Statement</a>  </td>
+                <td style="border-bottom:Solid 1px Silver;padding: 13px;">6. <a href="{{url('dynamic_pdf/SwornStatement')}}" target="_blank" style="text-decoration:none;">Sworn Statement of Accountability</a>  </td>
             </tr>
         </tbody>
     </table>
 </div>
-<div id="overlay" style="display:none;">
-                <div class="spinner"></div>
-                <br/>
-                <h3 style="font-family: Arial, Sans; color: white;" id="overlay-message">Saving your changes. Please be patient</h3>
-            </div>
+
 <script>
     $(document).ready(function(){
         var url=window.location.pathname;
@@ -46,7 +43,6 @@
 
 
         $("#save_entry").on('click', function(){
-            // $('#overlay').fadeIn().delay(2000).fadeOut();
 
             $.ajax({
                 url: "{{route('SaveNewApplication')}}",
@@ -59,8 +55,7 @@
                     $('#overlay').show();
                 },
                 success: function(response)
-                {   
-
+                {
                     $('#overlay').fadeOut(2000, () => {
                         Swal.fire({
                             icon: 'success',
@@ -70,27 +65,18 @@
                             width: '850px'
                         }).then((result) => {
                             /* Read more about handling dismissals below */
-                            if (result.dismiss === Swal.DismissReason.timer) {
-                                
-                                Pace.restart()
+                            if (result.dismiss) {
 
-                                // Pace.on('done', function() {
-                                    // var next = $('#mytabs li.active').next()
-                                    //     next.length?
-                                    //     next.find('a').click():
-                                    $('#myTab li a')[6].click();
-                                    // });
-                                    location.reload();
+                                $('#myTab li a')[6].click();
+
+                                location.reload();
                             }
                         });
                     });
-                    // $('#overlay').delay(2000).fadeOut();
                 }
             });
 
         });
 
-
-        
     });
 </script>

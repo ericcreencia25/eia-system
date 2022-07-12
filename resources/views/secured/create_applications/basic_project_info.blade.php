@@ -21,31 +21,31 @@ div.col-md-6 {
   <i>Provide below the proponent and project information. All fields below are required.</i>
   <br><br>
 </div>
-  <h4><b>Proponent Information</b></h4>
+  <h4><b>PROPONENT INFORMATION</b></h4>
   <div class="col-md-12">
     <!---Left side--->
     <div class="col-md-6">
       <div class="col-md-12">
-        Proponent Name
+        <label>Proponent Name</label>
         <input type="text" class="form-control" placeholder="" id="proponent_name" disabled>
       </div>
       <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
-        Landline No.
+        <label>Landline No.</label>
         <input type="text" class="form-control" placeholder="" id="landline_no">
       </div>
       <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
-        Fax No
+        <label>Fax No</label>
         <input type="text" class="form-control" placeholder="" id="fax_no">
       </div>
     </div>
     <!----right--->
     <div class="col-md-6">
       <div class="col-md-6">
-        Represented By
+        <label>Represented By</label>
         <input type="text" class="form-control" placeholder="" id="represented_by">
       </div>
       <div class="col-md-6">
-        Designation
+        <label>Designation</label>
         <select class="form-control" id="designation">
           <option>Owner</option>
           <option>Director</option>
@@ -60,98 +60,77 @@ div.col-md-6 {
         </select>
       </div>
       <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
-        Mobile No.
+        <label>Mobile No.</label>
         <input type="text" class="form-control" placeholder="" id="mobile_number">
       </div>
       <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
-        Email Address
+        <label>Email Address</label>
         <input type="text" class="form-control" placeholder="" id="email_address">
       </div>
     </div>
   </div>
-  <h4><b>Project Information</b></h4>
+  <h4><b>PROJECT INFORMATION</b></h4>
+  <!-- <div class="col-md-12" style="padding-top: 10px; padding-bottom: 10px;">
+        <label>Establishment Name</label>
+        <input type="text" class="form-control" placeholder="" id="establishment_name" required>
+      </div> -->
   <div class="col-md-12">
     <!---Left side--->
     <div class="col-md-6">
       <div class="col-md-12">
-        Project Name
+        <label>Project Name</label>
         <input type="text" class="form-control" placeholder="" id="project_name" required>
       </div>
       <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
-        Project Location: Specific Address
+        <label>Project Location: Specific Address</label>
         <input type="text" class="form-control" placeholder="" id="project_location">
       </div>
       <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
-        Municipality
+        <label>Municipality</label>
         <select class="form-control select2" id='municipality' name='municipality' style="width: 100%;">
         </select>
       </div>
       <div class="col-md-6" >
-        Total Project Land Area (sq. m.)
+        <label>Total Project Land Area (sq. m.)</label>
         <input type="text" class="form-control" placeholder="" id="project_landarea">
       </div>
       <div class="col-md-6">
-        Total Projects/Building Footprint Area (sq. m)
+        <label>Total Projects/Building Footprint Area (sq. m)</label>
         <input type="text" class="form-control" placeholder="" id="project_footprintarea">
       </div>
     </div>
     <!---right side--->
     <div class="col-md-6">
       <div class="col-md-12">
-        Mailing Address
+        <label>Mailing Address</label>
         <input type="text" class="form-control" placeholder="" id="mailing_address">
       </div>
       <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
-        Province
+        <label>Province</label>
         <select class="form-control" id="province" name="province">
         </select>
       </div>
       <div class="col-md-6  mb-3" style="padding-top: 10px; padding-bottom: 10px;">
-        Zone Classification (i.e. industrial, residential)
+        <label>Zone Classification (i.e. industrial, residential)</label>
         <input type="text" class="form-control" placeholder="" id="zone_classification">
       </div>
       <div class="col-md-6">
-        No. of Employees
+        <label>No. of Employees</label>
         <input type="text" class="form-control" placeholder="" id="no_of_employees">
       </div>
       <div class="col-md-6">
-        Total Project Cost (Php)
+        <label>Total Project Cost (Php)</label>
         <input type="text" class="form-control" placeholder="" id="total_project_cost">
       </div>
     </div>
   </div>
-
-  <!-- <div class="col-md-12" style="padding-top: 30px;">
-    <div class="col-md-6">
-      Check here if the establishment is existing:
-      <select class="form-control select2" style="width: 100%;">
-        </select>
-    </div>
-    <div class="col-md-6">
-    </div>
-  </div>
-  <div class="col-md-12" style="padding-top: 30px;">
-    <div class="col-md-6">
-      Establishment Name
-      <input type="text" class="form-control" placeholder="" id="">
-    </div>
-    <div class="col-md-3">
-      Date Established
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-calendar"></i>
-        </div>
-        <input type="text" class="form-control pull-right" id="reservation">
-      </div>
-    </div>
-    <div class="col-md-3">
-      EMB ID
-      <input type="text" class="form-control" placeholder="" id="" disabled>
-    </div>
-  </div> -->
-
 </div>
 
+<div class="overlay" style="display:none;">
+    <div class="spinner"></div>
+    <br/>
+    <h3 style="font-family: Arial, Sans; color: white;" id="overlay-message">Saving your changes. Please be patient</h3>
+</div>
 
 
 <script>
@@ -188,40 +167,43 @@ div.col-md-6 {
     var arr=url.split('/');
     var NewGUID=arr[2];
 
-      $.ajax({
-        url: "{{route('getMunicipalities')}}",
-        type: 'POST',
-        data: {
-          data : municipality_check,
-          _token: '{{csrf_token()}}' ,
-        },
-        success: function(response){
-          var len = 0;
-          if(response['data'] != null){
-            len = response['data'].length;
-          }
-          if(len > 0){
-            // Read data and create <option >
-            for(var i=0; i<len; i++){
-              var ID = response['data'][i].ID;
-              var Municipality = response['data'][i].Municipality;
-              var Province = response['data'][i].Province;
+    $.ajax({
+      url: "{{route('getMunicipalities')}}",
+      type: 'POST',
+      data: {
+        data : municipality_check,
+        _token: '{{csrf_token()}}' ,
+      },
+      success: function(response){
+        var len = 0;
 
-              if(Municipality === municipality_check){
-                var option = "<option value='"+ID+"' selected>"+Municipality+"</option>";
-                var option1 = "<option value='"+ID+"' selected>"+Province+"</option>";
-              }else{
-                var option = "<option value='"+ID+"'>"+Municipality+"</option>";
-                var option1 = "<option value='"+ID+"'>"+Province+"</option>";
-              }
-              
-              
-              $("#province").append(option1);
-              $("#municipality").append(option); 
+        if(response['data'] != null){
+          len = response['data'].length;
+        }
+
+        if(len > 0){
+          // Read data and create <option >
+
+          for(var i=0; i<len; i++){
+            var ID = response['data'][i].ID;
+            var Municipality = response['data'][i].Municipality;
+            var Province = response['data'][i].Province;
+
+            if(Municipality === municipality_check){
+              var option = "<option value='"+ID+"' selected>"+Municipality+"</option>";
+              var option1 = "<option value='"+ID+"' selected>"+Province+"</option>";
+            }else{
+              var option = "<option value='"+ID+"'>"+Municipality+"</option>";
+              var option1 = "<option value='"+ID+"'>"+Province+"</option>";
             }
+
+            $("#province").append(option1);
+            $("#municipality").append(option); 
           }
         }
-      });
+      }
+    });
+
     ///Get Proponent Information
     var ProponentGUID = "{{session('data')['ProponentGUID']}}";
     
@@ -318,55 +300,59 @@ div.col-md-6 {
 
       var check_error_message = error_message.length;
       if(check_error_message > 0){
-        // Pace.on('done', function() {
-          $.ajax({
-            url: "{{route('FifthStep')}}",
-            type: 'POST',
-            data: {
-              data,
-              fifth : 0,
-              _token: '{{csrf_token()}}' ,
-            },
-            success: function(response){
+
+        $.ajax({
+          url: "{{route('FifthStep')}}",
+          type: 'POST',
+          data: {
+            data,
+            fifth : 0,
+            _token: '{{csrf_token()}}' ,
+          },
+          beforeSend: function() {
+            $('#overlay').show();
+          },
+          success: function(response){
+            $('#overlay').fadeOut(2000, () => {
+
               Swal.fire({
                 icon: 'error',
                 title: 'Notifications!',
                 text: 'You need to completely fill-up the proponent and project information.',
-                // footer: '<a href="">Why do I have this issue?</a>',
                 width: '850px'
               });
 
-
               $("#step_5").css({"background-color":"#dd4b39", "color": "#ffffff"});
-            }
-          });
-        // });
-        
+
+            });
+          }
+        });
       } else {
+
         var data = {
-        proponent_name : proponent_name,
-        landline_no : landline_no,
-        fax_no : fax_no,
-        represented_by : represented_by,
-        mobile_number : mobile_number,
-        email_address : email_address,
-        designation : designation,
+          proponent_name : proponent_name,
+          landline_no : landline_no,
+          fax_no : fax_no,
+          represented_by : represented_by,
+          mobile_number : mobile_number,
+          email_address : email_address,
+          designation : designation,
 
-        project_name : project_name,
-        project_location : project_location,
-        municipality : municipality,
-        project_landarea : project_landarea,
-        project_footprintarea : project_footprintarea,
-        mailing_address : mailing_address,
-        province : province,
-        zone_classification : zone_classification,
-        no_of_employees : no_of_employees,
-        total_project_cost : total_project_cost,
-        ProjectGUID : NewGUID
-      }
+          project_name : project_name,
+          project_location : project_location,
+          municipality : municipality,
+          project_landarea : project_landarea,
+          project_footprintarea : project_footprintarea,
+          mailing_address : mailing_address,
+          province : province,
+          zone_classification : zone_classification,
+          no_of_employees : no_of_employees,
+          total_project_cost : total_project_cost,
+          ProjectGUID : NewGUID
+        }
 
-      /// insert in session
-      // Pace.on('done', function() {
+        /// insert in session
+
         $.ajax({
           url: "{{route('FifthStep')}}",
           type: 'POST',
@@ -375,44 +361,44 @@ div.col-md-6 {
             fifth : 1,
             _token: '{{csrf_token()}}' ,
           },
+          beforeSend: function() {
+            $('#overlay').show();
+          },
           success: function(response){
-            Swal.fire({
-              icon: 'success',
-              title: 'Step 5 is already saved in the session.',
-              showConfirmButton: false,
-              timer: 1500,
-              width: '850px'
-            }).then((result) => {
-              /* Read more about handling dismissals below */
-              if (result.dismiss === Swal.DismissReason.timer) {
-                $("#step_5").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 
-                // var next = $('#mytabs li.active').next()
-                //   next.length?
-                //   next.find('a').click():
+            $('#overlay').fadeOut(2000, () => {
+
+              Swal.fire({
+                icon: 'success',
+                title: 'Step 5 is already saved in the session.',
+                showConfirmButton: false,
+                timer: 1500,
+                width: '850px'
+              }).then((result) => {
+                /* Read more about handling dismissals below */
+                if (result.dismiss) {
+                  $("#step_5").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+
                   $('#myTab li a')[5].click();
-                  location.reload();
-              }
+                    location.reload();
+                }
+              });
             });
-            
-            // location.reload();
           }
         });
 
-      // });
+        $("#step_6").css({"background-color":"#00a65a", "color": "#ffffff"});
 
-      $("#step_6").css({"background-color":"#00a65a", "color": "#ffffff"});
+        $("#li_step_6").attr("class", "able");
+        $("#step_6").attr("data-toggle", "tab");
 
-      $("#li_step_6").attr("class", "able");
-      $("#step_6").attr("data-toggle", "tab");
+        /// last step active
+        $("#li_step_7").attr("class", "able");
+        $("#step_7").attr("data-toggle", "tab");
 
-      /// last step active
-      $("#li_step_7").attr("class", "able");
-      $("#step_7").attr("data-toggle", "tab");
-
-      $("#step_7").css({"background-color":"#3c8dbc", "color": "#ffffff"});
-    }
-  });
+        $("#step_7").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+      }
+    });
 
     ///check if there's existing session
     var step5_check = "{{ Session::has('step_5_status') ? Session::get('step_5_status') : 'N/A' }}";

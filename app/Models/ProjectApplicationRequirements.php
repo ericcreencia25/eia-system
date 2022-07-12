@@ -11,6 +11,6 @@ class ProjectApplicationRequirements extends Model
     use HasFactory;
 
     protected $fillable = [
-            'ID', 'Description', 
+            'ID', 'Description', 'Required', 'IsTenInstrument', 'IsAncestralDomain', 'Sorter' 
     ];
 }

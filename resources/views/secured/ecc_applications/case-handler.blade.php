@@ -5,7 +5,7 @@
   <h1 class="hidden-sm">
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-cog"></i>ECC Applications</a></li>
+    <!-- <li><a href="#"><i class="fa fa-cog"></i>ECC Applications</a></li> -->
   </ol>
 </section>
 @stop

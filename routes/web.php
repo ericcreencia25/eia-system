@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AspnetUserController;
+use App\Http\Controllers\Secured\AdministrationsController;
 use App\Http\Controllers\Secured\EccApplicationsController;
 use App\Http\Controllers\Secured\ForActionsController;
 use App\Http\Controllers\Secured\NewApplicationsController;
@@ -144,10 +145,6 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::get('/reviewer/{GUID}', [ForActionsController::class, 'reviewer'])->name('reviewer');
 
-    // Route::get('/reviewer/{GUID}', [ForActionsController::class, 'reviewer'])->name('reviewer');
-
-    // Route::view('reviewer', 'secured.for_actions.reviewer');
-
     Route::get('/generate-qrcode', [ForActionsController::class, 'generateQrCode'])->name('generateQrCode');
 
     Route::get('/convertDocxToPDF/{GUID}', [ForActionsController::class, 'convertDocxToPDF'])->name('convertDocxToPDF');
@@ -162,6 +159,24 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::post('/getSpecificHolidays', [ForActionsController::class, 'getSpecificHolidays'])->name('getSpecificHolidays');
 
+    Route::post('/getCompliantsCount', [ForActionsController::class, 'getCompliantsCount'])->name('getCompliantsCount');
+
+    Route::post('/updateBasicProjectInformation', [ForActionsController::class, 'updateBasicProjectInformation'])->name('updateBasicProjectInformation');
+
+    Route::post('/autoForwardingProponent', [ForActionsController::class, 'autoForwardingProponent'])->name('autoForwardingProponent');
+
+    Route::post('/getApplicationsList', [ForActionsController::class, 'getApplicationsList'])->name('get.applications.list');
+
+    Route::post('/getECCDraftTemplate', [ForActionsController::class, 'getECCDraftTemplate'])->name('getECCDraftTemplate');
+
+    Route::get('/ecc-draft-certificate', [ForActionsController::class, 'ECCDraftCertificate'])->name('ECCDraftCertificate');
+
+    Route::get('/ecc-draft-print/{GUID}', [ForActionsController::class, 'ECCDraftPrint'])->name('ECCDraftPrint');
+
+    Route::post('/ecc-draft-certificate/compose/page-save', [ForActionsController::class, 'PageSave'])->name('PageSave');
+
+    Route::post('/ecc-draft-data', [ForActionsController::class, 'ECCDraftData'])->name('ECCDraftData');
+
 
 /// ASPNET USER CONTROLLER
 
@@ -169,11 +184,11 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::post('/login-user', [AspnetUserController::class, 'loginUser'])->name('login-user');
 
+    Route::post('/login-user-crs', [ApiController::class, 'loginCRS'])->name('login-user-crs');
+
     Route::post('/first-time-login-user', [AspnetUserController::class, 'firstTimeLoginUser'])->name('first-time-login-user');
 
     Route::get('/logout', [AspnetUserController::class, 'logoutUser'])->name('logout'); 
-
-    Route::post('/getUsersList', [AspnetUserController::class, 'getUsersList'])->name('get.users.list');
 
     Route::post('/getProponentInformation', [AspnetUserController::class, 'getProponentInformation'])->name('getProponentInformation');
 
@@ -183,25 +198,6 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::get('/verification/{GUID}', [AspnetUserController::class, 'verification'])->name('verification');
 
-    Route::post('/login-user-crs', [ApiController::class, 'loginCRS'])->name('loginCRS');
-
-    Route::get('/company-data', [ApiController::class, 'companyData'])->name('companyData');
-
-    Route::get('/log-in/lockscreen', [ApiController::class, 'lockScreen'])->name('lockScreen');
-
-    Route::get('/administration/default', [AspnetUserController::class, 'manageCredentials'])->name('manageCredentials');
-
-    Route::get('/administration/signatories', [AspnetUserController::class, 'manageSignatories'])->name('manageSignatories');
-
-    Route::post('/administration/getRegisteredUsers', [AspnetUserController::class, 'getRegisteredUsers'])->name('getRegisteredUsers');
-
-    Route::get('/administration/getSignatories', [AspnetUserController::class, 'getSignatories'])->name('getSignatories');
-
-    Route::get('/administration/getOffice', [AspnetUserController::class, 'getOffice'])->name('getOffice');
-    Route::post('/administration/getUserAction', [AspnetUserController::class, 'getUserAction'])->name('getUserAction');
-
-    Route::post('/administration/getRegionalInformation', [AspnetUserController::class, 'getRegionalInformation'])->name('getRegionalInformation');
-
     Route::get('/authentication/registerUrAccount', [AspnetUserController::class, 'registerUrAccount'])->name('registerUrAccount');
 
     Route::post('/saveRegister', [AspnetUserController::class, 'saveRegister'])->name('saveRegister');
@@ -210,7 +206,16 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::post('/updateAccount', [AspnetUserController::class, 'updateAccount'])->name('updateAccount');
 
+    Route::post('/UserStatusModal', [AspnetUserController::class, 'UserStatusModal'])->name('UserStatusModal');
 
+    
+
+    Route::get('/company-data', [ApiController::class, 'companyData'])->name('companyData');
+
+    Route::get('/log-in/lockscreen', [ApiController::class, 'lockScreen'])->name('lockScreen');
+
+    Route::get('/crs-login', [ApiController::class, 'loginCRSUSers'])->name('loginCRSUSers');
+    
 
 /// NEW APPLICANT CONTROLLER
     Route::match(['get','post'], '/ProjectTypeTable', [NewApplicationsController::class, 'ProjectTypeTable'])->name('ProjectTypeTable');
@@ -265,6 +270,8 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::get('/dynamic_pdf/ProjectInformation', [NewApplicationsController::class, 'ProjectInformation'])->name('ProjectInformation');
 
+    Route::get('/dynamic_pdf/ProjectDescription/{GUID}', [NewApplicationsController::class, 'ProjectDescription'])->name('ProjectDescription');
+
     Route::get('/dynamic_pdf/SwornStatement', [NewApplicationsController::class, 'SwornStatement'])->name('SwornStatement');
 
     Route::post('/LinkProjectType', [NewApplicationsController::class, 'LinkProjectType'])->name('LinkProjectType');
@@ -281,26 +288,68 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::post('/getBindedData', [NewApplicationsController::class, 'getBindedData'])->name('getBindedData');
 
+    Route::post('/insertProjectRequirement', [NewApplicationsController::class, 'insertProjectRequirement'])->name('insertProjectRequirement');
+
+    ////ADMIN
+
+    Route::get('/administration/default', [AdministrationsController::class, 'manageCredentials'])->name('manageCredentials');
+
+    Route::get('/administration/signatories', [AdministrationsController::class, 'manageSignatories'])->name('manageSignatories');
+
+    Route::post('/administration/getRegisteredUsers', [AdministrationsController::class, 'getRegisteredUsers'])->name('getRegisteredUsers');
+
+    Route::get('/administration/getSignatories', [AdministrationsController::class, 'getSignatories'])->name('getSignatories');
+
+    Route::get('/administration/getOffice', [AdministrationsController::class, 'getOffice'])->name('getOffice');
+
+    Route::post('/administration/getUserAction', [AdministrationsController::class, 'getUserAction'])->name('getUserAction');
+
+    Route::post('/administration/getRegionalInformation', [AdministrationsController::class, 'getRegionalInformation'])->name('getRegionalInformation');
+
+    Route::get('/administration/getUserApplications', [AdministrationsController::class, 'getUserApplications'])->name('getUserApplications');
+
+    Route::post('/administration/getUserApplicationsTable', [AdministrationsController::class, 'getUserApplicationsTable'])->name('getUserApplicationsTable');
+
+    Route::get('/administration/ECC', [AdministrationsController::class, 'getECCData'])->name('getECCData');
+
+    Route::post('/administration/getProjectTypeAdmin', [AdministrationsController::class, 'getProjectTypeAdmin'])->name('getProjectTypeAdmin');
+
+    Route::post('/administration/getUserAccountsAdmin', [AdministrationsController::class, 'getUserAccountsAdmin'])->name('getUserAccountsAdmin');
+
+    Route::post('/administration/getAttachmentsAdmin', [AdministrationsController::class, 'getAttachmentsAdmin'])->name('getAttachmentsAdmin');
+
+    Route::post('/administration/getRoutingHistoryAdmin', [AdministrationsController::class, 'getRoutingHistoryAdmin'])->name('getRoutingHistoryAdmin');
+
+    Route::post('/administration/getRequirementsAdmin', [AdministrationsController::class, 'getRequirementsAdmin'])->name('getRequirementsAdmin');
+
+    Route::post('/administration/getProcessingTimeAdmin', [AdministrationsController::class, 'getProcessingTimeAdmin'])->name('getProcessingTimeAdmin');
+
+    Route::post('/administration/adminUploadFile', [AdministrationsController::class, 'adminUploadFile'])->name('adminUploadFile');
+    
+
 /// VIEW 
 
-    // Route::view('default', 'secured.for_actions.default');
+    Route::view('google_map', 'secured.create_applications.google_map');
+    Route::view('draw_map', 'secured.create_applications.draw_map');
+
     Route::view('map', 'secured.create_applications.map');
 
     Route::view('search_project_type', 'secured.create_applications.search_project_type');
 
     Route::view('reviewer', 'secured.for_actions.reviewer');
 
-    // Route::view('ECCDashboard', 'secured.ecc_applications.dashboard');
-
-    // Route::view('new_document', 'secured\create_applications\new_application_tab');
-
-    // Route::view('documents', 'secured.ecc_applications.document');
     Route::view('{GUID}/map', 'secured.create_applications.clickable_map');
 
     Route::view('stepper', 'secured.new_applications_v3.application_tab');
 
     Route::view('admin', 'secured.manage_credentials.admin');
 
-    // Route::view('{GUID}/map', 'secured.create_applications.clickable_map');
+    Route::view('NIPAS', 'secured.create_applications.NIPAS');
+
+    Route::view('login-crs', 'auth.login-crs');
+
+    Route::view('preview', 'pdf.ecc_preview');
+
+    // Route::view('ecc-draft-certificate', 'secured.for_actions.compose');
 
 });

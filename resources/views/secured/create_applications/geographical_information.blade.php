@@ -31,10 +31,10 @@
             <td>Longitude (pad space with 0)</td>
           </tr>
           <tr>
-            <td> <input type="image" name="" id="" title="Click to add a polygon" src="../img/polygon.PNG" onclick="addSelectedArea('polygon')" style="background-color:White;width:30px;"> 
+            <td> <input type="image" name="" id="" title="Click to add a polygon" src="../img/polygon.PNG" onclick="addSelectedArea('Polygon')" style="background-color:White;width:30px;"> 
             </td>
             <td> 
-              <input type="image" name="" id="" title="Click to add a line" src="../img/line.PNG" onclick="addSelectedArea('line')" style="background-color:White;width:30px;">
+              <input type="image" name="" id="" title="Click to add a line" src="../img/line.PNG" onclick="addSelectedArea('Line')" style="background-color:White;width:30px;">
             </td>
             <td style="padding-left:30px;">
               <select  id="selected_area" style="width:70px;"class="form-control">
@@ -66,7 +66,7 @@
               <input type="submit" name="" value="Remove Area " onclick="RemoveArea()" id="" title="Click to remove the selected area" class="btn btn-block btn-flat btn-warning">
             </td>
             <td>&nbsp;&nbsp;
-              <input type="image" name="" id="" title="Click here to view your current location in map" class="imgbutton" src="../img/globe.jpg" style="background-color:White;width:35px;" onclick="MapView()">
+              <input type="image" name="" id="" title="Click here to view your current location in map" class="imgbutton" src="../img/globe.jpg" style="background-color:White;width:35px;" onclick="ShapesPreview()">
             </td>
           </tr>
         </tbody>
@@ -74,12 +74,12 @@
     </div>
     <div class="box">
       <div class="box-body no-padding">
-        <div class="col-md-12" style="padding-top: 10px">
-          <div class="col-md-8">
-            <div id="map" style="width: 100%; height: 400px;"></div>
+        <!-- <div class="col-md-12" style="padding-top: 10px"> -->
+          <div class="col-md-12">
+            <div id="map" style="width: 100%; height: 500px;" hidden></div>
           </div>
 
-          <div class="col-md-4">
+          <!-- <div class="col-md-4">
             <table class="table table-bordered" style="width: 100%">
               <thead>
                 <th>Area</th>
@@ -88,8 +88,8 @@
               <tbody id="geocoordinate_body_area">
               </tbody>
             </table>
-          </div>
-        </div>
+          </div> -->
+        <!-- </div> -->
       </div>
     </div>
     <div class="box">
@@ -97,7 +97,7 @@
         <div class="col-md-12" style="padding-top: 10px">
           <table class="table table-bordered" id="ProjectGeoCoordinatesTable" style="width: 100%">
               <thead>
-                <th hidden>Area</th>
+                <th>Area</th>
                 <th>Type</th>
                 <th>DMS Latitude</th>
                 <th>DMS Longitude</th>            
@@ -118,27 +118,23 @@
   @extends('secured.create_applications.map')
 </div>
 <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyB6K1CFUQ1RwVJ-nyXxd6W0rfiIBe12Q&libraries=places" type="text/javascript"></script>
+<!-- <script type="text/javascript" src="https://unpkg.com/default-passive-events"></script> -->
+
 <script>
   var url=window.location.pathname;
   var arr=url.split('/');
   var NewGUID=arr[2];
-  let  polygonCount = 0;
-  let  lineCount = 0;
+  let polygonCount = 0;
+  let lineCount = 0;
   var coordinatesChecklist = [];
+  var hash = window.location.hash;
 
   $(document).ready(function() {
 
-    $("#li_step_4").on('click', function() {
-      if (navigator.geolocation)
-      {
-          navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
-      }
-      else 
-      {
-          alert('It seems like Geolocation, which is required for this page, is not enabled in your browser.');
-      }
-    });
+    // $("#li_step_4").on('click', function() {
+      
+
+    // });
     
     $('[data-mask]').inputmask();
 
@@ -194,7 +190,7 @@
 
       if(selected_area_val != null){
         var html_code = "<tr class='row_"+ selected_area_txt +"'>";
-        html_code += "<td hidden>"+selected_area_txt+"</td>";
+        html_code += "<td>"+selected_area_txt+"</td>";
         html_code += "<td>"+selected_area+"</td>";
         html_code += "<td>"+dms_latitude+ "</td>";
         html_code += "<td>"+dms_longitude+ "</td>";
@@ -220,112 +216,49 @@
     ///check if there's already an input in session
     var step4_check = "{{ Session::has('step_4_status') ? Session::get('step_4_status') : 'N/A' }}";
 
-
+    
     if(step4_check == 1){
       $("#li_step_5").attr("class", "able");
       $("#step_5").attr("data-toggle", "tab");
 
       $("#step_4").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 
-      $.ajax({
-        url: "{{route('getGeoTable')}}",
-        type: 'GET',
-        success: function(response){
-          $.each(response, function(index, value ) {
-            //now you can access properties using dot notation
-            var html_code = "<tr class='row_"+value[0]+"'>";
-            html_code += "<td hidden>"+value[0]+"</td>";
-            html_code += "<td>"+value[1]+"</td>";
-            html_code += "<td>"+value[2]+"</td>";
-            html_code += "<td>"+value[3]+"</td>";
-            html_code += "<td>"+value[4]+"</td>";
-            html_code += "<td>"+value[5]+"</td>";
-            html_code += '<td><button type="button" class="btn btn-default" id="remove" title="delete coordinates"><img src="../img/trashbin.jpg" style="width:15px;" /></button></td>';
-            html_code += '<td><button type="button" class="btn btn-default" id="map-view"       onclick="clickMe('+value[4]+', '+"'"+value[5]+"'"+')" title="view by point"><img src="../img/map.png" style="width:17px;" /></button></td>';
-            html_code += "<td hidden>"+value[8]+"</td>";
-            html_code += "</tr>";
-            $("#geocoordinate_body").append(html_code);
-          });
-        }
-      });
+      Maps();
 
-      // $.ajax({
-      //   url: "{{route('selectedArea')}}",
-      //   type: 'POST',
-      //   data: {
-      //     ProjectGUID : NewGUID,
-      //     _token: '{{csrf_token()}}' ,
-      //   },
-      //   success: function(response){
-      //     $.each(response['data'], function(index, value ) {
-      //       //now you can access properties using dot notation
-      //       var Area = value['Area'];
-      //       var AreaType = value['AreaType'];
-      //       var GUID = value['GUID'];
-
-      //       $("#selected_area").append('<option value="'+ AreaType + '__' + GUID  +'" >' +Area+'</option>');
-
-      //       var area_append = "<tr>";
-      //       area_append += "<td>"+Area+"</td>";
-      //       area_append += '<td><button type="button" class="btn btn-default" id="map-view" onClick="modalPolyLine('+Area+')"><img src="../img/globe.jpg" style="width:17px;" /></button></td>';
-      //       area_append += "</tr>";
-      //       $("#geocoordinate_body_area").append(area_append);
-      //     });
-      //   }
-      // });
-
-      $.ajax({
-        url: "{{route('getGeoTable')}}",
-          type: 'GET',
-          success: function(response){
-            const groupedData = response.reduce((acc, curr) => {
-              (acc[curr[0]] = acc[curr[0]] || []).push(curr);
-              return acc;
-            }, {});
-
-            $.each(groupedData, function(index, value1 ) {
-              var Area = value1[0][0];
-              var AreaType = value1[0][1];
-              var GUID = value1[0][9];
-
-              $("#selected_area").append('<option value="'+ AreaType + '__' + GUID  +'" >' +Area+'</option>');
-
-              var area_append = "<tr class='row_"+ Area +"'>";
-              area_append += "<td>"+Area+"</td>";
-              area_append += '<td><button type="button" class="btn btn-default" id="map-view" onClick="modalPolyLine('+Area+')"><img src="../img/globe.jpg" style="width:17px;" /></button></td>';
-              area_append += "</tr>";
-
-              $("#geocoordinate_body_area").append(area_append);
-
-            });
-
-          }
-        });
-  } else if(step4_check == 0){
-    $("#step_4").css({"background-color":"#dd4b39", "color": "#ffffff"});
-  } else if(step4_check == "N/A"){
-    // $("#step_4").css({"background-color":"#fff", "color": "#444"});
-  }
-
-  $('.table tbody').on('click', '#remove', function() { 
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You want to delete this coordinates?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Confirm'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        $(this).closest('tr').remove();
+    } else if(step4_check == 0){
+      $("#step_4").css({"background-color":"#dd4b39", "color": "#ffffff"});
+    } else if(step4_check == "N/A"){
+      if (navigator.geolocation)
+      {
+          navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
       }
-    })
-  });
+      else 
+      {
+          alert('It seems like Geolocation, which is required for this page, is not enabled in your browser.');
+      }
+      // $("#step_4").css({"background-color":"#fff", "color": "#444"});
+    }
+
+    $('.table tbody').on('click', '#remove', function() { 
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to delete this coordinates?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Confirm'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $(this).closest('tr').remove();
+        }
+      })
+    });
 
   var successMessage = [];
   var errorMessage = [];
   var text = '';
+
   /// onclick of proceed: save to session
   $('#check_step_4').on("click", function() {
     Swal.fire({
@@ -365,6 +298,7 @@ function addSelectedArea(Area){
             area_append += "<td>"+counter+"</td>";
             area_append += '<td><button type="button" class="btn btn-default" id="map-view" data-toggle="modal" data-target="#modal-default"><img src="../img/globe.jpg" style="width:17px;" /></button></td>';
             area_append += "</tr>";
+
             $("#geocoordinate_body_area").append(area_append);
       }
     });
@@ -473,32 +407,11 @@ function RemoveArea(){
     cancelButtonColor: '#d33',
     confirmButtonText: 'Confirm'
   }).then((result) => {
-    if (result.isConfirmed) {
+    if (result.dismiss || result.isConfirmed) {
       $(deleteRow).remove();
     $("#selected_area option[value='"+selected_area_val +"']").remove();
     }
-  })
-
-  // if(confirm(message)){
-  //   $(deleteRow).remove();
-  //   $("#selected_area option[value='"+selected_area_val +"']").remove();
-  // }else{
-  //   return false;
-  // }
-}
-
-function MapView()
-{
-  // window.location.origin
-  // window.open(window.location.origin + "/" +NewGUID + "/map");
-  if (navigator.geolocation)
-  {
-    navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
-  }
-  else 
-  {
-    alert('It seems like Geolocation, which is required for this page, is not enabled in your browser.');
-  }
+  });
 }
 
 function clickMe(latitude, longitude)
@@ -531,18 +444,16 @@ function modalMessage(successMessage, errorMessage)
     // title: 'Oops...',
     html : text,
     text: 'Something went wrong!',
-    showConfirmButton: false,
-    timer: 1500,
+    showConfirmButton: true,
+    timer: 2000,
     width: '850px',
     footer: '<a class="pointer" onClick="whyDoIHaveThisIssue()">Why do I have this issue?</a>'
   }).then((result) => {
     /* Read more about handling dismissals below */
-    if (result.dismiss) {
+    if (result.dismiss || result.isConfirmed) {
       location.reload();
     }
   });
-
-  // location.reload();
 }
 
 function whyDoIHaveThisIssue()
@@ -562,69 +473,64 @@ function checkSucessErrorMessage()
 {
   var successMessage = [];
   var errorMessage = [];
+  
   $.ajax({
-        url: "{{route('getGeoTable')}}",
-          type: 'GET',
-          success: function(response){
-            const groupedData = response.reduce((acc, curr) => {
-              (acc[curr[0]] = acc[curr[0]] || []).push(curr);
-              return acc;
-            }, {});
+    url: "{{route('getGeoTable')}}",
+    type: 'GET',
+    success: function(response){
 
-            $.each(groupedData, function(index, value1 ) {
-              if(value1[0][1] == 'polygon' && value1.length >= 3){
-                successMessage.push(
-                {
-                  'Area' : value1[0][0],
-                  'AreaType' : value1[0][1],
-                  'Counter' : value1.length
-                },
-                );
-              } else if(value1[0][1] == 'line' && value1.length == 2){
-                successMessage.push(
-                {
-                  'Area' : value1[0][0],
-                  'AreaType' : value1[0][1],
-                  'Counter' : value1.length
-                },
-                );
-              } else {
-                errorMessage.push(
-                {
-                  'Area' : value1[0][0],
-                  'AreaType' : value1[0][1],
-                  'Counter' : value1.length
-                },
-                );
-              }
-            });
+      const groupedData = response.reduce((acc, curr) => {
+        (acc[curr[0]] = acc[curr[0]] || []).push(curr);
+        return acc;
+      }, {});
 
-            if(Object.keys(errorMessage).length > 0){
-              modalMessage(successMessage, errorMessage);
-              
-            } else {
-              Swal.fire({
+      $.each(groupedData, function(index, value1 ) {
+        if(value1[0][1].toUpperCase() == 'POLYGON' && value1.length >= 3){
+          successMessage.push(
+          {
+            'Area' : value1[0][0],
+            'AreaType' : value1[0][1],
+            'Counter' : value1.length
+          });
+        } else if(value1[0][1].toUpperCase() == 'LINE' && value1.length == 2){
+          successMessage.push(
+          {
+            'Area' : value1[0][0],
+            'AreaType' : value1[0][1],
+            'Counter' : value1.length
+          } );
+        } else {
+          errorMessage.push(
+          {
+            'Area' : value1[0][0],
+            'AreaType' : value1[0][1],
+            'Counter' : value1.length
+          });
+        }
+      });
+
+
+      if(Object.keys(errorMessage).length > 0){
+        modalMessage(successMessage, errorMessage);
+      }  else {
+        Swal.fire({
                 icon: 'success',
                 title: 'Step 4 is already saved in the session.',
-                showConfirmButton: false,
-                timer: 1500,
-                width: '850px'
+                showDenyButton: false,
+                showCancelButton: false,
+                confirmButtonText: 'Confirm',
               }).then((result) => {
-                /* Read more about handling dismissals below */
-                if (result.dismiss === Swal.DismissReason.timer) {
-
+                /* Read more about isConfirmed, isDenied below */
+                if (result.dismiss || result.isConfirmed) {
                   $("#step_4").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 
-                  // var next = $('#mytabs li.active').next()
-                  // next.length?
-                  // next.find('a').click():
                   $('#myTab li a')[4].click();
                   
                   location.reload();
+                } else if (result.isDenied) {
+                  Swal.fire('Changes are not saved', '', 'info')
                 }
-              });
-
-              
+              })
             }
           }
         });
@@ -637,52 +543,154 @@ function proceedNextStep()
       .data()
       .toArray();
 
-    const array_check = [];
-    
-    if(data.length > 0){
+  const array_check = [];
 
-      // Pace.on('done', function() {
-        $("#li_step_5").attr("class", "able");
-        $("#step_5").attr("data-toggle", "tab");
-        $.ajax({
-          url: "{{route('FourthStep')}}",
-          type: 'POST',
-          data: {
-            data : data,
-            fourth : 1,
-            _token: '{{csrf_token()}}' ,
-          },
-          success: function(response){
-            checkSucessErrorMessage();
-          }
+  if(data.length > 0){
+    $("#li_step_5").attr("class", "able");
+    $("#step_5").attr("data-toggle", "tab");
+    $.ajax({
+      url: "{{route('FourthStep')}}",
+      type: 'POST',
+      data: {
+        data : data,
+        fourth : 1,
+         _token: '{{csrf_token()}}',
+       },
+       success: function(response){
+        checkSucessErrorMessage();
+      }
+    });
+
+  } else {
+    $.ajax({
+      url: "{{route('FourthStep')}}",
+      type: 'POST',
+      data: {
+        data : '',
+        fourth : 0,
+        _token: '{{csrf_token()}}' ,
+      },
+      success: function(response){
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Notifications!',
+          text: 'Something went wrong while saving your GeoCoordinates!',
+          width: '850px'
         });
-      // });
 
-    } else {
-      // Pace.on('done', function() {
-        $.ajax({
-          url: "{{route('FourthStep')}}",
-          type: 'POST',
-          data: {
-            data : '',
-            fourth : 0,
-            _token: '{{csrf_token()}}' ,
-          },
-          success: function(response){
-            Swal.fire({
-              icon: 'error',
-              title: 'Notifications!',
-              text: 'Something went wrong while saving your GeoCoordinates!',
-              // footer: '<a href="">Why do I have this issue?</a>',
-              width: '850px'
-            });
-
-            $("#step_4").css({"background-color":"#dd4b39", "color": "#ffffff"});
-          }
-        });
-      // });
-    }
+        $("#step_4").css({"background-color":"#dd4b39", "color": "#ffffff"});
+      }
+    });
+  }
 }
 
 
+function Maps()
+{
+  
+  var arr1 = [];
+  var arr = [];
+  
+  $.ajax({
+    url: "{{route('getGeoTable')}}",
+    type: 'GET',
+    success: function(response){
+      var Area;
+
+      $.each(response, function(index, value ) {
+
+        //now you can access properties using dot notation
+        var html_code = "<tr class='row_"+value[0]+"'>";
+        html_code += "<td>"+value[0]+"</td>";
+        html_code += "<td>"+value[1]+"</td>";
+        html_code += "<td>"+value[2]+"</td>";
+        html_code += "<td>"+value[3]+"</td>";
+        html_code += "<td>"+value[4]+"</td>";
+        html_code += "<td>"+value[5]+"</td>";
+        html_code += '<td><button type="button" class="btn btn-default" id="remove" title="delete coordinates"><img src="../img/trashbin.jpg" style="width:15px;" /></button></td>';
+        html_code += '<td><button type="button" class="btn btn-default" id="map-view"       onclick="clickMe('+value[4]+', '+"'"+value[5]+"'"+')" title="view by point"><img src="../img/map.png" style="width:17px;" /></button></td>';
+        html_code += "<td hidden>"+value[8]+"</td>";
+        html_code += "</tr>";
+        
+
+        $("#geocoordinate_body").append(html_code);
+
+        arr1.push([parseFloat(value[4]) , parseFloat(value[5]) ]);
+      });
+
+      var centerPoint = getCenterPoint(arr1);
+      var popup = L.popup();
+
+      var map = L.map('map').setView(centerPoint, 18);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        maxZoom: 45,
+        crossOrigin: true,
+      }).addTo(map);
+
+      map.on("click", function(event) {
+
+        var lat = event.latlng.lat;
+        var lng = event.latlng.lng;
+
+        $("#deci_lat").val(lat);
+        $("#deci_long").val(lng);
+
+        popup
+            .setLatLng(event.latlng)
+            .setContent("You clicked the map at " + event.latlng.toString())
+            .openOn(map);
+          });
+
+      const groupedData = response.reduce((acc, curr) => {
+        (acc[curr[0]] = acc[curr[0]] || []).push(curr);
+        return acc;
+      }, {});
+
+      var ctr = 0;
+
+      $.each(groupedData, function(index, value1 ) {
+        ctr++;
+        arr[ctr] = [];
+
+        var Area = value1[0][0];
+        var AreaType = value1[0][1];
+        var GUID = value1[0][9];
+
+        $("#selected_area").append('<option value="'+ AreaType + '__' + GUID  +'" >' +Area+'</option>');
+
+        var area_append = "<tr class='row_"+ Area +"'>";
+        area_append += "<td>"+Area+"</td>";
+        area_append += '<td><button type="button" class="btn btn-default" id="map-view" onClick="modalPolyLine('+Area+')"><img src="../img/globe.jpg" style="width:17px;" /></button></td>';
+        area_append += "</tr>";
+
+        $("#geocoordinate_body_area").append(area_append);
+
+        $.each(value1, function(index, value2 ) {
+          if(value2[0] == Area){
+            areaType = value2[1];
+            arr[ctr].push([parseFloat(value2[4]) , parseFloat(value2[5]) ]);
+          }
+        });
+
+        var polygon = L.polygon(
+          arr[ctr]
+          ).addTo(map).bindPopup("I am a polygon.");
+
+        polygon.bindPopup("Area " + Area + ': ' + areaType).openPopup();
+
+        $('a[href="' + hash + '"]').on('shown.bs.tab', function(e) {
+          map.invalidateSize();
+        });
+      });
+    }
+  });
+}
+
+function ShapesPreview(){
+  ;
+
+  window.open('/google_map', '_blank');
+}
 </script>

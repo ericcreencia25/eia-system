@@ -1,14 +1,13 @@
 <script>
   $(document).ready(function(){
-    if (navigator.geolocation)
-    {
-        navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
-    }
-    else 
-    {
-        alert('It seems like Geolocation, which is required for this page, is not enabled in your browser.');
-    }
-
+    // if (navigator.geolocation)
+    // {
+    //     navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
+    // }
+    // else 
+    // {
+    //     alert('It seems like Geolocation, which is required for this page, is not enabled in your browser.');
+    // }
   });
 
   function modalPolyLine(Area)
@@ -20,36 +19,44 @@
       container._leaflet_id = null;
     } 
 
-    // var arr = [[14.659, 121.036], [14.655, 121.035], [14.653, 121.043], [14.659, 121.044]];
+    var arr2 = [[14.659, 121.036], [14.655, 121.035], [14.653, 121.043], [14.659, 121.044]];
     var arr = [];
+    var arr1 = [];
     var areaType;
 
     $.ajax({
       url: "{{route('getGeoTable')}}",
+      
         type: 'GET',
         success: function(response){
+
           $.each(response, function(index, value ) {
+
             if(value[0] == Area){
               areaType = value[1];
               arr.push([parseFloat(value[4]) , parseFloat(value[5]) ]);
             }
+
+            arr1.push([parseFloat(value[4]) , parseFloat(value[5]) ]);
           });
 
-          var centerPoint = getCenterPoint(arr);
+          var centerPoint = getCenterPoint(arr1);
 
-          var map = L.map('map').setView(centerPoint, 16);
-          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          var map = L.map('map').setView(centerPoint, 18);
+          L.tileLayer('https://maps/tilehosting.com/styles/streets/{z}/{x}/{y}.png?key=HfiQgsMsSnorjEs2Sxek', {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-            maxZoom: 19,
+            maxZoom: 21,
             crossOrigin: true,
           }).addTo(map);
+
+
 
           var polygon = L.polygon(
             arr
             ).addTo(map).bindPopup("I am a polygon.");
 
           polygon.bindPopup("Area " + Area + ': ' + areaType).openPopup();
-
+          
           var popup = L.popup();
 
           // map.on("click", function(event) {
@@ -105,11 +112,18 @@
           marker.bindPopup("Your current location: " + lat + ', ' + long).openPopup();
 
           map.on("click", function(event) {
+
+            var lat = event.latlng.lat;
+            var lng = event.latlng.lng;
+
+            $("#deci_lat").val(lat);
+            $("#deci_long").val(lng);
+
             popup
-                .setLatLng(event.latlng)
-                .setContent("You clicked the map at " + event.latlng.toString())
-                .openOn(map);
-              });
+              .setLatLng(event.latlng)
+              .setContent("You clicked the map at " + event.latlng.toString())
+              .openOn(map);
+            });
 
           setTimeout(function(){ map.invalidateSize()}, 400);
   }

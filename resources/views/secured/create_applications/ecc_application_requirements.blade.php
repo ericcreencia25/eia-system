@@ -27,7 +27,8 @@
             <thead>
                 <th style="width: 5%; text-align: center"></th>
                 <th style="width: 50%">Requirements</th>
-                <th style="width: 45%">Files</th>
+                <th style="width: 33%">Files</th>
+                <th style="width: 12%"></th>
             </thead>
             <tbody></tbody>
         </table>
@@ -58,10 +59,16 @@
 <script src="../../adminlte/dist/js/demo.js"></script>
 
 <script>
+
     $(document).ready(function(){
         var url=window.location.pathname;
         var arr=url.split('/');
         var NewGUID=arr[2];
+
+        var IsGovProject = "{{ Session::has('step_1') ? session::get('step_1')['IsGovProject'] : '' }}";
+        var IsAncestralDomain = "{{ Session::has('step_1') ? session::get('step_1')['IsAncestralDomain'] : '' }}";
+        var InTenInstrument = "{{ Session::has('step_1') ? session::get('step_1')['InTenInstrument'] : '' }}";
+
 
         $('#ApplicationRequirements').DataTable({
             processing:true,
@@ -78,6 +85,9 @@
                 "type": "POST",
                 "data" : {
                     ProjectGUID : NewGUID,
+                    IsGovProject : IsGovProject,
+                    InTenInstrument : InTenInstrument,
+                    IsAncestralDomain : IsAncestralDomain,
                      _token: '{{csrf_token()}}' ,
                 }
             },
@@ -85,6 +95,7 @@
             {data: 'Counts', name: 'Counts'},
             {data: 'Requirements', name: 'Requirements'},
             {data: 'Files', name: 'Files'},
+            {data: 'Progress', name: 'Progress'},
             ]
         });
 
@@ -98,17 +109,45 @@
             }  
 
             if(error_message.length == 0){
-                $("#li_step_8").attr("class", "able");
-                $("#step_8").attr("data-toggle", "tab");
-                $('#myTab li a')[7].click();
 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Proceed to last step.',
-                    showConfirmButton: false,
-                    timer: 1500,
-                    width: '850px'
+                $.ajax({
+                    url: "{{route('insertProjectRequirement')}}",
+                    type: 'POST',
+                    data: {
+                        ProjectGUID : NewGUID,
+                        IsGovProject : IsGovProject,
+                        InTenInstrument : InTenInstrument,
+                        IsAncestralDomain : IsAncestralDomain,
+                        _token: '{{csrf_token()}}',
+                    },
+                    beforeSend: function() {
+                        $('#overlay').show();
+                    },
+                    success: function(response)
+                    {   
+
+                        $('#overlay').fadeOut(2000, () => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Proceed to last step.',
+                                showDenyButton: false,
+                                showCancelButton: false,
+                                confirmButtonText: 'Confirm'
+                            }).then((result) => {
+                                /* Read more about isConfirmed, isDenied below */
+                                if (result.dismiss || result.isConfirmed) {
+                                    $("#li_step_8").attr("class", "able");
+                                    $("#step_8").attr("data-toggle", "tab");
+                                    $('#myTab li a')[7].click();
+                                }
+                            })
+                        });
+                        // $('#overlay').delay(2000).fadeOut();
+                    }
                 });
+
+                
+
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -175,7 +214,7 @@
                                 console.log('Percentage Uploaded: ' + (e.loaded / e.total));
 
                                 var percent = Math.round((e.loaded / e.total) * 100);
-
+                                console.log(percent);
                                 $('#progressBar_' + id).attr('aria-valuenow', percent).css('width', percent + '%').text(percent + '%');
                             }
                         });
@@ -211,7 +250,7 @@
                               // denyButtonText: `Don't save`,
                             }).then((result) => {
                               /* Read more about isConfirmed, isDenied below */
-                              if (result.isConfirmed) {
+                              if (result.dismiss || result.isConfirmed) {
                                 location.reload();
                               } else if (result.isDenied) {
                                 Swal.fire('Changes are not saved', '', 'info')
@@ -253,75 +292,46 @@
             fd.append('_token','{{csrf_token()}}');
 
 
-        Swal.fire({
-            title: 'Are you sure?',
-          text: "You want to remove the updated file?",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Confirm'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            $.ajax({
-                url: "{{route('deleteFile')}}",
-                method: 'post',
-                data: fd,
-                contentType: false,
-                processData: false,
-                dataType: 'json',
-                success: function(response){
-                    Swal.fire({
-                        icon: 'success',
-                        title: response['message'],
-                        showConfirmButton: false,
-                        timer: 1500,
-                        width: '850px'
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to remove the updated file?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+            }).then((result) => {
+                if (result.dismiss || result.isConfirmed) {
+                    $.ajax({
+                        url: "{{route('deleteFile')}}",
+                        method: 'post',
+                        data: fd,
+                        contentType: false,
+                        processData: false,
+                        dataType: 'json',
+                        success: function(response){
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: response['message'],
+                                showDenyButton: false,
+                                showCancelButton: false,
+                                confirmButtonText: 'Confirm',
+                            }).then((result) => {
+                                /* Read more about isConfirmed, isDenied below */
+
+                                if (result.dismiss || result.isConfirmed) {
+                                    location.reload();
+                                }
+                            })
+                        },
+
+                        error: function(response){
+                            console.log("error : " + JSON.stringify(response) );
+                        }
+
                     });
-                    location.reload();
-                },
-                error: function(response){
-                    console.log("error : " + JSON.stringify(response) );
                 }
-            });
-          }
-        })
-
-        // if(confirm("Remove the updated file?")){
-        //     // alert("Successfully removed");
-        //     $.ajax({
-        //         url: "{{route('deleteFile')}}",
-        //         method: 'post',
-        //         data: fd,
-        //         contentType: false,
-        //         processData: false,
-        //         dataType: 'json',
-        //         success: function(response){
-        //             Swal.fire({
-        //                 icon: 'success',
-        //                 title: response['message'],
-        //                 showConfirmButton: false,
-        //                 timer: 1500,
-        //                 width: '850px'
-        //             });
-        //             location.reload();
-        //         },
-        //         error: function(response){
-        //             console.log("error : " + JSON.stringify(response) );
-        //         }
-        //     });
-        // }
-        // else{
-        //    Swal.fire({
-        //     icon: 'error',
-        //     title: 'Notifications!',
-        //     text: 'Something went wrong while uploading your files!',
-        //     // footer: '<a href="">Why do I have this issue?</a>',
-        //     width: '850px'
-        //   });
-        //     // return false;
-        // }
-        
-
-    }
+            })
+        }
 </script>

@@ -30,7 +30,7 @@
               </div>
               <div style="padding-bottom:5px; font-size:9pt; ">Remarks</div>
               <div class="col-md-12" style="padding: 0px">
-                <textarea id="remarks_textarea" rows="2" cols="20" style="font-family:Tahoma;font-size:Medium;height:200px;width:100%;"></textarea>
+                <textarea id="remarks_textarea" rows="2" cols="20" style="font-family:Tahoma;font-size:Medium;height:200px;width:100%;padding: 13px;"></textarea>
               </div>
               <div class="col-md-12" style="padding: 0px">
                 <small>
@@ -40,7 +40,7 @@
                 <input id="ProjectRequirementsGUID" hidden/>
               </div>
               <div class="col-md-12" style="padding: 0px">
-                <button class="btn btn-primary" id="SaveAppReq">Save</button>
+                <button class="btn btn-primary" id="SaveAppReq" onclick="SaveAppReq()">Save</button>
                 <button class="btn btn-warning" id="NextDescription">Next</button>
               </div>
             </div>
@@ -91,114 +91,123 @@ $(document).ready(function(){
     var description = $(this).val();
     $("#NextDescription").removeAttr('onClick');
 
+    $("#remarks_textarea").val('');
+
     $.ajax({
-        url: "{{route('reviewerPDF')}}",
-        type: 'POST',
+      url: "{{route('reviewerPDF')}}",
+      type: 'POST',
         data: {
-          ProjectGUID : GUID,
-          Description : description,
-          _token: '{{csrf_token()}}' ,
-        },
-        success: function(response){
-          $("#remarks_textarea").text(response['Remarks']);
+        ProjectGUID : GUID,
+        Description : description,
+        _token: '{{csrf_token()}}' ,
+      },
+      success: function(response){
+        $("#remarks_textarea").val(response['Remarks']);
 
-          var embedded = '<embed type="application/pdf" src="'+response['FilePath']+'" width="100%" height="800" alt="pdf" />'
+        var embedded = '<embed type="application/pdf" src="'+response['FilePath']+'" width="100%" height="800" alt="pdf" />'
 
-          if(response['Compliant'] === 1){
-            $("#Compliant").attr('checked', 'checked');
-          } else {
-            $("#Compliant").removeAttr('checked');
-          }
+        if(response['Compliant'] === 1){
+          $("#Compliant").attr('checked', 'checked');
+        } else {
+          $("#Compliant").removeAttr('checked');
+        }
 
-          var selectedIndex = document.getElementById("project_description").selectedIndex;
+        $("#title").html(description);
+        $("#pdf_view").html(embedded);
+
+        $("#ProjectRequirementsGUID").val(response['PRID']);
+
+        var selectedIndex = document.getElementById("project_description").selectedIndex;
           selectedIndex = selectedIndex + 1;
-          var selected = document.getElementById("project_description").options[selectedIndex].value;
+        var selected = document.getElementById("project_description").options[selectedIndex].value;
 
-          $("#NextDescription").attr('onClick', 'NextDesc("'+selected+'")');
+        $("#NextDescription").attr('onClick', 'NextDesc("'+selected+'")');
           
-          $("#title").html(description);
-          $("#pdf_view").html(embedded);
-
-          $("#ProjectRequirementsGUID").val(response['PRID']);
-        }
-      });
-
-    $("#SaveAppReq").on('click', function() {
-      var Remarks = $("#remarks_textarea").val();
-      var Compliant = $('#Compliant').is(':checked');
-      var PRID = $("#ProjectRequirementsGUID").val();
-
-      $.ajax({
-        url: "{{route('SaveAppReqApprover')}}",
-        type: 'POST',
-        data: {
-          Remarks : Remarks,
-          Compliant : Compliant,
-          PRID : PRID,
-          ProjectGUID : GUID,
-          _token: '{{csrf_token()}}',
-        },
-        beforeSend: function() {
-          $('#overlay').show();
-        },
-        success: function(response){
-          $('#overlay').fadeOut(2000, () => {
-            Swal.fire({
-              icon: 'success',
-              title: 'Saved',
-              showConfirmButton: false,
-              timer: 1500,
-              width: '800px'
-            }).then((result) => {
-              /* Read more about handling dismissals below */
-              if (result.dismiss === Swal.DismissReason.timer) {
-                location.reload();
-              }
-            });
-          });
-        }
-      });
+        
+      }
     });
   });
 });
 
 function NextDesc(selectedDesc){
+  
   var GUID = "{{$project['GUID']}}";
+  
   $("#NextDescription").removeAttr('onClick');
+  $("#remarks_textarea").val('');
 
   $.ajax({
-        url: "{{route('reviewerPDF')}}",
-        type: 'POST',
-        data: {
-          ProjectGUID : GUID,
-          Description : selectedDesc,
-          _token: '{{csrf_token()}}' ,
-        },
-        success: function(response){
-          $("#remarks_textarea").text(response['Remarks']);
+    url: "{{route('reviewerPDF')}}",
+    type: 'POST',
+    data: {
+      ProjectGUID : GUID,
+      Description : selectedDesc,
+      _token: '{{csrf_token()}}' ,
+    },
+    success: function(response){
+      $("#remarks_textarea").val(response['Remarks']);
           
-          $("#project_description").val(response['Description']);
+      $("#project_description").val(response['Description']);
 
-          var embedded = '<embed type="application/pdf" src="'+response['FilePath']+'" width="100%" height="800" alt="pdf" />'
+      var embedded = '<embed type="application/pdf" src="'+response['FilePath']+'" width="100%" height="800" alt="pdf" />'
 
-          if(response['Compliant'] === 1){
-            $("#Compliant").attr('checked', 'checked');
-          } else {
-            $("#Compliant").removeAttr('checked');
-          }
+      if(response['Compliant'] === 1){
+        $("#Compliant").attr('checked', 'checked');
+      } else {
+        $("#Compliant").removeAttr('checked');
+      }
 
-          var selectedIndex = document.getElementById("project_description").selectedIndex;
+      var selectedIndex = document.getElementById("project_description").selectedIndex;
           selectedIndex = selectedIndex + 1;
-          var selected = document.getElementById("project_description").options[selectedIndex].value;
+      var selected = document.getElementById("project_description").options[selectedIndex].value;
 
-          $("#NextDescription").attr('onClick', 'NextDesc("'+selected+'")');
-          
-          $("#title").html(response['Description']);
+      $("#NextDescription").attr('onClick', 'NextDesc("'+selected+'")');
 
-          $("#pdf_view").html(embedded);
+      $("#title").html(response['Description']);
 
-          $("#ProjectRequirementsGUID").val(response['PRID']);
-        }
+      $("#pdf_view").html(embedded);
+
+      $("#ProjectRequirementsGUID").val(response['PRID']);
+    }
+  });
+}
+
+function SaveAppReq()
+{
+  var Remarks = $("#remarks_textarea").val();
+  var Compliant = $('#Compliant').is(':checked');
+  var PRID = $("#ProjectRequirementsGUID").val();
+
+  $.ajax({
+    url: "{{route('SaveAppReqApprover')}}",
+    type: 'POST',
+    data: {
+      Remarks : Remarks,
+      Compliant : Compliant,
+      PRID : PRID,
+      ProjectGUID : GUID,
+      _token: '{{csrf_token()}}',
+    },
+    beforeSend: function() {
+      $('#overlay').show();
+    },
+    success: function(response){
+      
+      $('#overlay').fadeOut(2000, () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Saved',
+          showConfirmButton: false,
+          timer: 1500,
+          width: '800px'
+        }).then((result) => {
+          /* Read more about handling dismissals below */
+          if (result.dismiss === Swal.DismissReason.timer) {
+            location.reload();
+          }
+        });
       });
+    }
+  });
 }
 </script>

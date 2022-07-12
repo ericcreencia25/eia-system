@@ -45,6 +45,7 @@ $(document).ready(function(){
   var ComponentGUID_check = "{{ Session::has('step_2') ? session::get('step_2')['ComponentGUID'] : '' }}";
   var input_size_check = "{{ Session::has('step_2') ? session::get('step_2')['input_size'] : '' }}";
 
+
   if(ComponentGUID_check != ''){
     $('#projectType').DataTable({
       processing:true,
@@ -119,34 +120,31 @@ $(document).ready(function(){
   }
 
   $("#check_step_2").on("click", function() {
-    Pace.restart()
 
-    // Pace.on('done', function() {
-      Swal.fire({
-        icon: 'success',
+    Swal.fire({
         title: 'Step 2 is already saved in the session.',
-        showConfirmButton: false,
-        timer: 1500,
-        width: '850px'
+        icon: 'success',
+        showCancelButton: false,          
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Confirm'
       }).then((result) => {
-        /* Read more about handling dismissals below */
-        if (result.dismiss === Swal.DismissReason.timer) {
+        if (result.dismiss || result.isConfirmed) {
           $("#step_2").css({"background-color":"#3c8dbc", "color": "#ffffff"});
           var next = $('#mytabs li.active').next()
               next.length?
               next.find('a').click():
+
               $('#myTab li a')[2].click();
 
               $("#li_step_3").attr("class", "able");
               $("#step_3").attr("data-toggle", "tab");
-
             }
-          });
-    // });
-
-  });
+          })
+    });
     
 });
+
 function ProjectSize(ComponentGUID, Category) {
     var id = "#input_project_size_" + ComponentGUID;
     var input_size = $(id).val();
@@ -167,29 +165,28 @@ function ProjectSize(ComponentGUID, Category) {
       if(input_size != ''){
         if(inRange(input_size, min, max))
         {
-          Pace.restart()
-          // Pace.on('done', function() {
-            $.ajax({
-              url: "{{route('SecondStep')}}",
-              type: 'POST',
-              data: {
-                input_size : input_size,
-                second : 1,
-                ComponentGUID : ComponentGUID,
-                _token: '{{csrf_token()}}',
-              },
-              success: function(response)
-              {
-                Swal.fire({
-                  icon: 'success',
+
+          $.ajax({
+            url: "{{route('SecondStep')}}",
+            type: 'POST',
+            data: {
+              input_size : input_size,
+              second : 1,
+              ComponentGUID : ComponentGUID,
+              _token: '{{csrf_token()}}',
+            },
+            success: function(response)
+            {
+
+              Swal.fire({
                   title: 'Step 2 is already saved in the session.',
-                  showConfirmButton: false,
-                  timer: 1500,
-                  width: '850px'
+                  icon: 'success',
+                  showCancelButton: false,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Confirm'
                 }).then((result) => {
-                  /* Read more about handling dismissals below */
-                  if (result.dismiss === Swal.DismissReason.timer) {
-                    
+                  if (result.dismiss || result.isConfirmed) {
                     $("#step_2").css({"background-color":"#3c8dbc", "color": "#ffffff"});
                       var next = $('#mytabs li.active').next()
                       next.length?
@@ -198,17 +195,16 @@ function ProjectSize(ComponentGUID, Category) {
 
                       $("#li_step_3").attr("class", "able");
                       $("#step_3").attr("data-toggle", "tab");
-
-                    }
-                });
+                  }
+                })
                 
               }
             });
-          // });
-          
+
         } else {
           Swal.fire('Your value is out of range');
         }
+
       }else{
         $.ajax({
           url: "{{route('SecondStep')}}",
@@ -225,7 +221,6 @@ function ProjectSize(ComponentGUID, Category) {
               icon: 'error',
               title: 'Notifications!',
               text: 'Proposed Project Size accepts numeric value only.',
-              // footer: '<a href="">Why do I have this issue?</a>',
               width: '850px'
             });
 
@@ -240,3 +235,4 @@ function inRange(x, min, max) {
     return ((x-min)*(x-max) <= 0);
 }
 </script>
+

@@ -35,9 +35,27 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 </head>
+<style>
+  .pointer {cursor: pointer;}
+   .spinner-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #022829;
+      z-index: 999999;
+    }
+  </style>
 <!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
 <body class="hold-transition skin-blue layout-top-nav">
 <div class="wrapper">
+
+  <!-- Preloader -->
+  <div class="spinner-wrapper">
+    <img src="../../img/denr1.png" width="100" height="100" class="d-inline-block align-top" alt="" style="position: absolute;top: 48%;left: 45%;">
+    <div class="spinner" style="position: absolute;top: 48%;left: 45%; width: 100px; height: 100px;" ></div>
+  </div>
 
   <nav class="main-header navbar navbar-expand-md navbar-primary navbar-dark" style="background-color: #1E8CBE">
     <div class="container">
@@ -199,6 +217,13 @@
     //   "timeOut": 5000,
     //   "extendedTimeOut": 1000,
     // }
+    //Preloader
+    preloaderFadeOutTime = 500;
+    function hidePreloader() {
+    var preloader = $('.spinner-wrapper');
+    preloader.fadeOut(preloaderFadeOutTime);
+    }
+    hidePreloader();
 
   });
 </script>

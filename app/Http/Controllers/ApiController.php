@@ -93,8 +93,8 @@ class ApiController extends Controller
         // $UserName = 'sampleclient2021';
         // $Password = '1234567';
 
-        $UserName = $req['UserName'];
-        $Password = $req['Password'];
+        $UserName = $req['username'];
+        $Password = $req['password'];
 
         $url = 'https://iis.emb.gov.ph/embis/api/Crs_Api/crs_account_login_api?username='.$UserName.'&password='.$Password;
 
@@ -108,80 +108,111 @@ class ApiController extends Controller
         $client = new Client(['verify' => false]);
         $res = $client->get($url);
 
+
+
         $result = json_decode($res->getBody());
 
-        $user = AspnetUser::on('mysql')->where('aspnet_users.UserName', '=', $UserName)
-        ->where('aspnet_membership.Password', '=', $Password)
-        // ->where('aspnet_users.InECCOAS', '=', 1)
-        ->leftJoin('aspnet_membership', 'aspnet_users.UserId', '=', 'aspnet_membership.UserId')
-        ->first();
+        if($result->response == 'invalid username or password'){
+            return 'invalid username or password';
+        }else{
 
-        if($user){
+            $user = AspnetUser::on('mysql')->where('aspnet_users.UserName', '=', $UserName)
+            ->where('aspnet_membership.Password', '=', $Password)
+            // ->where('aspnet_users.InECCOAS', '=', 1)
+            ->leftJoin('aspnet_membership', 'aspnet_users.UserId', '=', 'aspnet_membership.UserId')
+            ->first();
 
-            $now = new \DateTime(); 
+            if($user){
 
-            $req->session()->put('data', $user);
+                $now = new \DateTime(); 
 
-            DB::table('aspnet_users')
-              ->where('UserId','=', $user->UserId)
-              ->where('UserName', '=', $user->UserName)
-              ->update([
-                'LastActivityDate' => $now->format('Y-m-d H:i:s')
-            ]);
+                $req->session()->put('data', $user);
 
-            DB::table('aspnet_membership')
-              ->where('UserId','=', $user->UserId)
-              ->update([
-                'LastLoginDate' => $now->format('Y-m-d H:i:s')
-            ]);
+                DB::table('aspnet_users')
+                  ->where('UserId','=', $user->UserId)
+                  ->where('UserName', '=', $user->UserName)
+                  ->update([
+                    'LastActivityDate' => $now->format('Y-m-d H:i:s')
+                ]);
 
-              if($user->UserRole == 'Evaluator'){
-                return redirect('default')->with('msg', 'Hi, '.$user->UserName.'! You signed in successfully');
-            }else{
-                return redirect('default')->with('msg', 'Hi, '.$user->UserName.'! You signed in successfully');
+                DB::table('aspnet_membership')
+                  ->where('UserId','=', $user->UserId)
+                  ->update([
+                    'LastLoginDate' => $now->format('Y-m-d H:i:s')
+                ]);
+
+                return "Success";
+
+                // if($user->UserRole == 'Evaluator'){
+                //     return redirect('default')->with('msg', 'Hi, '.$user->UserName.'! You signed in successfully');
+                // }else{
+                //     return redirect('default')->with('msg', 'Hi, '.$user->UserName.'! You signed in successfully');
+                // }
+
+            } else {
+
+                $rowData = [];
+
+                $rowData['UserName'] = $result->response->username;
+                $rowData['Email'] = $result->response->email;
+                $rowData['FirstName'] = $result->response->first_name;
+                $rowData['LastName'] = $result->response->last_name;
+                $rowData['MobileAlias'] = $result->response->contact_no;
+                $rowData['Position'] = $result->response->position;
+                $rowData['CreatedDate'] = $result->response->date_registered;
+                $rowData['UserCode'] = $result->response->user_code;
+                $rowData['Password'] = $Password;
+                $rowData['PasswordSalt'] = $result->response->password;
+                $rowData['UserOffice'] = 'Proponent';
+                $rowData['UserRole'] = 'Applicant';
+                $rowData['UserId'] = '';
+                $rowData['UserCode'] = $result->response->user_code;
+                
+                $req->session()->put('data', $rowData);
+
+                // if($rowData['UserRole'] == 'Evaluator'){
+                //     return redirect('default')->with('msg', 'Hi, '.$UserName.'! You signed in successfully');
+                // }else{
+                //     return redirect('default')->with('msg', 'Hi, '.$UserName.'! You signed in successfully');
+                // }
+
+                return 'No Binded Account.';
+
             }
-
-        } else {
-
-            $rowData = [];
-
-            $rowData['UserName'] = $result->response->username;
-            $rowData['Email'] = $result->response->email;
-            $rowData['FirstName'] = $result->response->first_name;
-            $rowData['LastName'] = $result->response->last_name;
-            $rowData['MobileAlias'] = $result->response->contact_no;
-            $rowData['Position'] = $result->response->position;
-            $rowData['CreatedDate'] = $result->response->date_registered;
-            $rowData['UserCode'] = $result->response->user_code;
-            $rowData['Password'] = $Password;
-            $rowData['PasswordSalt'] = $result->response->password;
-            $rowData['UserOffice'] = 'Proponent';
-            $rowData['UserRole'] = 'Applicant';
-            $rowData['UserId'] = '';
-            $rowData['UserCode'] = $result->response->user_code;
-            
-            $req->session()->put('data', $rowData);
-
-            if($rowData['UserRole'] == 'Evaluator'){
-                return redirect('default')->with('msg', 'Hi, '.$UserName.'! You signed in successfully');
-            }else{
-                return redirect('default')->with('msg', 'Hi, '.$UserName.'! You signed in successfully');
-            }
-
         }
         
-        
 
-        
-
-        
         // return $rowData;
         // return json_decode($rowData);
     }
 
+    public function loginCRSUSers()
+    {
+        return view('auth.login-crs');
+    }
+
     public function companyData()
     {
-        $url = 'https://iis.emb.gov.ph/embis/api/Getdata/json_company_for_ecc?api_key=x&emb_id=EMBR2-1314200-45572';
+        $UserName = Session::get('data')['UserName'];
+        $Password = Session::get('data')['Password'];
+
+        // $client = new \GuzzleHttp\Client();
+        // $response = $client->post(
+        //     'https://iis.emb.gov.ph/embis/api/Crs_Api/ecc_api',
+        //     array(
+        //         'form_params' => array(
+        //         'username' => $UserName,
+        //         'password' => $Password,
+        //         'key' => '3mb$swmk3y',
+        //         )
+        //     )
+        // );
+
+        // $response_body = json_decode($response->getBody());
+        
+        // $emb_id = $response_body->company_details[0]->emb_id;
+
+        $url = 'https://iis.emb.gov.ph/embis/api/Getdata/json_company_for_ecc?api_key=x&emb_id=EMBR4A-161540-57784';
         $client = new Client(['verify' => false]);
         $res = $client->get($url);
 
@@ -210,6 +241,10 @@ class ApiController extends Controller
         $rowData['ceo_fname'] = $result->ceo_fname;
         $rowData['ceo_sname'] = $result->ceo_sname;
         $rowData['ceo_mname'] = $result->ceo_mname;
+        $rowData['sec_registration'] = '';
+        $rowData['dti_registration'] = '';
+        $rowData['ceo_contact_num'] = $result->ceo_contact_num;
+        $rowData['ceo_fax_no'] = $result->ceo_fax_no;
         
         return $rowData;
     }

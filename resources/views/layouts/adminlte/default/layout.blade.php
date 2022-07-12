@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>EIA</title>
   <!-- <link rel="icon" type="image/x-icon" href="../../imag/denr.png"> -->
-  <link rel = "icon" type = "image/png" href="../img/denr1.png">
+  <link rel = "icon" type = "image/png" href="../../img/denr1.png">
   
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -58,13 +58,41 @@
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 
+  <link rel="stylesheet" href="../../adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+
+  <script src="https://cdn.tiny.cloud/1/u1zby00l4hbcsuf7u8q6mm6iekqmrs3txm1ih2nk2x23fy21/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+  <script>
+             tinymce.init({
+               selector: 'textarea#editor', });
+        </script>
+
+
 </head>
+
 <style>
   .pointer {cursor: pointer;}
-  </style>
+
+  .spinner-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #022829;
+    z-index: 999999;
+  }
+
+</style>
 <!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
 <body class="hold-transition skin-blue layout-top-nav">
 <div class="wrapper">
+
+  <!-- Preloader -->
+  <div class="spinner-wrapper">
+    <img src="../../img/denr1.png" width="100" height="100" class="d-inline-block align-top" alt="" style="position: absolute;top: 48%;left: 45%;">
+    <div class="spinner" style="position: absolute;top: 48%;left: 45%; width: 100px; height: 100px;" ></div>
+  </div>
 
   <header class="main-header">
     <nav class="navbar navbar-static-top">
@@ -181,13 +209,19 @@
   </header>
   <!-- Full Width Column -->
 
+  <div id="overlay" style="display:none;">
+    <div class="spinner"></div>
+    <br/>
+    <h3 style="font-family: Arial, Sans; color: white;" id="overlay-message">Saving your changes. Please be patient</h3>
+</div>
+
   <div class="content-wrapper">
             <!-- Content Header (Page header) -->
 
             @yield('header')
 
             <!-- Main content -->
-            <section class="content container-fluid" id="container-fluid">
+            <section class="content container-fluid no-padding" id="container-fluid">
 
                 @yield('content')
 
@@ -200,6 +234,8 @@
 
 <!-- jQuery 3 -->
 <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.6.0/umd/popper.min.js"  crossorigin="anonymous"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="../../adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- Select2 -->
@@ -239,6 +275,11 @@
 
 <!---sweetalert2--->
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script src="../../adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+
+<script src="https://cdn.tiny.cloud/1/u1zby00l4hbcsuf7u8q6mm6iekqmrs3txm1ih2nk2x23fy21/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 </body>
 </html>
 
@@ -247,7 +288,7 @@
   window.onload = function () {
     var loadTime = window.performance.timing.domContentLoadedEventEnd-window.performance.timing.navigationStart; 
     console.log('Page load time is '+ loadTime);
-}
+  }
 
   $(document).ready(function(){
 
@@ -274,6 +315,16 @@
     //   "timeOut": 5000,
     //   "extendedTimeOut": 1000,
     // }
+
+    //Preloader
+    preloaderFadeOutTime = 500;
+
+    function hidePreloader() {
+      var preloader = $('.spinner-wrapper');
+      preloader.fadeOut(preloaderFadeOutTime);
+    }
+
+    hidePreloader();
 
   });
 

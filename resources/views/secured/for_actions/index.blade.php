@@ -182,7 +182,7 @@
 
     <div class="box box-default">
       <div class="box-header with-border">
-        <img id="" src="../img/Tools.jpg" style="width:38px;"> <b>Applications for Action - </b>
+        <img id="" src="../img/Tools.jpg" style="width:38px;"> <b>Applications for Action - </b> <span style="color:Red;font-size:Small;font-weight:normal;font-style:italic;text-decoration:none;">Per MC 2022-002, application for payment must be complied and submitted within 7 days from reversion. While application that requires payment and and other documents must be complied and submitted within 20 days from reversion. Applications beyond the said timeframes will be automatically dropped with option to re-file.</span>
       </div>
       <div class="box-body">
         <div class="box-header">
@@ -196,6 +196,7 @@
               <th style="width: 40%; height: 30%">Details</th>
               <th style="width: 20%; height: 30%">Status</th>
               <th style="width: 40%; height: 30%">Remarks</th>
+              <th style="width: 40%; height: 30%">Accumulated Days</th>
             </thead>
             <tbody></tbody>
           </table>
@@ -389,7 +390,7 @@ $(document).ready(function(){
     scroller:true,
     searching : true,
     ajax: {
-      "url": "{{route('get.users.list')}}",
+      "url": "{{route('get.applications.list')}}",
       "type": "POST",
       "data": {
         UserName : UserName,
@@ -402,6 +403,7 @@ $(document).ready(function(){
     {data: 'Details', name: 'Details'},
     {data: 'Status', name: 'Status'},
     {data: 'Remarks', name: 'Remarks'},
+    {data: 'IncurredDate', name: 'IncurredDate'},
     ]
   });
 
@@ -622,17 +624,19 @@ function ResetSession(){
 function NewDocument(result){
   var href = "NewDocument/";
 
-  $.ajax({
-    url: "{{route('putExistingDataInSession')}}",
-    type: 'POST',
-    data: {
-      ProjectGUID : result,
-      _token: '{{csrf_token()}}',
-    },
-    success: function(response){
-      document.location = href + result;
-    }
-  }); 
+  document.location = href + result;
+
+  // $.ajax({
+  //   url: "{{route('putExistingDataInSession')}}",
+  //   type: 'POST',
+  //   data: {
+  //     ProjectGUID : result,
+  //     _token: '{{csrf_token()}}',
+  //   },
+  //   success: function(response){
+  //     document.location = href + result;
+  //   }
+  // }); 
 }
 
 function companyData()

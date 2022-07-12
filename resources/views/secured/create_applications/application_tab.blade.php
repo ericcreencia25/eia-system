@@ -6,11 +6,7 @@
     <section class="content-header">
         <h1 class="hidden-sm">
         </h1>
-        <!-- <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-cog"></i>New ECC Application</a></li>
-            <li class="active"><i class="fa fa-user"></i>Purpose</li>
-        </ol> -->
-    </section>
+      </section>
 @stop
 
 @section('content')
@@ -77,12 +73,11 @@
     </div>
   </section>
 </div>
+
+
 @stop
 
 <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
-<!-- Bootstrap 3.3.7 -->
-<!-- <script src="../../adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js"></script> -->
-<!-- DataTables -->
 <script src="../../adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="../../adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 
@@ -103,7 +98,7 @@
 
     // $('#myTab a').click(function(e) {
     //   e.preventDefault();
-    //   $(this).tab('show');
+    //   $(this).tab('show');h);
     // });
 
     // store the currently selected tab in the hash value
@@ -115,6 +110,7 @@
     // on load of the page: switch to the currently selected tab
     var hash = window.location.hash;
     $('#myTab a[href="' + hash + '"]').tab('show');
+
 
     var activetab = $('#myTab').find('li.active');
   });

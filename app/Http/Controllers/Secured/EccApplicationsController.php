@@ -49,7 +49,7 @@ class EccApplicationsController extends Controller
         $todate = date('Y-m-d H:i:s');
         $tomorrow = date('Y-m-d', strtotime( $todate . " +1 days"));
 
-        $project = Project::select(
+        $project = DB::table('project')->select(
             'project.Address AS Address',
             'project.Municipality  AS Municipality', 
             'project.Province AS Province',
@@ -60,6 +60,7 @@ class EccApplicationsController extends Controller
             'project.Stage', 
             'project.ProcTimeFrameInDays',
             'project.TotProcDays',
+            'project.version',
 
             'projectactivity.Details AS Remarks',
             'projectactivity.RoutedTo',
@@ -143,7 +144,7 @@ class EccApplicationsController extends Controller
         $todate = date('Y-m-d H:i:s');
         $tomorrow = date('Y-m-d', strtotime( $todate . " +1 days"));
 
-        $project = Project::select(
+        $project = DB::table('project')->select(
             'project.Address AS Address',
             'project.Municipality  AS Municipality', 
             'project.Province AS Province',
@@ -170,10 +171,10 @@ class EccApplicationsController extends Controller
             });
 
         if($StatusFilter == 'Pending with EMB'){
-            $project->where('projectactivity.RoutedToOffice', '=', $UserOffice)
+            $project->where('projectactivity.RoutedToOffice', $UserOffice)
             ->whereNotIn('projectactivity.Status', array('Approved', 'Denied'));
         } else if($StatusFilter == 'Pending with Proponents'){
-            $project->where('projectactivity.RoutedToOffice', '=', 'Proponent')
+            $project->where('projectactivity.RoutedToOffice', 'Proponent')
             ->whereNotIn('projectactivity.Status', array('Approved', 'Denied', 'Pending for Submission'));
         } else if($StatusFilter == 'Decided'){
             $project->whereIn('projectactivity.RoutedToOffice', array($UserOffice, 'Proponent'), )
@@ -530,7 +531,7 @@ class EccApplicationsController extends Controller
         $project = Project::where('project.GUID', '=', $req->GUID)
         // ->where('project.Stage', '>', 0 )
         ->Join('projectactivity', function ($join) {
-            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+            $join->on('project.GUID', 'projectactivity.ProjectGUID');
             // $join->on('projectactivity.CreateDate','>=', DB::raw("'2012-05-01'"));
 
             $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 

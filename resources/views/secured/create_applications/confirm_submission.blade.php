@@ -8,7 +8,7 @@
   <h4><b>8. Confirm Submission: 
     <span></span></b><br>
   </h4>
-  <i>Please review your entries by navigating to previous pages or click the 'Next' button to confirm the submission of this application FOR SCREENING. The submitted documents are automatically forwarded to the EMB Regional Office having jurisdiction of the project. Once screened, you will be advised to pay the corresponding application fee or submit additional document/provide clarification. Returned applications will appear in the 'For Action' page.</i>
+  <i style="color: red">PLEASE REVIEW AND CHECK THAT THE CORRECT AND CLEAR VERSION OF THE PDF FILE WAS ATTACHED FOR EACH REQUIREMENT</i> <i>before clicking 'Next' button to confirm the submission of this application FOR SCREENING. The submitted documents are automatically forwarded to the EMB Regional Office having jurisdiction of the project. Once screened, you will be advised to pay the corresponding application fee or submit additional document/provide clarification. Returned applications will appear in the 'For Action' page.</i>
   <br><br>
 </div>
   <h4><label>Purpose: New ECC Application</label></h4>
@@ -44,10 +44,6 @@
         </div>
       </div>
     </div>
-    <!-- <div id="overlay" style="display:none;">
-      <div class="spinner"></div><br/>
-      <h3>Please wait while saving your data...</h3>
-    </div> -->
 <script>
 
 $(document).ready(function(){
@@ -88,7 +84,7 @@ $(document).ready(function(){
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes'
+      confirmButtonText: 'Confirm'
     }).then((result) => {
       if (result.isConfirmed) {
         var remarks = $("#remarks").val();
@@ -105,7 +101,6 @@ $(document).ready(function(){
             let timerInterval
 
             Swal.fire({
-              // title: 'Auto close alert!',
               html: 'Please wait while saving your data...',
               timer: 2000,
               timerProgressBar: true,
@@ -118,31 +113,29 @@ $(document).ready(function(){
             })
           },  
           success: function(response){
-            // $('#overlay').fadeOut(2000, () => {
-              // var response = 'R07';
-              var text = '<small>Your application was forwarded FOR SCREENING to '+ response +'</small><br><br>';
-              text += 'For complaints and suggestions, you may send your letter to:<br>';
-              text += '<b>ENGR. WILLIAM P. CUÑADO</b><br>';
-              text += 'OIC-EMB Director<br>';
-              text += 'Environmental Management Bureau<br>';
-              text += 'DENR Compound, Diliman, Quezon City <br>';
 
-              Swal.fire({
-                icon: 'success',
-                title: "APPLICATION WAS SUBMITTED SUCCESSFULLY FOR SCREENING!",
-                html : text,
-                showConfirmButton: false,
-                timer: 10000,
-                width: '850px'
-              }).then((result) => {
-                /* Read more about handling dismissals below */
-                if (result.dismiss === Swal.DismissReason.timer) {
-                  window.location.href='/default';
-                }
-              });
-            // });
-          }
-        });
+            var text = '<small>Your application was forwarded FOR SCREENING to '+ response +'</small><br><br>';
+                text += 'For complaints and suggestions, you may send your letter to:<br>';
+                text += '<b>ENGR. WILLIAM P. CUÑADO</b><br>';
+                text += 'OIC-EMB Director<br>';
+                text += 'Environmental Management Bureau<br>';
+                text += 'DENR Compound, Diliman, Quezon City <br>';
+
+                Swal.fire({
+                  icon: 'success',
+                  title: "APPLICATION WAS SUBMITTED SUCCESSFULLY FOR SCREENING!",
+                  html : text,
+                  showConfirmButton: true,
+                  confirmButtonText: 'Confirm',
+                  width: '850px'
+                }).then((result) => {
+                  /* Read more about handling dismissals below */
+                  if (result.dismiss || result.isConfirmed) {
+                    window.location.href='/default';
+                  }
+                });
+              }
+            });
       }
     });
 
