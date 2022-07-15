@@ -118,7 +118,7 @@ Route::group(['middleware'=>'web'], function(){
     Route::post('uploadFileEndorseApp', [ForActionsController::class, 'uploadFileEndorseApp'])->name('uploadFileEndorseApp');
 
     Route::post('getUploadedFile', [ForActionsController::class, 'getUploadedFile'])->name('getUploadedFile');
-        
+    
     Route::post('uploadFileEndorseApplicant', [ForActionsController::class, 'uploadFileEndorseApplicant'])->name('uploadFileEndorseApplicant');
 
     Route::post('/ReturnApplication', [ForActionsController::class, 'ReturnApplication'])->name('ReturnApplication');
@@ -176,6 +176,8 @@ Route::group(['middleware'=>'web'], function(){
     Route::post('/ecc-draft-certificate/compose/page-save', [ForActionsController::class, 'PageSave'])->name('PageSave');
 
     Route::post('/ecc-draft-data', [ForActionsController::class, 'ECCDraftData'])->name('ECCDraftData');
+
+    Route::post('/generate-template', [ForActionsController::class, 'generateTemplate'])->name('generateTemplate');
 
 
 /// ASPNET USER CONTROLLER
@@ -326,7 +328,11 @@ Route::group(['middleware'=>'web'], function(){
 
     Route::post('/administration/adminUploadFile', [AdministrationsController::class, 'adminUploadFile'])->name('adminUploadFile');
     
+    Route::post('/administration/eccDraftDataAdmin', [AdministrationsController::class, 'ECCDraftDataAdmin'])->name('ECCDraftDataAdmin');
 
+    Route::get('/administration/ECCDraftCertficate', [AdministrationsController::class, 'ECCDraftCertficateAdmin'])->name('ECCDraftCertficateAdmin');
+
+    Route::post('/administration/PageSaveAdmin', [AdministrationsController::class, 'PageSaveAdmin'])->name('PageSaveAdmin');
 /// VIEW 
 
     Route::view('google_map', 'secured.create_applications.google_map');
