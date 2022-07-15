@@ -17,11 +17,11 @@
     width: 250px;
     height: 70px;
     white-space: normal
-}
+  }
 
-.align-left {
-  text-align: left;
-}
+  .align-left {
+    text-align: left;
+  }
 
 </style>
 
@@ -52,11 +52,11 @@
                 <li><i class="fa fa-square text-light-blue"></i> IEE Checklist</li>
                 <li><i class="fa fa-square text-green"></i> EIS</li>
               </ul> -->
-            <!-- </div> -->
+              <!-- </div> -->
+            </div>
           </div>
-        </div>
-        <!-- /.box-header -->
-        <div class="box-body no-padding">
+          <!-- /.box-header -->
+          <div class="box-body no-padding">
           <!-- <div class="box-header with-border">
             <h5 class="box-title">Project Grouping Matrix for Determination of EIA Report Types for New Single & Co-Located Projects</h5>
           </div> -->
@@ -107,17 +107,17 @@
 <script src="../../adminlte/dist/js/demo.js"></script>
 
 <script>
-var UserOffice = "{{session('data')['UserOffice']}}";
-var UserName = "{{session('data')['UserName']}}";
-var UserRole = "{{session('data')['UserRole']}}";
-$(document).ready(function(){
-  ResetSession();
-  localStorage.clear();
+  var UserOffice = "{{session('data')['UserOffice']}}";
+  var UserName = "{{session('data')['UserName']}}";
+  var UserRole = "{{session('data')['UserRole']}}";
+  $(document).ready(function(){
+    ResetSession();
+    localStorage.clear();
 
-  $('#projectType').DataTable({
-    processing:true,
-    info:true,
-    ordering: false,
+    $('#projectType').DataTable({
+      processing:true,
+      info:true,
+      ordering: false,
     // serverSide : true,
     scrollY: 350,
     deferRender: true,
@@ -151,55 +151,55 @@ $(document).ready(function(){
   });
 
 
-  var table = $('#projectType').DataTable();
+    var table = $('#projectType').DataTable();
 
   // #myInput is a <input type="text"> element
   $('#searchInput').on('keyup change', function () {
-      table.search(this.value).draw();
+    table.search(this.value).draw();
   });
 
 });
 
-function ResetSession(){
-  $.ajax({
-    url: "{{route('ResetInputs')}}",
-    type: 'GET',
-    success: function(response){
-    }
-  });
-}
+  function ResetSession(){
+    $.ajax({
+      url: "{{route('ResetInputs')}}",
+      type: 'GET',
+      success: function(response){
+      }
+    });
+  }
 
-function NewDocument(result){
-  var href = "NewDocument/";
+  function NewDocument(result){
+    var href = "NewDocument/";
 
-  $.ajax({
-    url: "{{route('putExistingDataInSession')}}",
-    type: 'POST',
-    data: {
-      ProjectGUID : result,
-      _token: '{{csrf_token()}}',
-    },
-    success: function(response){
-      document.location = href + result;
-    }
-  });
-}
+    $.ajax({
+      url: "{{route('putExistingDataInSession')}}",
+      type: 'POST',
+      data: {
+        ProjectGUID : result,
+        _token: '{{csrf_token()}}',
+      },
+      success: function(response){
+        document.location = href + result;
+      }
+    });
+  }
 
-function ProjectSize(ComponentthresholdGUID, ComponentGUID, ReportType){
-  var id = "#input_project_size_" + ComponentGUID;
-  var input_size = $(id).val();
+  function ProjectSize(ComponentthresholdGUID, ComponentGUID, ReportType){
+    var id = "#input_project_size_" + ComponentGUID;
+    var input_size = $(id).val();
 
-  $.ajax({
-    url: "{{route('getComponents')}}",
-    type: 'POST',
-    data: {
-      ReportType : ReportType,
-      ComponentGUID : ComponentGUID,
-      input_size : input_size,
-      _token: '{{csrf_token()}}',
-    },
-    success: function(result)
-    {
+    $.ajax({
+      url: "{{route('getComponents')}}",
+      type: 'POST',
+      data: {
+        ReportType : ReportType,
+        ComponentGUID : ComponentGUID,
+        input_size : input_size,
+        _token: '{{csrf_token()}}',
+      },
+      success: function(result)
+      {
       // #f39c12 - yellow
       // #3c8dbc - blue
       // #00a65a - green
@@ -226,59 +226,59 @@ function ProjectSize(ComponentthresholdGUID, ComponentGUID, ReportType){
         }
 
         var table = '<table class="table" style="width: 100%;  display: table;">';
-          table += '<tr>';
-          table += '<th style=" background-color: #f5f6f8" width="30%">CATEGORY</th>';
-          table += '<td><b><small>'+result['ProjectType'].toUpperCase() + '</b> ('+result['Category']+') </b> <br>' + result['ProjectSubType']+'</td>';
-          table += '</tr>';
+        table += '<tr>';
+        table += '<th style=" background-color: #f5f6f8" width="30%">CATEGORY</th>';
+        table += '<td><b><small>'+result['ProjectType'].toUpperCase() + '</b> ('+result['Category']+') </b> <br>' + result['ProjectSubType']+'</td>';
+        table += '</tr>';
 
-          table += '<tr>';
-          table += '<th style=" background-color: #f5f6f8"  width="30%">SPECIFIC TYPE</td>';
-          table += '<td><small>'+specifictype.toUpperCase() +'</b>' + subtype +'</td>';
-          table += '<tr>';
+        table += '<tr>';
+        table += '<th style=" background-color: #f5f6f8"  width="30%">SPECIFIC TYPE</td>';
+        table += '<td><small>'+specifictype.toUpperCase() +'</b>' + subtype +'</td>';
+        table += '<tr>';
 
-          table += '<tr>';
-          table += '<th style=" background-color: #f5f6f8" width="20%"><small>PROJECT SIZE <br></td>';
-          table += '<td><b><small>'+result['Parameter'].toUpperCase() + '</b>' + '<br> Min: ' + result['Minimum']  + ' ' + result['UnitOfMeasure']  + '<br> Max: ' + result['Maximum'] + ' '  + result['UnitOfMeasure'] +'</td>';
-          table += '<tr>';
+        table += '<tr>';
+        table += '<th style=" background-color: #f5f6f8" width="20%"><small>PROJECT SIZE <br></td>';
+        table += '<td><b><small>'+result['Parameter'].toUpperCase() + '</b>' + '<br> Min: ' + result['Minimum']  + ' ' + result['UnitOfMeasure']  + '<br> Max: ' + result['Maximum'] + ' '  + result['UnitOfMeasure'] +'</td>';
+        table += '<tr>';
 
-          table += '<tr>';
-          table += '<th style=" background-color: #f5f6f8" width="20%"><small>PROPOSED PROJECT SIZE <br></td>';
-          table += '<td>'+ input_size + ' ' + result['UnitOfMeasure'].toUpperCase() +'</td>';
-          table += '<tr>';
+        table += '<tr>';
+        table += '<th style=" background-color: #f5f6f8" width="20%"><small>PROPOSED PROJECT SIZE <br></td>';
+        table += '<td>'+ input_size + ' ' + result['UnitOfMeasure'].toUpperCase() +'</td>';
+        table += '<tr>';
 
 
-          table += '<tbody></tbody>';
-          table += '</table>';
+        table += '<tbody></tbody>';
+        table += '</table>';
 
-          var html = '<div class="align-left"><b>' +result['ProjectType'].toUpperCase() +'</b> <br>' + result['ProjectSubType'] + '</div><br>' + table ;
+        var html = '<div class="align-left"><b>' +result['ProjectType'].toUpperCase() +'</b> <br>' + result['ProjectSubType'] + '</div><br>' + table ;
 
-          var button = result['ReportType'];
+        var button = result['ReportType'];
 
-          Swal.fire({
-            html:html,
-            width: 800,
-            showCancelButton: false,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Apply ' + button + ' Permit',
-            confirmButtonColor: buttonColor,
-          }).then((response)  => {
-            if (response.isConfirmed) {
-              if(result['ReportType'] === 'EIS'){
-                Swal.fire('Link for EIS Application');
-              }else if(result['ReportType'] === 'IEE'){
-                applyPermit(result, input_size);
-              }else if(result['ReportType'] === 'CNC Application'){
-                Swal.fire('Link for CNC Application');
-              }
+        Swal.fire({
+          html:html,
+          width: 800,
+          showCancelButton: false,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Apply ' + button + ' Permit',
+          confirmButtonColor: buttonColor,
+        }).then((response)  => {
+          if (response.isConfirmed) {
+            if(result['ReportType'] === 'EIS'){
+              Swal.fire('Link for EIS Application');
+            }else if(result['ReportType'] === 'IEE'){
+              applyPermit(result, input_size);
+            }else if(result['ReportType'] === 'CNC Application'){
+              Swal.fire('Link for CNC Application');
             }
-          });
-        } else {
-          Swal.fire('Your value is out of range');
-        }
+          }
+        });
+      } else {
+        Swal.fire('Your value is out of range');
       }
-    });
-}
+    }
+  });
+  }
 
   function applyPermit(result, input_size){
     ReportType = result['ReportType'];

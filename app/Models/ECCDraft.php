@@ -12,8 +12,8 @@ class ECCDraft extends Model
 
     protected $fillable = [
             'ID',
-            'GUID',
             'Template',
+            'Type',
             'ProjectType',
             'Subject',
             'Body',
@@ -22,8 +22,9 @@ class ECCDraft extends Model
             'ProjectComponents',
             'ThisCertificateIsIssued',
             'SwornAccountabilityStatement',
-            'EMConditions',
-            'SubEMConditions',
-            'Restrictions'
+            'EnvironmentalManagement',
+            'GeneralConditions',
+            'Restrictions',
+            'PAPT'
     ];
 }

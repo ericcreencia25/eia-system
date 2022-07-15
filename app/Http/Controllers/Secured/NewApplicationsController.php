@@ -47,25 +47,25 @@ class NewApplicationsController extends Controller
         $ProjectSize = $req['ProjectSize'];
 
         $component = Component::Join('componentthresholdnew', 'component.GUID', '=', 'componentthresholdnew.ComponentGUID')
-            ->select(
-                'component.GUID as GUID',
-                'component.ProjectType as ProjectType',
-                'component.ProjectSubType as ProjectSubType',
-                'component.ProjectSpecificSubType as ProjectSpecificSubType',
-                'component.ProjectSpecificType as ProjectSpecificType',
-                'component.Parameter as Parameter',
-                'component.UnitOfMeasure as UnitOfMeasure',
+        ->select(
+            'component.GUID as GUID',
+            'component.ProjectType as ProjectType',
+            'component.ProjectSubType as ProjectSubType',
+            'component.ProjectSpecificSubType as ProjectSpecificSubType',
+            'component.ProjectSpecificType as ProjectSpecificType',
+            'component.Parameter as Parameter',
+            'component.UnitOfMeasure as UnitOfMeasure',
 
-                'componentthresholdnew.Category as Category',
-                'componentthresholdnew.Minimum',
-                'componentthresholdnew.Maximum',
-                'componentthresholdnew.ReportType as ReportType',
-                'componentthresholdnew.GUID as componentthresholdGUID',
-                'componentthresholdnew.ReferenceID',
-            )
-            ->orderByRaw('componentthresholdnew.ReferenceID')
-            ->groupBy('component.GUID')
-            ->get();
+            'componentthresholdnew.Category as Category',
+            'componentthresholdnew.Minimum',
+            'componentthresholdnew.Maximum',
+            'componentthresholdnew.ReportType as ReportType',
+            'componentthresholdnew.GUID as componentthresholdGUID',
+            'componentthresholdnew.ReferenceID',
+        )
+        ->orderByRaw('componentthresholdnew.ReferenceID')
+        ->groupBy('component.GUID')
+        ->get();
         // }
         
         return DataTables::of($component)
@@ -100,18 +100,18 @@ class NewApplicationsController extends Controller
         ->addColumn('ProjectSizeInput', function($component)  use ($ProjectSize){
 
             // $details = '<div class="input-group input-group-lg col-md-12" ">
-                
+            
             //     <input type="number" id="input_project_size_'.$component->componentthresholdGUID.'"  class="form-control" value="'.$ProjectSize.'"  min="'.$component->Minimum.'" max="'.$component->Maximum.'" style="height: 70px">
             //   </div>';
 
-              $details = '<div class="input-group input-group-lg col-md-12" ">
-                
-                <input type="number" id="input_project_size_'.$component->GUID.'"  class="form-control" style="height: 70px">
-              </div>';
+          $details = '<div class="input-group input-group-lg col-md-12" ">
+          
+          <input type="number" id="input_project_size_'.$component->GUID.'"  class="form-control" style="height: 70px">
+          </div>';
 
 
-            return $details;
-        })
+          return $details;
+      })
         ->addColumn('Action', function($component){
 
             // if($component->ReportType === 'EIS'){
@@ -150,17 +150,17 @@ class NewApplicationsController extends Controller
             'component.GUID as GUID',
             'component.ProjectType as ProjectType',
             'component.ProjectSubType as ProjectSubType',
-                'component.ProjectSpecificSubType as ProjectSpecificSubType',
-                'component.ProjectSpecificType as ProjectSpecificType',
-                'component.Parameter as Parameter',
-                'component.UnitOfMeasure as UnitOfMeasure',
+            'component.ProjectSpecificSubType as ProjectSpecificSubType',
+            'component.ProjectSpecificType as ProjectSpecificType',
+            'component.Parameter as Parameter',
+            'component.UnitOfMeasure as UnitOfMeasure',
 
-                'componentthreshold.Category as Category',
-                'componentthreshold.Minimum',
-                'componentthreshold.Maximum',
-                'componentthreshold.ReportType as ReportType',
-                'componentthreshold.GUID as componentthresholdGUID',
-            )
+            'componentthreshold.Category as Category',
+            'componentthreshold.Minimum',
+            'componentthreshold.Maximum',
+            'componentthreshold.ReportType as ReportType',
+            'componentthreshold.GUID as componentthresholdGUID',
+        )
         ->whereRaw($ProjectSize .'BETWEEN componentthreshold.Minimum AND componentthreshold.Maximum')
         ->first();
 
@@ -247,12 +247,12 @@ class NewApplicationsController extends Controller
             // $details .= '<input type="number" id="input_project_size_'.$component->GUID.'"  class="form-control" value="'.$ProjectSize.'"  min="'.$component->Minimum.'" max="'.$component->Maximum.'" style="height: 70px" disabled>';
 
             $details = '<div class="input-group margin">
-                <div class="input-group-btn">
-                  <span class="input-group-addon input-md limit" style="word-wrap:break-word; width: 150px; white-space: normal; background-color: #f5f6f8">'. $component->Parameter . ' in '. $component->UnitOfMeasure. '</span>
-                </div>
-                <!-- /btn-group -->
-                <input type="text" class="form-control" style="height: 55px" value="'.$ProjectSize.'" disabled>
-              </div>';
+            <div class="input-group-btn">
+            <span class="input-group-addon input-md limit" style="word-wrap:break-word; width: 150px; white-space: normal; background-color: #f5f6f8">'. $component->Parameter . ' in '. $component->UnitOfMeasure. '</span>
+            </div>
+            <!-- /btn-group -->
+            <input type="text" class="form-control" style="height: 55px" value="'.$ProjectSize.'" disabled>
+            </div>';
 
 
             return $details;
@@ -260,9 +260,9 @@ class NewApplicationsController extends Controller
         ->addColumn('ProjectSizeInput', function($component)  use ($ProjectSize){
 
             $details = '<div class="input-group input-group-lg col-md-12" ">
-                
-                <input type="number" id="input_project_size_'.$component->GUID.'"  class="form-control" value="'.$ProjectSize.'"  min="'.$component->Minimum.'" max="'.$component->Maximum.'" style="height: 70px" disabled>
-              </div>';
+            
+            <input type="number" id="input_project_size_'.$component->GUID.'"  class="form-control" value="'.$ProjectSize.'"  min="'.$component->Minimum.'" max="'.$component->Maximum.'" style="height: 70px" disabled>
+            </div>';
 
 
             return $details;
@@ -310,30 +310,30 @@ class NewApplicationsController extends Controller
         ->leftJoin('projectactivity', 'project.GUID', '=', 'projectactivity.ProjectGUID')
         ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
         ->select('project.Address AS Address',
-        'project.Municipality  AS Municipality',
-        'project.Province AS Province', 
-        'project.ProjectSize AS ProjectSize', 
-        'project.Address', 
-        'projectactivity.Status', 
-        'projectactivity.Details AS Remarks', 
-        'project.ProjectName', 
-        'project.Region AS Region', 
-        'projectactivity.RoutedTo', 
-        'projectactivity.RoutedFrom', 
-        'projectactivity.CreatedDate', 
-        'project.GUID AS ProjectGUID', 
-        'project.PreviousECCNo', 
-        'project.Purpose', 
-        'project.PriorTo1982', 
-        'project.InNIPAS', 
-        'project.Description', 
-        'project.ComponentGUID', 
-        'project.ZoneClassification',
-        'project.LandAreaInSqM',
-        'project.FootPrintAreaInSqM',
-        'project.NoOfEmployees',
-        'project.ProjectCost',
-        'proponent.*')
+            'project.Municipality  AS Municipality',
+            'project.Province AS Province', 
+            'project.ProjectSize AS ProjectSize', 
+            'project.Address', 
+            'projectactivity.Status', 
+            'projectactivity.Details AS Remarks', 
+            'project.ProjectName', 
+            'project.Region AS Region', 
+            'projectactivity.RoutedTo', 
+            'projectactivity.RoutedFrom', 
+            'projectactivity.CreatedDate', 
+            'project.GUID AS ProjectGUID', 
+            'project.PreviousECCNo', 
+            'project.Purpose', 
+            'project.PriorTo1982', 
+            'project.InNIPAS', 
+            'project.Description', 
+            'project.ComponentGUID', 
+            'project.ZoneClassification',
+            'project.LandAreaInSqM',
+            'project.FootPrintAreaInSqM',
+            'project.NoOfEmployees',
+            'project.ProjectCost',
+            'proponent.*')
         ->first();
 
         if($UserRole == 'Evaluator'){
@@ -358,7 +358,7 @@ class NewApplicationsController extends Controller
         $municipality = $req['data'];
 
         // if(empty($municipality)){
-            $project['data'] = Municipality::all();    
+        $project['data'] = Municipality::all();    
         // } else {
         //     $project['data'] = Municipality::where('municipality.municipality', '=', $municipality)->get();
         // }
@@ -443,20 +443,20 @@ class NewApplicationsController extends Controller
 
             if(!empty($data)){
                 $details .= '<div class="btn-group">
-                                <button type="button" class="btn btn-primary btn-sm" name="submit" style="width:70px;" disabled><i class="fa fa-upload"></i> Upload</button>
+                <button type="button" class="btn btn-primary btn-sm" name="submit" style="width:70px;" disabled><i class="fa fa-upload"></i> Upload</button>
 
-                                <button type="button" class="btn btn-danger btn-sm" style="width:70px;" onclick="deleteFile('. "'" .$data->GUID. "'".')"><i class="fa fa-trash"></i> Delete</button>
-                            </div>';
+                <button type="button" class="btn btn-danger btn-sm" style="width:70px;" onclick="deleteFile('. "'" .$data->GUID. "'".')"><i class="fa fa-trash"></i> Delete</button>
+                </div>';
             }else{
                 $details .= '<div class="btn-group">
-                                <button type="button" class="btn btn-primary btn-sm" name="submit" onclick="uploadFile('. "'" .$project->Description. "',". "'". $project->ID. "'" . ')"  style="width:70px;" ><i class="fa fa-upload"></i> Upload</button>
+                <button type="button" class="btn btn-primary btn-sm" name="submit" onclick="uploadFile('. "'" .$project->Description. "',". "'". $project->ID. "'" . ')"  style="width:70px;" ><i class="fa fa-upload"></i> Upload</button>
 
-                                <button type="button" class="btn btn-danger btn-sm" style="width:70px;"  disabled><i class="fa fa-trash"></i> Delete</button>
-                            </div>';
+                <button type="button" class="btn btn-danger btn-sm" style="width:70px;"  disabled><i class="fa fa-trash"></i> Delete</button>
+                </div>';
 
-                        }
+            }
 
-                return $details;
+            return $details;
         })
 
         ->addColumn('Progress', function($project) use ($ActivityGUID){
@@ -468,10 +468,10 @@ class NewApplicationsController extends Controller
                 $details = '';
             }else{
                 $details ='<div class="progress"  style="width:150px;" >
-                    <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="00" aria-valuemin="0" aria-valuemax="100" style="width: 00%" id="progressBar_'.$project->ID.'">
-                        <span class="sr-only">0% Complete (success)</span>
-                    </div>
-                    <p class="text-green" id="progressMessage_'.$project->ID.'"></p>
+                <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="00" aria-valuemin="0" aria-valuemax="100" style="width: 00%" id="progressBar_'.$project->ID.'">
+                <span class="sr-only">0% Complete (success)</span>
+                </div>
+                <p class="text-green" id="progressMessage_'.$project->ID.'"></p>
                 </div>';
             }
 
@@ -834,1043 +834,1043 @@ class NewApplicationsController extends Controller
         $rtrn = array();
 
         $validator = Validator::make($request->all(), [
-            'file' => 'required|mimes:pdf|max:2048'
+            'file' => 'required|mimes:pdf'
+            // |max:2048
         ]);
 
-      if ($validator->fails()) {
+        if ($validator->fails()) {
 
-         $rtrn['success'] = 0;
+           $rtrn['success'] = 0;
          $rtrn['error'] = $validator->errors()->first('file');// Error response
 
-      }else{
-         if($request->file('file')) {
+     }else{
+       if($request->file('file')) {
 
-             $file = $request->file('file');
-             $filename = $file->getClientOriginalName();
-             
+           $file = $request->file('file');
+           $filename = $file->getClientOriginalName();
+           
              // $filename = $NewGUID;
-             
+           
              // filesize
-             $size = $file->getSize();
-             $filesize = $size * 0.001;
+           $size = $file->getSize();
+           $filesize = $size * 0.001;
              // File extension
-             $extension = $file->getClientOriginalExtension();
+           $extension = $file->getClientOriginalExtension();
 
-             $path = public_path('files/'.$ProjectGUID);
+           $path = public_path('files/'.$ProjectGUID);
                 // $savedFiles = $pdf->saveAs($urlSavePDF);
 
-            if(!File::exists($path)) {
-                File::makeDirectory($path, $mode = 0755, true, true);
-                    
+           if(!File::exists($path)) {
+            File::makeDirectory($path, $mode = 0755, true, true);
+            
                 // File upload location
-                $location = 'files/'.$ProjectGUID.'/';
+            $location = 'files/'.$ProjectGUID.'/';
 
                 // // Upload file
-                $file->move($location,$NewGUID.'.'.$extension);
+            $file->move($location,$NewGUID.'.'.$extension);
 
-            } else {
-                $location = 'files/'.$ProjectGUID.'/';
+        } else {
+            $location = 'files/'.$ProjectGUID.'/';
 
-                $file->move($location,$NewGUID.'.'.$extension);
-            }
+            $file->move($location,$NewGUID.'.'.$extension);
+        }
 
              // File path
              // $filepath = public_path('files/'.$NewGUID.'.'.$extension);
-             $filepath = 'files/'.$ProjectGUID.'/'.$NewGUID.'.'.$extension;
+        $filepath = 'files/'.$ProjectGUID.'/'.$NewGUID.'.'.$extension;
 
              // Response
-             $rtrn['success'] = 1;
-             $rtrn['message'] = 'Uploaded Successfully!';
+        $rtrn['success'] = 1;
+        $rtrn['message'] = 'Uploaded Successfully!';
 
-             $data['GUID'] = $GUID;
-             $data['ActivityGUID'] = $ActivityGUID;
-             $data['Description'] = $description;
-             $data['Directory'] = public_path();
-             $data['FileName'] = $filename;
-             $data['FilePath'] = $filepath;
+        $data['GUID'] = $GUID;
+        $data['ActivityGUID'] = $ActivityGUID;
+        $data['Description'] = $description;
+        $data['Directory'] = public_path();
+        $data['FileName'] = $filename;
+        $data['FilePath'] = $filepath;
              // $data['extension'] = $extension;
-             $data['FileSizeInKB'] = $filesize;
-             $data['CreatedBy'] = $UserName;
+        $data['FileSizeInKB'] = $filesize;
+        $data['CreatedBy'] = $UserName;
 
-             DB::table('projectactivityattachmenttemp')->insert($data);
-         }else{
+        DB::table('projectactivityattachmenttemp')->insert($data);
+    }else{
              // Response
-             $rtrn['success'] = 2;
-             $rtrn['message'] = 'File not uploaded.'; 
-         }
-      }
-      return response()->json($rtrn);
-    }
+       $rtrn['success'] = 2;
+       $rtrn['message'] = 'File not uploaded.'; 
+   }
+}
+return response()->json($rtrn);
+}
 
 
-    public function deleteFile(Request $request)
-    {
-        $GUID = $request['TempGUID'];
+public function deleteFile(Request $request)
+{
+    $GUID = $request['TempGUID'];
 
-        $rtrn = array();
+    $rtrn = array();
 
-        $data = ProjectActivityAttachmentTemp::where('GUID', '=', $GUID)
-        ->first();
+    $data = ProjectActivityAttachmentTemp::where('GUID', '=', $GUID)
+    ->first();
 
-        if(File::exists(public_path($data->FilePath))){
+    if(File::exists(public_path($data->FilePath))){
 
-            File::delete(public_path($data->FilePath));
+        File::delete(public_path($data->FilePath));
 
-            if(ProjectActivityAttachmentTemp::where('GUID', $GUID)->delete()){
-                $rtrn['success'] = 2;
-                $rtrn['message'] = "Removed uploaded file."; 
-            }
-        }else{
+        if(ProjectActivityAttachmentTemp::where('GUID', $GUID)->delete()){
             $rtrn['success'] = 2;
-            $rtrn['message'] = "File doesn't uploaded.";  
+            $rtrn['message'] = "Removed uploaded file."; 
         }
-
-        return response()->json($rtrn);
+    }else{
+        $rtrn['success'] = 2;
+        $rtrn['message'] = "File doesn't uploaded.";  
     }
 
-
-   public function getGeoTable()
-    {
-        $data = Session::get('step_4');
-
-        return $data;
-    }
+    return response()->json($rtrn);
+}
 
 
-    public function SaveNewApplication(Request $req)
-    {
-        $UserName = Session::get('data')['UserName'];
-        $UserOffice = Session::get('data')['UserOffice'];
-        $ProjectGUID = $req['ProjectGUID'];
+public function getGeoTable()
+{
+    $data = Session::get('step_4');
 
-        $step_1 = Session::get('step_1');
-        $step_2 = Session::get('step_2');
-        $step_3 = Session::get('step_3');
-        $step_4 = Session::get('step_4');
-        $step_5 = Session::get('step_5');
-        $ProjectActivityGUID = Session::get('ActivityGUID');
-        $ProponentGUID = Session::get('data')['ProponentGUID'];
+    return $data;
+}
+
+
+public function SaveNewApplication(Request $req)
+{
+    $UserName = Session::get('data')['UserName'];
+    $UserOffice = Session::get('data')['UserOffice'];
+    $ProjectGUID = $req['ProjectGUID'];
+
+    $step_1 = Session::get('step_1');
+    $step_2 = Session::get('step_2');
+    $step_3 = Session::get('step_3');
+    $step_4 = Session::get('step_4');
+    $step_5 = Session::get('step_5');
+    $ProjectActivityGUID = Session::get('ActivityGUID');
+    $ProponentGUID = Session::get('data')['ProponentGUID'];
 
         ///getting region from province
-        $province = DB::table('province')
-        ->where('Province', '=', $step_5['province'])
-        ->first();
+    $province = DB::table('province')
+    ->where('Province', '=', $step_5['province'])
+    ->first();
 
-        $project = array();
-        $project['GUID'] = $ProjectGUID;
-        $project['Purpose'] = $step_1['purpose'];
-        $project['PriorTo1982'] = $step_1['prior_to_1982'];
-        $project['InNIPAS'] = $step_1['In_NIPAS'];
-        $project['PreviousECCNo'] = $step_1['ecc_amendment'];
+    $project = array();
+    $project['GUID'] = $ProjectGUID;
+    $project['Purpose'] = $step_1['purpose'];
+    $project['PriorTo1982'] = $step_1['prior_to_1982'];
+    $project['InNIPAS'] = $step_1['In_NIPAS'];
+    $project['PreviousECCNo'] = $step_1['ecc_amendment'];
 
-        $project['ProjectName'] = $step_5['project_name'];
-        $project['MailingAddress'] = $step_5['mailing_address'];
-        $project['Representative'] = $step_5['represented_by'];
-        $project['Designation'] = $step_5['designation'];;
-        $project['LandlineNo'] = $step_5['landline_no'];
-        $project['MobileNo'] = $step_5['mobile_number'];
-        $project['FaxNo'] = $step_5['fax_no'];
-        $project['EmailAddress'] = $step_5['email_address'];
-        $project['ZoneClassification'] = $step_5['zone_classification'];
-        $project['ProponentGUID'] = $ProponentGUID;
-        $project['Address'] = $step_5['project_location'];
-        $project['Municipality'] = $step_5['municipality'];
-        $project['Province'] = $step_5['province'];
-        $project['Region'] = $province->Region;
-        $project['LandAreaInSqM'] = $step_5['project_landarea'];
-        $project['FootPrintAreaInSqM'] = $step_5['project_footprintarea'];
+    $project['ProjectName'] = $step_5['project_name'];
+    $project['MailingAddress'] = $step_5['mailing_address'];
+    $project['Representative'] = $step_5['represented_by'];
+    $project['Designation'] = $step_5['designation'];;
+    $project['LandlineNo'] = $step_5['landline_no'];
+    $project['MobileNo'] = $step_5['mobile_number'];
+    $project['FaxNo'] = $step_5['fax_no'];
+    $project['EmailAddress'] = $step_5['email_address'];
+    $project['ZoneClassification'] = $step_5['zone_classification'];
+    $project['ProponentGUID'] = $ProponentGUID;
+    $project['Address'] = $step_5['project_location'];
+    $project['Municipality'] = $step_5['municipality'];
+    $project['Province'] = $step_5['province'];
+    $project['Region'] = $province->Region;
+    $project['LandAreaInSqM'] = $step_5['project_landarea'];
+    $project['FootPrintAreaInSqM'] = $step_5['project_footprintarea'];
 
-        $project['Description'] = $step_3['description'];
+    $project['Description'] = $step_3['description'];
 
-        $project['ComponentGUID'] = $step_2['ComponentGUID'];
-        $project['ReportType'] = "IEE";
-        $project['ProjectSize'] = $step_2['input_size'];
+    $project['ComponentGUID'] = $step_2['ComponentGUID'];
+    $project['ReportType'] = "IEE";
+    $project['ProjectSize'] = $step_2['input_size'];
 
-        $now = new \DateTime(); 
+    $now = new \DateTime(); 
 
-        $project['NoOfEmployees'] = $step_5['no_of_employees'];
-        $project['ProjectCost'] = $step_5['total_project_cost'];
-        $project['UpdatedBy'] = $UserName;
-        $project['UpdatedDate'] = $now->format('Y-m-d H:i:s');
-        $project['CreatedBy'] = $UserName;
-        $project['AssociatedUser'] = $UserName;
-        $project['Basis'] = "Auto";
-
-
+    $project['NoOfEmployees'] = $step_5['no_of_employees'];
+    $project['ProjectCost'] = $step_5['total_project_cost'];
+    $project['UpdatedBy'] = $UserName;
+    $project['UpdatedDate'] = $now->format('Y-m-d H:i:s');
+    $project['CreatedBy'] = $UserName;
+    $project['AssociatedUser'] = $UserName;
+    $project['Basis'] = "Auto";
 
 
-        $project['DENRTenurial'] = $step_1['InTenInstrument'];
-        $project['AncestralDomain'] = $step_1['IsAncestralDomain'];
-        $project['GovtProject'] = $step_1['IsGovProject'];
 
-        $project['Stage'] = 0;
 
-        $componentData = Component::where('component.GUID', '=', $step_2['ComponentGUID'])
-        ->leftJoin('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
-        ->leftJoin('_componenttemplate', 'component.GUID', '=', '_componenttemplate.GUID')
-        ->select(
-            'component.IEEChecklist',
+    $project['DENRTenurial'] = $step_1['InTenInstrument'];
+    $project['AncestralDomain'] = $step_1['IsAncestralDomain'];
+    $project['GovtProject'] = $step_1['IsGovProject'];
 
-            'componentthreshold.Category as Category',
-            'componentthreshold.ReportType',
-            'componentthreshold.DecisionDocumentDefault',
-            'componentthreshold.TagRef',
-            '_componenttemplate.TemplateAcronym as Template',
-            '_componenttemplate.AbandonementPDF',
-            '_componenttemplate.ComponentPDF',
-            '_componenttemplate.MgtPlanPDF',
-        )
-        ->where('componentthreshold.Category', '=', 'NECP')
-        ->where('componentthreshold.ReportType', '=', 'IEE')
-        ->first();
+    $project['Stage'] = 0;
 
-        $project['Category'] = 'NECP';
-        $project['ECALocation'] = 'ECA';
-        $project['Template'] = $componentData->Template;
-        $project['AbandonPDF'] = $componentData->AbandonementPDF;
-        $project['ComponentPDF'] = $componentData->ComponentPDF;
-        $project['MgtPlanPDF'] = $componentData->MgtPlanPDF;
+    $componentData = Component::where('component.GUID', '=', $step_2['ComponentGUID'])
+    ->leftJoin('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
+    ->leftJoin('_componenttemplate', 'component.GUID', '=', '_componenttemplate.GUID')
+    ->select(
+        'component.IEEChecklist',
 
- 
-        $projectActivity = array();
-        $projectActivity['GUID'] = $ProjectActivityGUID;
-        $projectActivity['ProjectGUID'] = $ProjectGUID;
-        $projectActivity['Status'] = "Pending for Submission";
-        $projectActivity['Details'] = "IEE Project Checklist Downloaded/Prepared";
-        $projectActivity['RoutedFrom'] = $UserName;
-        $projectActivity['RoutedFromOffice'] = $UserOffice;
-        $projectActivity['RoutedTo'] = $UserName;
-        $projectActivity['RoutedToOffice'] = $UserOffice;
-        $projectActivity['Routing'] = 1;
-        $projectActivity['Remarks'] = '';
-        $projectActivity['UpdatedBy'] = $UserName;
-        $projectActivity['CreatedBy'] = $UserName;
-        
-        $checkIfExistingProject = DB::table('project')->where('GUID', '=', $ProjectGUID)->first();
+        'componentthreshold.Category as Category',
+        'componentthreshold.ReportType',
+        'componentthreshold.DecisionDocumentDefault',
+        'componentthreshold.TagRef',
+        '_componenttemplate.Template acronym as Template',
+        '_componenttemplate.AbandonementPDF',
+        '_componenttemplate.ComponentPDF',
+        '_componenttemplate.MgtPlanPDF',
+    )
+    ->where('componentthreshold.Category', '=', 'NECP')
+    ->where('componentthreshold.ReportType', '=', 'IEE')
+    ->first();
 
-        if(empty($checkIfExistingProject)){
-            if(DB::table('project')->insert($project)){
-                if(DB::table('projectactivity')->insert($projectActivity)){
-                    $this->saveGeoCoordinates($ProjectGUID);
-                    
-                }
-                return "Submitted";
+    $project['Category'] = 'NECP';
+    $project['ECALocation'] = 'ECA';
+    $project['Template'] = $componentData->Template;
+    $project['AbandonPDF'] = $componentData->AbandonementPDF;
+    $project['ComponentPDF'] = $componentData->ComponentPDF;
+    $project['MgtPlanPDF'] = $componentData->MgtPlanPDF;
+
+    
+    $projectActivity = array();
+    $projectActivity['GUID'] = $ProjectActivityGUID;
+    $projectActivity['ProjectGUID'] = $ProjectGUID;
+    $projectActivity['Status'] = "Pending for Submission";
+    $projectActivity['Details'] = "IEE Project Checklist Downloaded/Prepared";
+    $projectActivity['RoutedFrom'] = $UserName;
+    $projectActivity['RoutedFromOffice'] = $UserOffice;
+    $projectActivity['RoutedTo'] = $UserName;
+    $projectActivity['RoutedToOffice'] = $UserOffice;
+    $projectActivity['Routing'] = 1;
+    $projectActivity['Remarks'] = '';
+    $projectActivity['UpdatedBy'] = $UserName;
+    $projectActivity['CreatedBy'] = $UserName;
+    
+    $checkIfExistingProject = DB::table('project')->where('GUID', '=', $ProjectGUID)->first();
+
+    if(empty($checkIfExistingProject)){
+        if(DB::table('project')->insert($project)){
+            if(DB::table('projectactivity')->insert($projectActivity)){
+                $this->saveGeoCoordinates($ProjectGUID);
+                
             }
-        } else {
-            DB::table('project')->where('GUID', $ProjectGUID)->update($project);
-
-            DB::table('projectactivity')
-            ->where('GUID','=', $ProjectActivityGUID)
-            ->where('ProjectGUID', '=', $ProjectGUID)
-            ->update([
-                'UpdatedDate' => $now->format('Y-m-d H:i:s')
-            ]);
-            $deleteArea = DB::table('projectarea')->where('ProjectGUID', '=', $ProjectGUID)->get();
-
-            foreach($deleteArea as $Area){
-                DB::table('projectgeocoordinates')->where('AreaGUID', '=', $Area->GUID)->delete();
-                DB::table('projectarea')->where('ProjectGUID', '=', $ProjectGUID)
-                ->where('GUID', '=', $Area->GUID)->delete();
-            }
-
-            $this->saveGeoCoordinates($ProjectGUID);
-
             return "Submitted";
         }
-    }
-
-    public function saveGeoCoordinates($ProjectGUID)
-    {   
-        $UserName = Session::get('data')['UserName'];
-        $UserOffice = Session::get('data')['UserOffice'];
-
-        $step_1 = Session::get('step_1');
-        $step_2 = Session::get('step_2');
-        $step_3 = Session::get('step_3');
-        $step_4 = Session::get('step_4');
-        $step_5 = Session::get('step_5');
-        $ProjectActivityGUID = Session::get('ActivityGUID');
-        $ProponentGUID = Session::get('data')['ProponentGUID'];
-
-        $areaArray = array();
-        $saveArea = array();
-        $saveGeo = array();
-
-        foreach($step_4 as $geo_steps){
-            $data = [];
-            $raw = [];
-            $all_raw = [];
-
-            $data['Area'] = $geo_steps[0];
-            $data['AreaType'] = $geo_steps[1];
-            $data['ProjectGUID'] = $ProjectGUID;
-
-            $raw['Area'] = $geo_steps[0];
-            $raw['AreaType'] = $geo_steps[1];
-            $raw['ProjectGUID'] = $ProjectGUID;
-            $raw['GUID'] = $geo_steps[8];
-
-
-            $DMS_lat = $geo_steps[2];
-            $DMS_deg_lat = explode("°",$DMS_lat);
-            $DMS_min_lat = explode("'", $DMS_deg_lat[1]);
-            $DMS_sec_lat = explode('"', $DMS_min_lat[1]);
-
-            $DMS_long = $geo_steps[3];
-            $DMS_deg_long = explode("°",$DMS_long);
-            $DMS_min_long = explode("'", $DMS_deg_long[1]);
-            $DMS_sec_long = explode('"', $DMS_min_long[1]);
-
-
-            $all_raw['AreaGUID'] = $geo_steps[8];
-
-            $all_raw['LatDeg'] = $DMS_deg_lat[0];
-            $all_raw['LatMin'] = $DMS_min_lat[0];
-            $all_raw['LatSec'] = $DMS_sec_lat[0];
-
-            $all_raw['LongDeg'] = $DMS_deg_long[0];
-            $all_raw['LongMin'] = $DMS_min_long[0];
-            $all_raw['LongSec'] = $DMS_sec_long[0];
-
-            $all_raw['Longitude'] = $geo_steps[5];
-            $all_raw['Latitude'] = $geo_steps[4];
-
-            $last = DB::table('projectgeocoordinates')
-            ->select('id')
-            ->orderByRaw('ID DESC')
-            ->first();
-
-            if($last == null){
-                $sorter = 0 + 1;
-            } else {
-                $sorter = $last->id + 1;
-            }
-
-
-            $all_raw['Sorter'] = $sorter;
-
-
-            if(in_array($data, $areaArray) == false){
-                ///put into array for checking
-                array_push($areaArray, $data);
-
-                // insert into database project area
-                DB::table('projectarea')->insert($raw);
-
-
-                // array_push($saveArea, $raw);
-            }
-
-            // insert into database geocoordinates
-            DB::table('projectgeocoordinates')->insert($all_raw);
-
-            // array_push($saveGeo, $all_raw);
-        }
-
-        
-    }
-
-    public function saveProjectActivityAttachment($ProjectGUID)
-    {
-        $UserName = Session::get('data')['UserName'];
-        $UserOffice = Session::get('data')['UserOffice'];
-
-        $ProjectActivityGUID = Session::get('ActivityGUID');
-
-        $data = DB::table('projectactivityattachmenttemp')
-            ->select('GUID','ActivityGUID','Description','FileName','Directory','FilePath','FileSizeInKB','CreatedBy','CreatedDate')
-            ->where('ActivityGUID', '=', $ProjectActivityGUID)
-            ->get();
-
-        $array = $data->map(function($obj){
-            return (array) $obj;
-            })->toArray();
-
-        if(DB::table('projectactivityattachment')->insert($array)){
-            ProjectActivityAttachmentTemp::where('ActivityGUID', $ProjectActivityGUID)->delete();
-            $this->ResetInputs();
-        }
-    }
-
-    public function SubmitApplication(Request $req)
-    {
-        $UserName = Session::get('data')['UserName'];
-        $step_5 = Session::get('step_5');
-        $ProjectActivityGUID = Session::get('ActivityGUID');
-        $ProjectGUID = $req['ProjectGUID'];
-        $Remarks = $req['remarks'];
-
-        $province = DB::table('province')
-        ->where('Province', '=', $step_5['province'])
-        ->first();
-
-        $this->saveProjectActivityAttachment($ProjectGUID);
-
-        $RouteTo = DB::table('aspnet_users')
-        ->select('*')
-        ->where('UserOffice', '=', $province->ProcessingOffice)
-        ->where('UserRole', '=', 'Evaluator')
-        ->where('InECCOAS', '=', 1)
-        ->where('DefaultRecipient', '=', 1)
-        ->orderByRaw('Screened Desc')
-        ->first();
-        
-        $now = new \DateTime(); 
+    } else {
+        DB::table('project')->where('GUID', $ProjectGUID)->update($project);
 
         DB::table('projectactivity')
         ->where('GUID','=', $ProjectActivityGUID)
         ->where('ProjectGUID', '=', $ProjectGUID)
         ->update([
-            'Status' => 'For Screening',
-            'Details' => "ECC Application Requirements Submitted for Screening",
-            'Remarks' => $Remarks,
-            'RoutedTo' => $RouteTo->UserName,
-            'RoutedToOffice' => $province->ProcessingOffice,
             'UpdatedDate' => $now->format('Y-m-d H:i:s')
         ]);
+        $deleteArea = DB::table('projectarea')->where('ProjectGUID', '=', $ProjectGUID)->get();
 
-        DB::table('project')
-        ->where('GUID','=', $ProjectGUID)
-        ->update([
-            'Stage' => 1,
-            'UpdatedBy' => $UserName,
-            'UpdatedDate' => $now->format('Y-m-d H:i:s')
-        ]);
+        foreach($deleteArea as $Area){
+            DB::table('projectgeocoordinates')->where('AreaGUID', '=', $Area->GUID)->delete();
+            DB::table('projectarea')->where('ProjectGUID', '=', $ProjectGUID)
+            ->where('GUID', '=', $Area->GUID)->delete();
+        }
 
-        return $RouteTo->UserName;
+        $this->saveGeoCoordinates($ProjectGUID);
+
+        return "Submitted";
     }
+}
+
+public function saveGeoCoordinates($ProjectGUID)
+{   
+    $UserName = Session::get('data')['UserName'];
+    $UserOffice = Session::get('data')['UserOffice'];
+
+    $step_1 = Session::get('step_1');
+    $step_2 = Session::get('step_2');
+    $step_3 = Session::get('step_3');
+    $step_4 = Session::get('step_4');
+    $step_5 = Session::get('step_5');
+    $ProjectActivityGUID = Session::get('ActivityGUID');
+    $ProponentGUID = Session::get('data')['ProponentGUID'];
+
+    $areaArray = array();
+    $saveArea = array();
+    $saveGeo = array();
+
+    foreach($step_4 as $geo_steps){
+        $data = [];
+        $raw = [];
+        $all_raw = [];
+
+        $data['Area'] = $geo_steps[0];
+        $data['AreaType'] = $geo_steps[1];
+        $data['ProjectGUID'] = $ProjectGUID;
+
+        $raw['Area'] = $geo_steps[0];
+        $raw['AreaType'] = $geo_steps[1];
+        $raw['ProjectGUID'] = $ProjectGUID;
+        $raw['GUID'] = $geo_steps[8];
 
 
-    public function ResetInputs()
-    {
-        Session::pull('step_1');
-        Session::pull('step_2');
-        Session::pull('step_3');
-        Session::pull('step_4');
-        Session::pull('step_4_status');
-        Session::pull('step_5');
-        Session::pull('step_5_status');
-        Session::pull('ActivityGUID');
-        Session::pull('NewActivityGUID');
-    }
+        $DMS_lat = $geo_steps[2];
+        $DMS_deg_lat = explode("°",$DMS_lat);
+        $DMS_min_lat = explode("'", $DMS_deg_lat[1]);
+        $DMS_sec_lat = explode('"', $DMS_min_lat[1]);
 
-    public function ProjectInformation()
-    {
-        $pdf = \App::make('dompdf.wrapper');
-        $pdf->loadHTML($this->convert_pdf());
-        $pdf->setPaper('A4', 'portrait');
-        
-        return $pdf->stream();
-    }
-
-    public function ProjectDescription($GUID)
-    {
-        $pdf = \App::make('dompdf.wrapper');
-        $pdf->loadHTML($this->convert_pdf_updated($GUID));
-        $pdf->setPaper('A4', 'portrait');
-        
-        return $pdf->stream();
-    }
-
-    public function convert_pdf_updated($GUID)
-    {
-        $UserName = Session::get('data')['UserName'];
-        $UserOffice = Session::get('data')['UserOffice'];
+        $DMS_long = $geo_steps[3];
+        $DMS_deg_long = explode("°",$DMS_long);
+        $DMS_min_long = explode("'", $DMS_deg_long[1]);
+        $DMS_sec_long = explode('"', $DMS_min_long[1]);
 
 
-        $data = DB::table('project')->where('project.GUID', $GUID)
-        ->Join('projectactivity', function ($join) {
-            $join->on('project.GUID', 'projectactivity.ProjectGUID');
-            
-            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
-                join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
-        })
-        ->leftJoin('proponent', 'project.ProponentGUID', 'proponent.GUID')
-        ->select(
-            'project.Purpose',
-            'project.Address AS Address', 
-            'project.Municipality  AS Municipality', 
-            'project.Province AS Province', 
-            'project.Address', 
-            'project.CreatedBy AS CreatedBy', 
-            'project.GUID AS GUID', 
-            'project.PreviousECCNo',
-            
-            'project.ProjectName', 
-            'project.Region  AS Region', 
-            'project.AcceptedBy',
-            'project.AcceptedDate',
-            'project.Representative',
-            'project.Designation',
-            'project.LandAreaInSqM',
-            'project.FootPrintAreaInSqM',
+        $all_raw['AreaGUID'] = $geo_steps[8];
 
-            'project.NoOfEmployees',
-            'project.ProjectCost',
+        $all_raw['LatDeg'] = $DMS_deg_lat[0];
+        $all_raw['LatMin'] = $DMS_min_lat[0];
+        $all_raw['LatSec'] = $DMS_sec_lat[0];
 
-            'project.LandlineNo',
-            'project.FaxNo',
-            'project.ProjectSize',
-            'project.Description',
-            'project.ComponentGUID',
-            'project.ZoneClassification',
+        $all_raw['LongDeg'] = $DMS_deg_long[0];
+        $all_raw['LongMin'] = $DMS_min_long[0];
+        $all_raw['LongSec'] = $DMS_sec_long[0];
 
+        $all_raw['Longitude'] = $geo_steps[5];
+        $all_raw['Latitude'] = $geo_steps[4];
 
-            'projectactivity.RoutedTo', 
-            'projectactivity.RoutedFrom', 
-
-            'projectactivity.RoutedToOffice', 
-            'projectactivity.RoutedFromOffice', 
-
-            'projectactivity.CreatedDate', 
-            'projectactivity.Status', 
-            'projectactivity.Details AS Remarks', 
-            'projectactivity.GUID AS ActivityGUID',
-            'projectactivity.FromDate AS FromDate',
-            'projectactivity.UpdatedDate AS UpdatedDate',
-
-            'proponent.ProponentName',
-            'proponent.MailingAddress as ProponentAddress'
-            
-        )
+        $last = DB::table('projectgeocoordinates')
+        ->select('id')
+        ->orderByRaw('ID DESC')
         ->first();
 
-        $output = '<style>
-        body {
-            font: 10pt/175% Arial, sans-serif; 
-        }
-        ul {
-            list-style: none;
-        }
-        ul li:before {
-            content: "- ";
-            margin-left: -20px;
-            margin-right: 10px;
+        if($last == null){
+            $sorter = 0 + 1;
+        } else {
+            $sorter = $last->id + 1;
         }
 
-        p {
-            letter-spacing: 1pt;
+
+        $all_raw['Sorter'] = $sorter;
+
+
+        if(in_array($data, $areaArray) == false){
+                ///put into array for checking
+            array_push($areaArray, $data);
+
+                // insert into database project area
+            DB::table('projectarea')->insert($raw);
+
+
+                // array_push($saveArea, $raw);
         }
-        </style>';
-        $output .= '<h3 align="center">PROJECT FACT SHEET</h3>
-        <table width="100%" style="border-collapse: collapse;">
-        <tr>
-            <td style=" padding:8px; " width="40%"><b>Name of the Project</b></td>
-            <td style=" padding:8px; " width="50%" colspan="2">'.$data->ProjectName.'</td>
-        </tr>
-        <tr>
-            <td style=" padding:8px; " width="30%"><b>Proponent Name</b></td>
-            <td style=" padding:8px; " width="70%" colspan="2">'.$data->ProponentName.'</td>
-        </tr>
-        <tr>
-            <td style=" padding:8px; " width="30%"><b>Proponent Address</b></td>
-            <td style=" padding:8px; " width="70%" colspan="2">'.$data->ProponentAddress.'</td>
-        </tr>
-        <tr>
-            <td style=" padding:8px; " width="20%"><b>Authorized Representative</b></td>
-            <td style=" padding:8px; " width="40%"><b>Name </b><br>'.$data->Representative.'</td>
-            <td style=" padding:8px; " width="40%"><b>Designation </b><br>'.$data->Designation.'</td>
-        </tr>
-        <tr>
-            <td style=" padding:8px; " width="20%"><b>Proponent Means of Contact</b></td>
-            <td style=" padding:8px; " width="40%"><b>Landline No. </b><br>'.$data->LandlineNo.'</td>
-            <td style=" padding:8px; " width="40%"><b>Fax No. </b><br>'.$data->FaxNo.'</td>
-        </tr>
-        </table>';
 
-        $ComponentGUID = $data->ComponentGUID;
-        $component = Component::where('GUID', $ComponentGUID)
-        ->first();
+            // insert into database geocoordinates
+        DB::table('projectgeocoordinates')->insert($all_raw);
 
-        $output .= '<h3>Project Description</h3>
-        <table width="100%" style="border-collapse: collapse; border: 1px;">
-        <tr>
-            <td style=" padding:8px; " width="30%"><b>Project Type</b></td>
-            <td style=" padding:8px; " width="30%"><b>Project Size Parameter</b></td>
-            <td style=" padding:8px; " width="30%"><b>Project Size</b></td>
-        </tr>
-        <tr>
-            <td style=" padding:8px; ">'.$component->ProjectType.'; '.$component->ProjectSubType.'</td>
-            <td style=" padding:8px; ">'.$component->Parameter.'</td>
-            <td style=" padding:8px; ">'.$data->ProjectSize. ' '.$component->UnitOfMeasure .'</td>
-        </tr>
-        <tr>
-            <td style=" padding:8px; " width="70%" colspan="3"><b>Other Description:</b><br>'.$data->Description.'</td>
-        </tr>
-        </table>';
+            // array_push($saveGeo, $all_raw);
+    }
+
+    
+}
+
+public function saveProjectActivityAttachment($ProjectGUID)
+{
+    $UserName = Session::get('data')['UserName'];
+    $UserOffice = Session::get('data')['UserOffice'];
+
+    $ProjectActivityGUID = Session::get('ActivityGUID');
+
+    $data = DB::table('projectactivityattachmenttemp')
+    ->select('GUID','ActivityGUID','Description','FileName','Directory','FilePath','FileSizeInKB','CreatedBy','CreatedDate')
+    ->where('ActivityGUID', '=', $ProjectActivityGUID)
+    ->get();
+
+    $array = $data->map(function($obj){
+        return (array) $obj;
+    })->toArray();
+
+    if(DB::table('projectactivityattachment')->insert($array)){
+        ProjectActivityAttachmentTemp::where('ActivityGUID', $ProjectActivityGUID)->delete();
+        $this->ResetInputs();
+    }
+}
+
+public function SubmitApplication(Request $req)
+{
+    $UserName = Session::get('data')['UserName'];
+    $step_5 = Session::get('step_5');
+    $ProjectActivityGUID = Session::get('ActivityGUID');
+    $ProjectGUID = $req['ProjectGUID'];
+    $Remarks = $req['remarks'];
+
+    $province = DB::table('province')
+    ->where('Province', '=', $step_5['province'])
+    ->first();
+
+    $this->saveProjectActivityAttachment($ProjectGUID);
+
+    $RouteTo = DB::table('aspnet_users')
+    ->select('*')
+    ->where('UserOffice', '=', $province->ProcessingOffice)
+    ->where('UserRole', '=', 'Evaluator')
+    ->where('InECCOAS', '=', 1)
+    ->where('DefaultRecipient', '=', 1)
+    ->orderByRaw('Screened Desc')
+    ->first();
+    
+    $now = new \DateTime(); 
+
+    DB::table('projectactivity')
+    ->where('GUID','=', $ProjectActivityGUID)
+    ->where('ProjectGUID', '=', $ProjectGUID)
+    ->update([
+        'Status' => 'For Screening',
+        'Details' => "ECC Application Requirements Submitted for Screening",
+        'Remarks' => $Remarks,
+        'RoutedTo' => $RouteTo->UserName,
+        'RoutedToOffice' => $province->ProcessingOffice,
+        'UpdatedDate' => $now->format('Y-m-d H:i:s')
+    ]);
+
+    DB::table('project')
+    ->where('GUID','=', $ProjectGUID)
+    ->update([
+        'Stage' => 1,
+        'UpdatedBy' => $UserName,
+        'UpdatedDate' => $now->format('Y-m-d H:i:s')
+    ]);
+
+    return $RouteTo->UserName;
+}
+
+
+public function ResetInputs()
+{
+    Session::pull('step_1');
+    Session::pull('step_2');
+    Session::pull('step_3');
+    Session::pull('step_4');
+    Session::pull('step_4_status');
+    Session::pull('step_5');
+    Session::pull('step_5_status');
+    Session::pull('ActivityGUID');
+    Session::pull('NewActivityGUID');
+}
+
+public function ProjectInformation()
+{
+    $pdf = \App::make('dompdf.wrapper');
+    $pdf->loadHTML($this->convert_pdf());
+    $pdf->setPaper('A4', 'portrait');
+    
+    return $pdf->stream();
+}
+
+public function ProjectDescription($GUID)
+{
+    $pdf = \App::make('dompdf.wrapper');
+    $pdf->loadHTML($this->convert_pdf_updated($GUID));
+    $pdf->setPaper('A4', 'portrait');
+    
+    return $pdf->stream();
+}
+
+public function convert_pdf_updated($GUID)
+{
+    $UserName = Session::get('data')['UserName'];
+    $UserOffice = Session::get('data')['UserOffice'];
+
+
+    $data = DB::table('project')->where('project.GUID', $GUID)
+    ->Join('projectactivity', function ($join) {
+        $join->on('project.GUID', 'projectactivity.ProjectGUID');
+        
+        $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 
+            join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+    })
+    ->leftJoin('proponent', 'project.ProponentGUID', 'proponent.GUID')
+    ->select(
+        'project.Purpose',
+        'project.Address AS Address', 
+        'project.Municipality  AS Municipality', 
+        'project.Province AS Province', 
+        'project.Address', 
+        'project.CreatedBy AS CreatedBy', 
+        'project.GUID AS GUID', 
+        'project.PreviousECCNo',
+        
+        'project.ProjectName', 
+        'project.Region  AS Region', 
+        'project.AcceptedBy',
+        'project.AcceptedDate',
+        'project.Representative',
+        'project.Designation',
+        'project.LandAreaInSqM',
+        'project.FootPrintAreaInSqM',
+
+        'project.NoOfEmployees',
+        'project.ProjectCost',
+
+        'project.LandlineNo',
+        'project.FaxNo',
+        'project.ProjectSize',
+        'project.Description',
+        'project.ComponentGUID',
+        'project.ZoneClassification',
+
+
+        'projectactivity.RoutedTo', 
+        'projectactivity.RoutedFrom', 
+
+        'projectactivity.RoutedToOffice', 
+        'projectactivity.RoutedFromOffice', 
+
+        'projectactivity.CreatedDate', 
+        'projectactivity.Status', 
+        'projectactivity.Details AS Remarks', 
+        'projectactivity.GUID AS ActivityGUID',
+        'projectactivity.FromDate AS FromDate',
+        'projectactivity.UpdatedDate AS UpdatedDate',
+
+        'proponent.ProponentName',
+        'proponent.MailingAddress as ProponentAddress'
+        
+    )
+    ->first();
+
+    $output = '<style>
+    body {
+        font: 10pt/175% Arial, sans-serif; 
+    }
+    ul {
+        list-style: none;
+    }
+    ul li:before {
+        content: "- ";
+        margin-left: -20px;
+        margin-right: 10px;
+    }
+
+    p {
+        letter-spacing: 1pt;
+    }
+    </style>';
+    $output .= '<h3 align="center">PROJECT FACT SHEET</h3>
+    <table width="100%" style="border-collapse: collapse;">
+    <tr>
+    <td style=" padding:8px; " width="40%"><b>Name of the Project</b></td>
+    <td style=" padding:8px; " width="50%" colspan="2">'.$data->ProjectName.'</td>
+    </tr>
+    <tr>
+    <td style=" padding:8px; " width="30%"><b>Proponent Name</b></td>
+    <td style=" padding:8px; " width="70%" colspan="2">'.$data->ProponentName.'</td>
+    </tr>
+    <tr>
+    <td style=" padding:8px; " width="30%"><b>Proponent Address</b></td>
+    <td style=" padding:8px; " width="70%" colspan="2">'.$data->ProponentAddress.'</td>
+    </tr>
+    <tr>
+    <td style=" padding:8px; " width="20%"><b>Authorized Representative</b></td>
+    <td style=" padding:8px; " width="40%"><b>Name </b><br>'.$data->Representative.'</td>
+    <td style=" padding:8px; " width="40%"><b>Designation </b><br>'.$data->Designation.'</td>
+    </tr>
+    <tr>
+    <td style=" padding:8px; " width="20%"><b>Proponent Means of Contact</b></td>
+    <td style=" padding:8px; " width="40%"><b>Landline No. </b><br>'.$data->LandlineNo.'</td>
+    <td style=" padding:8px; " width="40%"><b>Fax No. </b><br>'.$data->FaxNo.'</td>
+    </tr>
+    </table>';
+
+    $ComponentGUID = $data->ComponentGUID;
+    $component = Component::where('GUID', $ComponentGUID)
+    ->first();
+
+    $output .= '<h3>Project Description</h3>
+    <table width="100%" style="border-collapse: collapse; border: 1px;">
+    <tr>
+    <td style=" padding:8px; " width="30%"><b>Project Type</b></td>
+    <td style=" padding:8px; " width="30%"><b>Project Size Parameter</b></td>
+    <td style=" padding:8px; " width="30%"><b>Project Size</b></td>
+    </tr>
+    <tr>
+    <td style=" padding:8px; ">'.$component->ProjectType.'; '.$component->ProjectSubType.'</td>
+    <td style=" padding:8px; ">'.$component->Parameter.'</td>
+    <td style=" padding:8px; ">'.$data->ProjectSize. ' '.$component->UnitOfMeasure .'</td>
+    </tr>
+    <tr>
+    <td style=" padding:8px; " width="70%" colspan="3"><b>Other Description:</b><br>'.$data->Description.'</td>
+    </tr>
+    </table>';
 
         ///getting region from province
 
-        $output .= '<h3>1.1. PROJECT LOCATION AND AREA:</h3>
-        <table width="100%" style="border-collapse: collapse; border: 1px;">
-        <tr>
-            <td style=" padding:8px; ">Street/Sitio/Barangay:<br>'.$data->Address.'</td>
-            <td style=" padding:8px; " colspan="2">Zone/Classification (i.e. industrial, residential):<br>'.$data->ZoneClassification.'</td>
-        </tr>
-        <tr>
-            <td style=" padding:8px; ">Region:<br>'.$data->Region.'</td>
-            <td style=" padding:8px; ">City/Municipality:<br>'.$data->Municipality.'</td>
-            <td style=" padding:8px; ">Province:<br>'.$data->Province.'</td>
-        </tr>
-        <tr>
-            <td style=" padding:8px; ">Total Project Land Area:<br>'.$data->LandAreaInSqM.' sq. m. </td>
-            <td style=" padding:8px; " width="70%" colspan="2">Total Project/Building Footprint Area:<br>'.$data->FootPrintAreaInSqM.' sq. m. </td>
-        </tr>
-        </table>';
+    $output .= '<h3>1.1. PROJECT LOCATION AND AREA:</h3>
+    <table width="100%" style="border-collapse: collapse; border: 1px;">
+    <tr>
+    <td style=" padding:8px; ">Street/Sitio/Barangay:<br>'.$data->Address.'</td>
+    <td style=" padding:8px; " colspan="2">Zone/Classification (i.e. industrial, residential):<br>'.$data->ZoneClassification.'</td>
+    </tr>
+    <tr>
+    <td style=" padding:8px; ">Region:<br>'.$data->Region.'</td>
+    <td style=" padding:8px; ">City/Municipality:<br>'.$data->Municipality.'</td>
+    <td style=" padding:8px; ">Province:<br>'.$data->Province.'</td>
+    </tr>
+    <tr>
+    <td style=" padding:8px; ">Total Project Land Area:<br>'.$data->LandAreaInSqM.' sq. m. </td>
+    <td style=" padding:8px; " width="70%" colspan="2">Total Project/Building Footprint Area:<br>'.$data->FootPrintAreaInSqM.' sq. m. </td>
+    </tr>
+    </table>';
 
-        
-        $output .= '<h3>Geographic Coordinates of the Project Area (WGS84):</h3>
-        <table width="100%" style="border-collapse: collapse; border: 1px;">
-        <tr>
-            <td style=" padding:8px; ">Area</td>
-            <td style=" padding:8px; ">Longitude</td>
-            <td style=" padding:8px; ">Latitude</td>
+    
+    $output .= '<h3>Geographic Coordinates of the Project Area (WGS84):</h3>
+    <table width="100%" style="border-collapse: collapse; border: 1px;">
+    <tr>
+    <td style=" padding:8px; ">Area</td>
+    <td style=" padding:8px; ">Longitude</td>
+    <td style=" padding:8px; ">Latitude</td>
+    </tr>';
+
+    $geocoordinates = ProjectArea::where('ProjectGUID', $GUID)
+    ->leftJoin('projectgeocoordinates', 'projectarea.GUID', '=', 'projectgeocoordinates.AreaGUID')
+    ->select(
+        'projectarea.GUID AS AreaGUID',
+        'projectarea.Area',
+        'projectarea.AreaType AS Type',
+        'projectgeocoordinates.LongDeg',
+        'projectgeocoordinates.LongMin',
+        'projectgeocoordinates.LongSec',
+        'projectgeocoordinates.LatDeg',
+        'projectgeocoordinates.LatMin',
+        'projectgeocoordinates.LatSec',
+        'projectgeocoordinates.Longitude',
+        'projectgeocoordinates.Latitude',
+        'projectgeocoordinates.Sorter',
+    )
+    ->orderByRaw('Sorter ASC')
+    ->get();
+
+    foreach ($geocoordinates as $value) {
+        $output .= '<tr>
+        <td style=" padding:8px; ">'.$value->Area.'</td>
+        <td style=" padding:8px; ">'.$value->Longitude.'</td>
+        <td style=" padding:8px; ">'.$value->Latitude.'</td>
         </tr>';
-
-        $geocoordinates = ProjectArea::where('ProjectGUID', $GUID)
-        ->leftJoin('projectgeocoordinates', 'projectarea.GUID', '=', 'projectgeocoordinates.AreaGUID')
-        ->select(
-            'projectarea.GUID AS AreaGUID',
-            'projectarea.Area',
-            'projectarea.AreaType AS Type',
-            'projectgeocoordinates.LongDeg',
-            'projectgeocoordinates.LongMin',
-            'projectgeocoordinates.LongSec',
-            'projectgeocoordinates.LatDeg',
-            'projectgeocoordinates.LatMin',
-            'projectgeocoordinates.LatSec',
-            'projectgeocoordinates.Longitude',
-            'projectgeocoordinates.Latitude',
-            'projectgeocoordinates.Sorter',
-        )
-        ->orderByRaw('Sorter ASC')
-        ->get();
-
-        foreach ($geocoordinates as $value) {
-            $output .= '<tr>
-            <td style=" padding:8px; ">'.$value->Area.'</td>
-            <td style=" padding:8px; ">'.$value->Longitude.'</td>
-            <td style=" padding:8px; ">'.$value->Latitude.'</td>
-            </tr>';
-        }
-                
-        $output .= '</table>';
+    }
+    
+    $output .= '</table>';
 
 
-        return $output;
+    return $output;
+}
+
+public function convert_pdf()
+{
+    $UserName = Session::get('data')['UserName'];
+    $UserOffice = Session::get('data')['UserOffice'];
+
+    $step_1 = Session::get('step_1');
+    $step_2 = Session::get('step_2');
+    $step_3 = Session::get('step_3');
+    $step_4 = Session::get('step_4');
+    $step_5 = Session::get('step_5');
+    $ProjectActivityGUID = Session::get('ActivityGUID');
+    $ProponentGUID = Session::get('data')['ProponentGUID'];
+
+    $output = '<style>
+    body {
+        font: 10pt/175% Arial, sans-serif; 
+    }
+    ul {
+        list-style: none;
+    }
+    ul li:before {
+        content: "- ";
+        margin-left: -20px;
+        margin-right: 10px;
     }
 
-    public function convert_pdf()
-    {
-        $UserName = Session::get('data')['UserName'];
-        $UserOffice = Session::get('data')['UserOffice'];
+    p {
+        letter-spacing: 1pt;
+    }
+    </style>';
+    $output .= '<h3 align="center">PROJECT FACT SHEET</h3>
+    <table width="100%" style="border-collapse: collapse; border: 1px;">
+    <tr>
+    <td style="border: 1px solid; padding:8px; " width="40%"><b>Name of the Project</b></td>
+    <td style="border: 1px solid; padding:8px; " width="50%" colspan="2">'.$step_5['project_name'].'</td>
+    </tr>
+    <tr>
+    <td style="border: 1px solid; padding:8px; " width="30%"><b>Proponent Name</b></td>
+    <td style="border: 1px solid; padding:8px; " width="70%" colspan="2">'.$step_5['proponent_name'].'</td>
+    </tr>
+    <tr>
+    <td style="border: 1px solid; padding:8px; " width="30%"><b>Proponent Address</b></td>
+    <td style="border: 1px solid; padding:8px; " width="70%" colspan="2">'.$step_5['proponent_address'].'</td>
+    </tr>
+    <tr>
+    <td style="border: 1px solid; padding:8px; " width="20%"><b>Authorized Representative</b></td>
+    <td style="border: 1px solid; padding:8px; " width="40%"><b>Name </b><br>'.$step_5['represented_by'].'</td>
+    <td style="border: 1px solid; padding:8px; " width="40%"><b>Designation </b><br>'.$step_5['designation'].'</td>
+    </tr>
+    <tr>
+    <td style="border: 1px solid; padding:8px; " width="20%"><b>Proponent Means of Contact</b></td>
+    <td style="border: 1px solid; padding:8px; " width="40%"><b>Landline No. </b><br>'.$step_5['landline_no'].'</td>
+    <td style="border: 1px solid; padding:8px; " width="40%"><b>Fax No. </b><br>'.$step_5['fax_no'].'</td>
+    </tr>
+    </table>';
+    $ComponentGUID = $step_2['ComponentGUID'];
+    $component = Component::where('GUID', $ComponentGUID)
+    ->first();
 
-        $step_1 = Session::get('step_1');
-        $step_2 = Session::get('step_2');
-        $step_3 = Session::get('step_3');
-        $step_4 = Session::get('step_4');
-        $step_5 = Session::get('step_5');
-        $ProjectActivityGUID = Session::get('ActivityGUID');
-        $ProponentGUID = Session::get('data')['ProponentGUID'];
-
-        $output = '<style>
-        body {
-            font: 10pt/175% Arial, sans-serif; 
-        }
-        ul {
-            list-style: none;
-        }
-        ul li:before {
-            content: "- ";
-            margin-left: -20px;
-            margin-right: 10px;
-        }
-
-        p {
-            letter-spacing: 1pt;
-        }
-        </style>';
-        $output .= '<h3 align="center">PROJECT FACT SHEET</h3>
-        <table width="100%" style="border-collapse: collapse; border: 1px;">
-        <tr>
-            <td style="border: 1px solid; padding:8px; " width="40%"><b>Name of the Project</b></td>
-            <td style="border: 1px solid; padding:8px; " width="50%" colspan="2">'.$step_5['project_name'].'</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid; padding:8px; " width="30%"><b>Proponent Name</b></td>
-            <td style="border: 1px solid; padding:8px; " width="70%" colspan="2">'.$step_5['proponent_name'].'</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid; padding:8px; " width="30%"><b>Proponent Address</b></td>
-            <td style="border: 1px solid; padding:8px; " width="70%" colspan="2">'.$step_5['proponent_address'].'</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid; padding:8px; " width="20%"><b>Authorized Representative</b></td>
-            <td style="border: 1px solid; padding:8px; " width="40%"><b>Name </b><br>'.$step_5['represented_by'].'</td>
-            <td style="border: 1px solid; padding:8px; " width="40%"><b>Designation </b><br>'.$step_5['designation'].'</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid; padding:8px; " width="20%"><b>Proponent Means of Contact</b></td>
-            <td style="border: 1px solid; padding:8px; " width="40%"><b>Landline No. </b><br>'.$step_5['landline_no'].'</td>
-            <td style="border: 1px solid; padding:8px; " width="40%"><b>Fax No. </b><br>'.$step_5['fax_no'].'</td>
-        </tr>
-        </table>';
-        $ComponentGUID = $step_2['ComponentGUID'];
-        $component = Component::where('GUID', $ComponentGUID)
-        ->first();
-
-        $output .= '<h3>Project Description</h3>
-        <table width="100%" style="border-collapse: collapse; border: 1px;">
-        <tr>
-            <td style="border: 1px solid; padding:8px; " width="30%"><b>Project Type</b></td>
-            <td style="border: 1px solid; padding:8px; " width="30%"><b>Project Size Parameter</b></td>
-            <td style="border: 1px solid; padding:8px; " width="30%"><b>Project Size</b></td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid; padding:8px; ">'.$component->ProjectType.'; '.$component->ProjectSubType.'</td>
-            <td style="border: 1px solid; padding:8px; ">'.$component->Parameter.'</td>
-            <td style="border: 1px solid; padding:8px; ">'.$step_2['input_size']. ' '.$component->UnitOfMeasure .'</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid; padding:8px; " width="70%" colspan="3"><b>Other Description:</b><br>'.$step_3['description'].'</td>
-        </tr>
-        </table>';
+    $output .= '<h3>Project Description</h3>
+    <table width="100%" style="border-collapse: collapse; border: 1px;">
+    <tr>
+    <td style="border: 1px solid; padding:8px; " width="30%"><b>Project Type</b></td>
+    <td style="border: 1px solid; padding:8px; " width="30%"><b>Project Size Parameter</b></td>
+    <td style="border: 1px solid; padding:8px; " width="30%"><b>Project Size</b></td>
+    </tr>
+    <tr>
+    <td style="border: 1px solid; padding:8px; ">'.$component->ProjectType.'; '.$component->ProjectSubType.'</td>
+    <td style="border: 1px solid; padding:8px; ">'.$component->Parameter.'</td>
+    <td style="border: 1px solid; padding:8px; ">'.$step_2['input_size']. ' '.$component->UnitOfMeasure .'</td>
+    </tr>
+    <tr>
+    <td style="border: 1px solid; padding:8px; " width="70%" colspan="3"><b>Other Description:</b><br>'.$step_3['description'].'</td>
+    </tr>
+    </table>';
 
         ///getting region from province
-        $province = DB::table('province')
-        ->where('Province', '=', $step_5['province'])
-        ->first();
+    $province = DB::table('province')
+    ->where('Province', '=', $step_5['province'])
+    ->first();
 
-        $output .= '<h3>1.1. PROJECT LOCATION AND AREA:</h3>
-        <table width="100%" style="border-collapse: collapse; border: 1px;">
-        <tr>
-            <td style="border: 1px solid; padding:8px; ">Street/Sitio/Barangay:<br>'.$step_5['project_location'].'</td>
-            <td style="border: 1px solid; padding:8px; " colspan="2">Zone/Classification (i.e. industrial, residential):<br>'.$step_5['zone_classification'].'</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid; padding:8px; ">Region:<br>'.$province->Region.'</td>
-            <td style="border: 1px solid; padding:8px; ">City/Municipality:<br>'.$step_5['municipality'].'</td>
-            <td style="border: 1px solid; padding:8px; ">Province:<br>'.$step_5['province'].'</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid; padding:8px; ">Total Project Land Area:<br>'.$step_5['project_landarea'].' sq. m. </td>
-            <td style="border: 1px solid; padding:8px; " width="70%" colspan="2">Total Project/Building Footprint Area:<br>'.$step_5['project_footprintarea'].' sq. m. </td>
-        </tr>
-        </table>';
+    $output .= '<h3>1.1. PROJECT LOCATION AND AREA:</h3>
+    <table width="100%" style="border-collapse: collapse; border: 1px;">
+    <tr>
+    <td style="border: 1px solid; padding:8px; ">Street/Sitio/Barangay:<br>'.$step_5['project_location'].'</td>
+    <td style="border: 1px solid; padding:8px; " colspan="2">Zone/Classification (i.e. industrial, residential):<br>'.$step_5['zone_classification'].'</td>
+    </tr>
+    <tr>
+    <td style="border: 1px solid; padding:8px; ">Region:<br>'.$province->Region.'</td>
+    <td style="border: 1px solid; padding:8px; ">City/Municipality:<br>'.$step_5['municipality'].'</td>
+    <td style="border: 1px solid; padding:8px; ">Province:<br>'.$step_5['province'].'</td>
+    </tr>
+    <tr>
+    <td style="border: 1px solid; padding:8px; ">Total Project Land Area:<br>'.$step_5['project_landarea'].' sq. m. </td>
+    <td style="border: 1px solid; padding:8px; " width="70%" colspan="2">Total Project/Building Footprint Area:<br>'.$step_5['project_footprintarea'].' sq. m. </td>
+    </tr>
+    </table>';
 
-        
+    
 
-        $output .= '<h3>Geographic Coordinates of the Project Area (WGS84):</h3>
-        <table width="100%" style="border-collapse: collapse; border: 1px;">
-        <tr>
-            <td style="border: 1px solid; padding:8px; ">Area</td>
-            <td style="border: 1px solid; padding:8px; ">Longitude</td>
-            <td style="border: 1px solid; padding:8px; ">Latitude</td>
+    $output .= '<h3>Geographic Coordinates of the Project Area (WGS84):</h3>
+    <table width="100%" style="border-collapse: collapse; border: 1px;">
+    <tr>
+    <td style="border: 1px solid; padding:8px; ">Area</td>
+    <td style="border: 1px solid; padding:8px; ">Longitude</td>
+    <td style="border: 1px solid; padding:8px; ">Latitude</td>
+    </tr>';
+
+    foreach ($step_4 as $value) {
+        $output .= '<tr>
+        <td style="border: 1px solid; padding:8px; ">'.$value[0].'</td>
+        <td style="border: 1px solid; padding:8px; ">'.$value[5].'</td>
+        <td style="border: 1px solid; padding:8px; ">'.$value[4].'</td>
         </tr>';
+    }
+    
+    $output .= '</table>';
 
-        foreach ($step_4 as $value) {
-            $output .= '<tr>
-            <td style="border: 1px solid; padding:8px; ">'.$value[0].'</td>
-            <td style="border: 1px solid; padding:8px; ">'.$value[5].'</td>
-            <td style="border: 1px solid; padding:8px; ">'.$value[4].'</td>
-            </tr>';
+
+    return $output;
+}
+
+public function SwornStatement()
+{
+    $ProponentGUID = session::get('data')['ProponentGUID'];
+    $proponent = Proponent::where('proponent.GUID', '=', $ProponentGUID)
+    ->first();
+
+    $pdf = PDF::loadView('pdf.sworn_statement', compact('proponent'));
+    return $pdf->stream('try.pdf');
+}
+
+public function ProjectTypeTable(Request $req)
+{
+    $search = $req['search'];
+    
+    $component = Component::where('component.ProjectType', 'LIKE', '%'. $search.'%')
+    ->leftJoin('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
+    ->select('component.*', 'componentthreshold.*')
+    ->orderByRaw('componentthreshold.Ranking ASC')
+    ->get();
+
+    return DataTables::of($component)
+    
+    ->addColumn('Action', function($component){
+        if($component->ReportType == 'IEE'){
+            $title = 'Initial Environment Examination';
+        }else if($component->ReportType == 'EIS'){
+            $title = 'Environmental Impact Statement';
+        }else{
+            $title = 'Certificates of Non-Coverage';
         }
-                
-        $output .= '</table>';
 
+        if($component->ReportType == 'IEE'){
+            $details = '<button title="'.$title.'" class="btn btn-default btn-block btn-sm" onclick="LinkProject('."'". $component->ComponentGUID."', "."'". $component->Category."', "."'". $component->ReportType."'".')">'.$component->ReportType.'</button>';
+        }else{
 
-        return $output;
-    }
-
-    public function SwornStatement()
-    {
-        $ProponentGUID = session::get('data')['ProponentGUID'];
-        $proponent = Proponent::where('proponent.GUID', '=', $ProponentGUID)
-        ->first();
-
-        $pdf = PDF::loadView('pdf.sworn_statement', compact('proponent'));
-        return $pdf->stream('try.pdf');
-    }
-
-    public function ProjectTypeTable(Request $req)
-    {
-        $search = $req['search'];
+            $details = '<button title="'.$title.'" class="btn btn-default btn-block btn-sm" onclick="LinkProject('."'". $component->ComponentGUID."', "."'". $component->Category."', "."'". $component->ReportType."'".')" disabled>'.$component->ReportType.'</button>';
+        }
         
-        $component = Component::where('component.ProjectType', 'LIKE', '%'. $search.'%')
-            ->leftJoin('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
-            ->select('component.*', 'componentthreshold.*')
-            ->orderByRaw('componentthreshold.Ranking ASC')
-            ->get();
+        return $details;
 
-        return DataTables::of($component)
+    })
+    ->addColumn('SpecificType', function($component){
+
+        if($component->ProjectSpecificSubType == 'NULL'){
+            $subtype = '';
+        } else {
+            $subtype = $component->ProjectSpecificSubType;
+        }
+
+        if($component->ProjectSpecificType == 'NULL'){
+            $specifictype = '';
+        } else {
+            $specifictype = $component->ProjectSpecificType;
+        }
+
+        $details =  $specifictype . '<br>'. $subtype;
         
-        ->addColumn('Action', function($component){
-            if($component->ReportType == 'IEE'){
-                $title = 'Initial Environment Examination';
-            }else if($component->ReportType == 'EIS'){
-                $title = 'Environmental Impact Statement';
-            }else{
-                $title = 'Certificates of Non-Coverage';
-            }
+        return $details;
 
-            if($component->ReportType == 'IEE'){
-                $details = '<button title="'.$title.'" class="btn btn-default btn-block btn-sm" onclick="LinkProject('."'". $component->ComponentGUID."', "."'". $component->Category."', "."'". $component->ReportType."'".')">'.$component->ReportType.'</button>';
-            }else{
-
-                $details = '<button title="'.$title.'" class="btn btn-default btn-block btn-sm" onclick="LinkProject('."'". $component->ComponentGUID."', "."'". $component->Category."', "."'". $component->ReportType."'".')" disabled>'.$component->ReportType.'</button>';
-            }
-            
-            return $details;
-
-        })
-        ->addColumn('SpecificType', function($component){
-
-            if($component->ProjectSpecificSubType == 'NULL'){
-                $subtype = '';
-            } else {
-                $subtype = $component->ProjectSpecificSubType;
-            }
-
-            if($component->ProjectSpecificType == 'NULL'){
-                $specifictype = '';
-            } else {
-                $specifictype = $component->ProjectSpecificType;
-            }
-
-            $details =  $specifictype . '<br>'. $subtype;
-            
-            return $details;
-
-        })
-        
-        ->rawColumns(['Action', 'SpecificType'])
-        ->make(true);
+    })
+    
+    ->rawColumns(['Action', 'SpecificType'])
+    ->make(true);
 
         // This type of project and its size falls under the Environmentally Critical Projects (ECPs). The ECC Online Application System covers only the Non-Environmentally Critical Projects (NECPs). For ECP Project, please coordinate with EMB Central Office - Environmnetal Impact Assessment and Management Division.
-    }
+}
 
-    public function LinkProjectType(Request $req)
-    {
-        $ComponentGUID = $req['ComponentGUID'];
-        $input_size = $req['input_size'];
-        $second = $req['second'];
+public function LinkProjectType(Request $req)
+{
+    $ComponentGUID = $req['ComponentGUID'];
+    $input_size = $req['input_size'];
+    $second = $req['second'];
 
-        $components = DB::table('_componenttemplate')
-        ->where('GUID', $ComponentGUID)
-        ->first();
+    $components = ComponentTemplate::where('GUID', $ComponentGUID)
+    ->first();
 
-        $all = ['input_size'=> $input_size, 'ComponentGUID'=>$ComponentGUID, 'second'=> 1, 'Template'=>$components->Template, 'ComponentPDF'=>$components->ComponentPDF, 'MgtPlanPDF'=>$components->MgtPlanPDF, 'AbandonementPDF'=>$components->AbandonementPDF];
+    $all = ['input_size'=> $input_size, 'ComponentGUID'=>$ComponentGUID, 'second'=> 1, 'Template'=>$components->Template, 'ComponentPDF'=>$components->ComponentPDF, 'MgtPlanPDF'=>$components->MgtPlanPDF, 'AbandonementPDF'=>$components->AbandonementPDF];
 
-        $req->session()->put('step_2', $all);
+    $req->session()->put('step_2', $all);
 
-        $NewGUID = Uuid::generate()->string;
-        $GUID = Str::upper($NewGUID);
+    $NewGUID = Uuid::generate()->string;
+    $GUID = Str::upper($NewGUID);
 
-        return $GUID;
+    return $GUID;
 
         // Session::pull('input');
-    }
+}
 
-    public function searchProjectType()
-    {
-        return view('secured.create_applications.project_type_search');
-    }
+public function searchProjectType()
+{
+    return view('secured.create_applications.project_type_search');
+}
 
-    public function addBindData(Request $req)
-    {
-        $EmbID = $req['EmbID'];
-        $ProponentGUID = $req['ProponentGUID'];
-        $CompanyName = $req['CompanyName'];
-        $ProponentName = $req['ProponentName'];
-        $UserId = Session::get('data')['UserId'];
+public function addBindData(Request $req)
+{
+    $EmbID = $req['EmbID'];
+    $ProponentGUID = $req['ProponentGUID'];
+    $CompanyName = $req['CompanyName'];
+    $ProponentName = $req['ProponentName'];
+    $UserId = Session::get('data')['UserId'];
 
-        $UserData = DB::table('binded_data')
-        ->where('UserId', $UserId)
-        ->where('EmbID',$EmbID)
-        ->first();
+    $UserData = DB::table('binded_data')
+    ->where('UserId', $UserId)
+    ->where('EmbID',$EmbID)
+    ->first();
 
-        if(!$UserData){
-            $row = ['ProponentGUID' => $ProponentGUID, 'EmbID' => $EmbID, 'CompanyName' => $CompanyName, 'UserId' => $UserId, 'ProponentName' => $ProponentName];
+    if(!$UserData){
+        $row = ['ProponentGUID' => $ProponentGUID, 'EmbID' => $EmbID, 'CompanyName' => $CompanyName, 'UserId' => $UserId, 'ProponentName' => $ProponentName];
 
-            if(DB::table('binded_data')->insert($row)){
+        if(DB::table('binded_data')->insert($row)){
 
-                 DB::table('aspnet_users')
-                    ->where('UserId', $UserId)
-                    ->update([
-                        'ProponentGUID' => $ProponentGUID
-                    ]);
-
-
-                return 'Bind company successfully!';
-            } else {
-                return 'Error while saving into your database';
-            }
-        } elseif($UserData->ProponentGUID == ''){
-            DB::table('binded_data')
-            ->where('UserId', '=', $UserId)
-            ->update([
-                'ProponentGUID' => $ProponentGUID,
-                'ProponentName' => $ProponentName
-            ]);
-
-            DB::table('aspnet_users')
-            ->where('UserId', $UserId)
-            ->update([
-                'ProponentGUID' => $ProponentGUID
-            ]);
-
-            return 'Bind company successfully!';
-
-        }else {
-            return "There's binded data: unbind data first";
-        }
-    }
-
-    public function unBindData(Request $req)
-    {
-        $EmbID = $req['EmbID'];
-        $ProponentGUID = $req['ProponentGUID'];
-        $CompanyName = $req['CompanyName'];
-        $UserId = Session::get('data')['UserId'];
-
-
-        DB::table('binded_data')
-        ->where('UserId', '=', $UserId)
-        ->where('EmbID', '=', $EmbID)
-        ->update([
-            'ProponentGUID' => '',
-            'ProponentName' => '',
+           DB::table('aspnet_users')
+           ->where('UserId', $UserId)
+           ->update([
+            'ProponentGUID' => $ProponentGUID
         ]);
 
-        DB::table('aspnet_users')
-        ->where('UserId', '=', $UserId)
-        ->update([
-            'ProponentGUID' => 1
+
+           return 'Bind company successfully!';
+       } else {
+        return 'Error while saving into your database';
+    }
+} elseif($UserData->ProponentGUID == ''){
+    DB::table('binded_data')
+    ->where('UserId', '=', $UserId)
+    ->update([
+        'ProponentGUID' => $ProponentGUID,
+        'ProponentName' => $ProponentName
+    ]);
+
+    DB::table('aspnet_users')
+    ->where('UserId', $UserId)
+    ->update([
+        'ProponentGUID' => $ProponentGUID
+    ]);
+
+    return 'Bind company successfully!';
+
+}else {
+    return "There's binded data: unbind data first";
+}
+}
+
+public function unBindData(Request $req)
+{
+    $EmbID = $req['EmbID'];
+    $ProponentGUID = $req['ProponentGUID'];
+    $CompanyName = $req['CompanyName'];
+    $UserId = Session::get('data')['UserId'];
+
+
+    DB::table('binded_data')
+    ->where('UserId', '=', $UserId)
+    ->where('EmbID', '=', $EmbID)
+    ->update([
+        'ProponentGUID' => '',
+        'ProponentName' => '',
+    ]);
+
+    DB::table('aspnet_users')
+    ->where('UserId', '=', $UserId)
+    ->update([
+        'ProponentGUID' => 1
+    ]);
+
+    return 'Unbind company successfully!';
+}
+
+public function searchCompany(Request $req)
+{
+    $search = $req['search'];
+    
+    $Proponent = Proponent::where('ProponentName', 'LIKE', '%' . $search .'%');
+
+    return DataTables::of($Proponent)
+    ->addColumn('ProponentName', function($Proponent){
+        $details = '<small>'. $Proponent->ProponentName . '</small>';
+        
+        return $details;
+
+    })
+    
+    ->addColumn('Action', function($Proponent){
+        $details = '<button class="btn btn-default" onclick="ComparisonData(' . "'" . $Proponent->ProponentName . "'". ')"><span class="glyphicon glyphicon-eye-open"></span></button>';
+        
+        return $details;
+
+    })
+    ->rawColumns(['Action', 'ProponentName'])
+    ->make(true);
+}
+
+public function getBindedData(Request $req)
+{
+    $ID = $req['emb_id'];
+    $Name = $req['company_name'];
+    $UserId = Session::get('data')['UserId'];
+
+    $BindedData = BindedData::where('EmbID', '=', $ID)
+    ->where('CompanyName', '=', $Name)
+    ->where('UserId', '=', $UserId)
+    ->first();
+
+    return $BindedData;
+}
+
+public function addCompanyDetailsECC(Request $req)
+{
+    $EmbID = $req['emb_id'];
+    $CompanyName = $req['company_name'];
+    $ProponentName = $req['company_name'];
+    $EstablishmentName = $req['establishment_name'];
+
+    $ContactNo = $req['contact_no'];
+    $MobileNo = $req['mobile_no'];
+
+    $Email = $req['email'];
+    $ContactPerson = $req['contact_person'];
+    $Address = $req['address'];
+
+    $UserId = Session::get('data')['UserId'];
+
+    $NewGUID = Uuid::generate()->string;
+    $GUID = Str::upper($NewGUID);
+
+    $SECRegistrationNo = $req['sec_registration_no'];
+    $DTIRegistrationNo = $req['dti_registration_no'];
+
+
+    $ProponentGUID = $GUID;
+
+    DB::table('proponent')->insert([
+        'GUID' => $ProponentGUID, 
+        'ProponentName' => $CompanyName, 
+        'MailingAddress' => $Address, 
+        'ContactPerson' => $ContactPerson, 
+        'Designation' => 'CEO/President/Owner',
+        'ContactPersonNo' => $ContactNo, 
+        'MobileNo' => $MobileNo, 
+        'ContactPersonEmailAddress' => $Email, 
+        'LineOfBusiness' => '', 
+        'SECRegistrationNo' => $SECRegistrationNo, 
+        'DTIRegistrationNo' => $DTIRegistrationNo, 
+        'UpdatedBy' => Session::get('data')['UserName'], 
+        'UpdatedDate' => date('Y-m-d H:i:s'),
+        'CreatedBy' => Session::get('data')['UserName'], 
+        'CreatedDate' => date('Y-m-d H:i:s'), 
+    ] );
+
+    $UserData = DB::table('binded_data')->where('UserId', '=', $UserId)->first();
+
+    if(!$UserData){
+        $row = ['ProponentGUID' => $ProponentGUID, 'EmbID' => $EmbID, 'CompanyName' => $CompanyName, 'UserId' => $UserId, 'ProponentName' => $ProponentName];
+
+        if(DB::table('binded_data')->insert($row)){
+
+           DB::table('aspnet_users')
+           ->where('UserId', '=', $UserId)
+           ->update([
+            'ProponentGUID' => $ProponentGUID
         ]);
 
-        return 'Unbind company successfully!';
+
+           return 'Successfully binded!';
+       } else {
+        return 'Error while saving into your database';
     }
+} elseif($UserData->ProponentGUID == ''){
+    DB::table('binded_data')
+    ->where('UserId', '=', $UserId)
+    ->update([
+        'ProponentGUID' => $ProponentGUID,
+        'ProponentName' => $ProponentName
+    ]);
 
-    public function searchCompany(Request $req)
-    {
-        $search = $req['search'];
-        
-        $Proponent = Proponent::where('ProponentName', 'LIKE', '%' . $search .'%');
+    DB::table('aspnet_users')
+    ->where('UserId', '=', $UserId)
+    ->update([
+        'ProponentGUID' => $ProponentGUID
+    ]);
 
-        return DataTables::of($Proponent)
-        ->addColumn('ProponentName', function($Proponent){
-            $details = '<small>'. $Proponent->ProponentName . '</small>';
-            
-            return $details;
+    return 'Successfully binded!';
 
-        })
-        
-        ->addColumn('Action', function($Proponent){
-            $details = '<button class="btn btn-default" onclick="ComparisonData(' . "'" . $Proponent->ProponentName . "'". ')"><span class="glyphicon glyphicon-eye-open"></span></button>';
-            
-            return $details;
-
-        })
-        ->rawColumns(['Action', 'ProponentName'])
-        ->make(true);
-    }
-
-    public function getBindedData(Request $req)
-    {
-        $ID = $req['emb_id'];
-        $Name = $req['company_name'];
-        $UserId = Session::get('data')['UserId'];
-
-        $BindedData = BindedData::where('EmbID', '=', $ID)
-        ->where('CompanyName', '=', $Name)
-        ->where('UserId', '=', $UserId)
-        ->first();
-
-        return $BindedData;
-    }
-
-    public function addCompanyDetailsECC(Request $req)
-    {
-        $EmbID = $req['emb_id'];
-        $CompanyName = $req['company_name'];
-        $ProponentName = $req['company_name'];
-        $EstablishmentName = $req['establishment_name'];
-
-        $ContactNo = $req['contact_no'];
-        $MobileNo = $req['mobile_no'];
-
-        $Email = $req['email'];
-        $ContactPerson = $req['contact_person'];
-        $Address = $req['address'];
-
-        $UserId = Session::get('data')['UserId'];
-
-        $NewGUID = Uuid::generate()->string;
-        $GUID = Str::upper($NewGUID);
-
-        $SECRegistrationNo = $req['sec_registration_no'];
-        $DTIRegistrationNo = $req['dti_registration_no'];
+}else {
+    return "There's binded data: unbind data first";
+}
 
 
-        $ProponentGUID = $GUID;
-
-        DB::table('proponent')->insert([
-            'GUID' => $ProponentGUID, 
-            'ProponentName' => $CompanyName, 
-            'MailingAddress' => $Address, 
-            'ContactPerson' => $ContactPerson, 
-            'Designation' => 'CEO/President/Owner',
-            'ContactPersonNo' => $ContactNo, 
-            'MobileNo' => $MobileNo, 
-            'ContactPersonEmailAddress' => $Email, 
-            'LineOfBusiness' => '', 
-            'SECRegistrationNo' => $SECRegistrationNo, 
-            'DTIRegistrationNo' => $DTIRegistrationNo, 
-            'UpdatedBy' => Session::get('data')['UserName'], 
-            'UpdatedDate' => date('Y-m-d H:i:s'),
-            'CreatedBy' => Session::get('data')['UserName'], 
-            'CreatedDate' => date('Y-m-d H:i:s'), 
-        ] );
-
-        $UserData = DB::table('binded_data')->where('UserId', '=', $UserId)->first();
-
-        if(!$UserData){
-            $row = ['ProponentGUID' => $ProponentGUID, 'EmbID' => $EmbID, 'CompanyName' => $CompanyName, 'UserId' => $UserId, 'ProponentName' => $ProponentName];
-
-            if(DB::table('binded_data')->insert($row)){
-
-                 DB::table('aspnet_users')
-                    ->where('UserId', '=', $UserId)
-                    ->update([
-                        'ProponentGUID' => $ProponentGUID
-                    ]);
-
-
-                return 'Successfully binded!';
-            } else {
-                return 'Error while saving into your database';
-            }
-        } elseif($UserData->ProponentGUID == ''){
-            DB::table('binded_data')
-            ->where('UserId', '=', $UserId)
-            ->update([
-                'ProponentGUID' => $ProponentGUID,
-                'ProponentName' => $ProponentName
-            ]);
-
-            DB::table('aspnet_users')
-            ->where('UserId', '=', $UserId)
-            ->update([
-                'ProponentGUID' => $ProponentGUID
-            ]);
-
-            return 'Successfully binded!';
-
-        }else {
-            return "There's binded data: unbind data first";
-        }
-
-        
-    }
+}
 
 }

@@ -30,8 +30,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str; 
 // use PhpOffice\PhpWord\TemplateProcessor;
 use \PhpOffice\PhpWord\TemplateProcessor,
-    \PhpOffice\PhpWord\Shared\Html,
-    \PhpOffice\PhpWord\PhpWord;
+\PhpOffice\PhpWord\Shared\Html,
+\PhpOffice\PhpWord\PhpWord;
 
 use Session;
 use File;
@@ -82,6 +82,7 @@ class ForActionsController extends Controller
 
             'project.NoOfEmployees',
             'project.ProjectCost',
+            'project.Template',
 
             'projectactivity.RoutedTo', 
             'projectactivity.RoutedFrom', 
@@ -317,9 +318,9 @@ class ForActionsController extends Controller
         return DataTables::of($project)
         ->addColumn('Details', function($project){
             $details = '<div id="">
-                <a title="Click here to view the uploaded file" target="_blank" style="text-decoration:none;" 
-                href="'.url($project->FilePath).'">'.$project->Description.'</a>
-                </div>';
+            <a title="Click here to view the uploaded file" target="_blank" style="text-decoration:none;" 
+            href="'.url($project->FilePath).'">'.$project->Description.'</a>
+            </div>';
 
             return $details;
         })
@@ -348,7 +349,7 @@ class ForActionsController extends Controller
                 $run_days++;
             }
         }
-    return $run_days;
+        return $run_days;
     }
 
     public function getListOfAttachments(Request $req)
@@ -504,7 +505,7 @@ class ForActionsController extends Controller
                     $rowData['Directory'] = $project->Directory;
                     $rowData['FilePath'] = $project->FilePath;
                     $rowData['FileSizeInKB'] = $project->FileSizeInKB;
-      
+                    
                     array_push($ApplicationRequirements, $rowData);
                 } 
                 else{
@@ -549,21 +550,21 @@ class ForActionsController extends Controller
         ->addColumn('Complied', function($project){
             if($project['Compliant'] == 1){
                 $details = '<center><div class="form-group">
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" checked disabled>
-                    </label>
-                  </div>
-                  </div>';
-              } else {
+                <div class="checkbox">
+                <label>
+                <input type="checkbox" checked disabled>
+                </label>
+                </div>
+                </div>';
+            } else {
                 $details = '<center><div class="form-group">
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" disabled>
-                    </label>
-                  </div>
-                  </div>';
-              }
+                <div class="checkbox">
+                <label>
+                <input type="checkbox" disabled>
+                </label>
+                </div>
+                </div>';
+            }
             
             return $details;
         })
@@ -814,13 +815,13 @@ class ForActionsController extends Controller
             if($IncludeAttachment === "true"){
 
                 $data = DB::table('projectactivityattachmenttemp')
-                    ->select('GUID','ActivityGUID','Description','FileName','Directory','FilePath','FileSizeInKB','CreatedBy','CreatedDate')
-                    ->where('ActivityGUID', '=', $NewActivityGUID)
-                    ->get();
+                ->select('GUID','ActivityGUID','Description','FileName','Directory','FilePath','FileSizeInKB','CreatedBy','CreatedDate')
+                ->where('ActivityGUID', '=', $NewActivityGUID)
+                ->get();
 
                 $array = $data->map(function($obj){
                     return (array) $obj;
-                    })->toArray();
+                })->toArray();
 
 
                 if(DB::table('projectactivityattachment')->insert($array)){
@@ -898,14 +899,14 @@ class ForActionsController extends Controller
         $projectActivity['TotElapsedDays'] = $dateDiff - 1;
 
         $updateBankDetails = DB::table('project')
-            ->where('GUID','=', $ProjectGUID)
-            ->update([
-                'BankBranch' => $BankBranch,
-                'ORNumber' => $BankSequenceNo,
-                'BankTransaction' => $Datepicker,
-                'ProcessingFee' => 5070,
-                'AmountPaid' => 5050
-            ]);
+        ->where('GUID','=', $ProjectGUID)
+        ->update([
+            'BankBranch' => $BankBranch,
+            'ORNumber' => $BankSequenceNo,
+            'BankTransaction' => $Datepicker,
+            'ProcessingFee' => 5070,
+            'AmountPaid' => 5050
+        ]);
 
 
         if(DB::table('projectactivity')->insert($projectActivity)){
@@ -1044,7 +1045,7 @@ class ForActionsController extends Controller
                 $filename = $file->getClientOriginalName();
 
                 // $filename = $NewGUID;
-             
+                
                 // filesize
                 $size = $file->getSize();
                 $filesize = $size * 0.001;
@@ -1214,131 +1215,25 @@ class ForActionsController extends Controller
 
         $project = Project::where('project.GUID', '=', $ProjectGUID)
             // ->where('project.Stage', '>', 0 )
-            ->Join('projectactivity', function ($join) {
-                $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
-
-                $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
-            })
-            ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
-            ->select(
-                'project.Purpose',
-                'project.Address AS Address', 
-                'project.Municipality  AS Municipality', 
-                'project.Province AS Province', 
-                'project.Address', 
-                'project.CreatedBy AS CreatedBy', 
-                'project.GUID AS GUID', 
-                'project.PreviousECCNo',
-                'proponent.ProponentName',
-                'project.ProjectName', 
-                'project.Region  AS Region', 
-                'project.OrderOfPayment',
-
-                'projectactivity.RoutedTo', 
-                'projectactivity.RoutedFrom', 
-
-                'projectactivity.RoutedToOffice', 
-                'projectactivity.RoutedFromOffice', 
-
-                'projectactivity.CreatedDate', 
-                'projectactivity.Status', 
-                'projectactivity.Details AS Remarks', 
-                'projectactivity.GUID AS ActivityGUID',
-                'projectactivity.FromDate AS FromDate',
-                'projectactivity.UpdatedDate AS UpdatedDate',
-                
-            )
-            ->first();
-
-            $NewGUID = Uuid::generate()->string;
-            $GUID = Str::upper($NewGUID);
-
-            $todate = date('m/d/Y H:i:s A');
-            $Date = date('m/d/Y');
-
-            $pdf = PDF::loadView('pdf.order_of_payment', compact('project', 'todate', 'Date'));
-            $urlSavePDF = public_path('files/'.$ProjectGUID.'/'.$GUID. '.pdf');
-            $path = public_path('files/'.$ProjectGUID.'/');
-            // $savedFiles = $pdf->saveAs($urlSavePDF);
-
-
-            if(!File::exists($path)) {
-                File::makeDirectory($path, $mode = 0755, true, true);
-                
-                $pdf->save($urlSavePDF);
-            } else {
-                $pdf->save($urlSavePDF);
-            }
-
-            $file = pathinfo($urlSavePDF);
-
-            $filesize = filesize($urlSavePDF) * 0.001;
-
-            //  $file = $request->file('file');
-            $filename = $file['filename'];
-            $extension = $file['extension'];
-            $basename = $file['basename'];
-            $dirname = $file['dirname'];
-
-            // File path
-            // $filepath = public_path('attachments/SignedECC/'.$filename.'.'.$extension);
-            $filepath = 'files/'.$ProjectGUID.'/'.$filename.'.'.$extension;
-
-            // Response
-
-            $data['GUID'] = $GUID;
-            $data['ActivityGUID'] = Str::upper($NewActivityGUID);
-            $data['Description'] = 'Order of Payment - Application';
-            $data['Directory'] = public_path();
-            $data['FileName'] = $filename;
-            $data['FilePath'] = $filepath;
-            // $data['extension'] = $extension;
-            $data['FileSizeInKB'] = round($filesize, 3);
-            $data['CreatedBy'] = $UserName;
-
-            $DatabaseTemp = DB::table('projectactivityattachmenttemp')->insert($data);
-            $DatabaseTemp = DB::table('projectactivityattachment')->insert($data);
-
-            if($DatabaseTemp){
-                $rtrn['success'] = 1;
-                $rtrn['message'] = 'Uploaded Successfully!';
-            } else {
-                $rtrn['success'] = 0;
-                $rtrn['error'] = 'Error while saving data into the database';// Error response
-            }
-
-            return redirect()->route('project_app', ['GUID' => $ProjectGUID, 'ActivityGUID' => $ActivityGUID]);
-            // return $pdf->download('Order of Payment - Application.pdf');
-        
-    }
-
-    public function generateDraftCerticate($GUID, $ActivityGUID)
-    {
-        $NewActivityGUID = Session::get('NewActivityGUID');
-        $UserName = Session::get('data')['UserName'];
-
-        $project = Project::where('project.GUID', '=', $GUID)
         ->Join('projectactivity', function ($join) {
             $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
 
             $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
         })
         ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
-        ->leftJoin('aspnet_users', 'proponent.GUID', '=', 'aspnet_users.ProponentGUID')
-        ->Join('region', 'region.Region', '=', 'project.Region')
         ->select(
             'project.Purpose',
             'project.Address AS Address', 
             'project.Municipality  AS Municipality', 
-            'project.Province AS Province',  
+            'project.Province AS Province', 
+            'project.Address', 
             'project.CreatedBy AS CreatedBy', 
             'project.GUID AS GUID', 
             'project.PreviousECCNo',
             'proponent.ProponentName',
             'project.ProjectName', 
             'project.Region  AS Region', 
-            'project.LandAreaInSqM',
-            'project.Representative as Representative',
+            'project.OrderOfPayment',
 
             'projectactivity.RoutedTo', 
             'projectactivity.RoutedFrom', 
@@ -1352,105 +1247,211 @@ class ForActionsController extends Controller
             'projectactivity.GUID AS ActivityGUID',
             'projectactivity.FromDate AS FromDate',
             'projectactivity.UpdatedDate AS UpdatedDate',
-            'aspnet_users.*',
-            'proponent.*',
-
-            'region.Address as EMBAddress',
-            'region.TelephoneNo as EMBTelephoneNo',
-            'region.EmailAddress as EMBEmailAddress',
-            'region.WebSite as EMBWebSite',
-            'region.Director as Director',
-            'region.EIAChief as EIAChief',
-            'region.EIAChiefSignature',
-            'region.DirectorSignature',
-            'region.Designation as DirectorDesignation'
+            
         )
         ->first();
 
-        $templateProcessor = new TemplateProcessor('word-template/ECC.docx');
+        $NewGUID = Uuid::generate()->string;
+        $GUID = Str::upper($NewGUID);
 
-        $templateProcessor->setValue('projectname', htmlspecialchars($project->ProjectName));
-        $templateProcessor->setValue('proponentname', htmlspecialchars($project->ProponentName));
-        $templateProcessor->setValue('representativedesignation', $project->Designation);
-        $templateProcessor->setValue('proponentaddress', $project->MailingAddress);
-        $templateProcessor->setValue('projectaddress', $project->Address);
-        $templateProcessor->setValue('projectdescription', $project->Description);
+        $todate = date('m/d/Y H:i:s A');
+        $Date = date('m/d/Y');
 
-        $templateProcessor->setValue('UserName', $project->CreatedBy);
-        $templateProcessor->setValue('region', $project->Region);
-        $templateProcessor->setValue('projectarea', $project->LandAreaInSqM . " square meters ");
-        $templateProcessor->setValue('province', $project->Province);
-        $templateProcessor->setValue('municipality', $project->Municipality);
-        $templateProcessor->setValue('representative', $project->Representative);
+        $pdf = PDF::loadView('pdf.order_of_payment', compact('project', 'todate', 'Date'));
+        $urlSavePDF = public_path('files/'.$ProjectGUID.'/'.$GUID. '.pdf');
+        $path = public_path('files/'.$ProjectGUID.'/');
+            // $savedFiles = $pdf->saveAs($urlSavePDF);
 
-        $templateProcessor->setValue('embaddress', $project->EMBAddress);
-        $templateProcessor->setValue('embtelephoneno', $project->EMBTelephoneNo);
-        $templateProcessor->setValue('emailaddress', $project->EMBEmailAddress);
-        $templateProcessor->setValue('website', $project->EMBWebSite);
 
-        if(Str::lower($project->EIAChief != $project->Director)){
-            $templateProcessor->setValue('eiachief', $project->EIAChief);
+        if(!File::exists($path)) {
+            File::makeDirectory($path, $mode = 0755, true, true);
+            
+            $pdf->save($urlSavePDF);
         } else {
-            $templateProcessor->setValue('eiachief', '');
+            $pdf->save($urlSavePDF);
         }
-        
 
-        $templateProcessor->setValue('approver', $project->Director);
-        $templateProcessor->setValue('approverdesignation', $project->DirectorDesignation);
+        $file = pathinfo($urlSavePDF);
 
+        $filesize = filesize($urlSavePDF) * 0.001;
 
-        $str = $project->DirectorSignature;
-        $Signature = explode("/",$str);
-        $image = 'signatures/' . $Signature[3];
-
-        $templateProcessor->setImageValue('sign', array('path' => $image, 'width' => 160, 'height' => 70, 'ratio' => false));
-
-        // $templateProcessor->setValue('dategenerated', date("F j, Y"));
-
-        $str1 = $project->EIAChiefSignature;
-        $Signature1 = explode("/",$str1);
-        $image1 = 'signatures/' . $Signature1[3];
-
-        $templateProcessor->setImageValue('eiachiefsign', array('path' => $image1, 'width' => 160, 'height' => 70, 'ratio' => false));
-
-        // $templateProcessor->setImageV    alue('qrcode', array('path' => 'img/qrc.png', 'width' => 64,  'ratio' => true));
-
-        $filename = 'Draft ECC';
-        $urlSave = 'attachments/ECC/' . $GUID . '.docx';
-        // dd($urlSave);
-        $templateProcessor->saveAs($urlSave);
-
-        $file = pathinfo($urlSave);
-
-        $filesize = filesize($urlSave) * 0.001;
-
-        //  $file = $request->file('file');
+            //  $file = $request->file('file');
         $filename = $file['filename'];
         $extension = $file['extension'];
         $basename = $file['basename'];
         $dirname = $file['dirname'];
 
-        // File path
-        // $filepath = public_path('attachments/SignedECC/'.$filename.'.'.$extension);
-        $filepath = 'attachments/ECC/'.$filename.'.'.$extension;
+            // File path
+            // $filepath = public_path('attachments/SignedECC/'.$filename.'.'.$extension);
+        $filepath = 'files/'.$ProjectGUID.'/'.$filename.'.'.$extension;
 
-        // Response
+            // Response
 
         $data['GUID'] = $GUID;
         $data['ActivityGUID'] = Str::upper($NewActivityGUID);
-        $data['Description'] = 'Draft ECC';
+        $data['Description'] = 'Order of Payment - Application';
         $data['Directory'] = public_path();
         $data['FileName'] = $filename;
         $data['FilePath'] = $filepath;
-        // $data['extension'] = $extension;
+            // $data['extension'] = $extension;
         $data['FileSizeInKB'] = round($filesize, 3);
         $data['CreatedBy'] = $UserName;
 
-        if(DB::table('projectactivityattachmenttemp')->insert($data)){
+        $DatabaseTemp = DB::table('projectactivityattachmenttemp')->insert($data);
+        $DatabaseTemp = DB::table('projectactivityattachment')->insert($data);
+
+        if($DatabaseTemp){
             $rtrn['success'] = 1;
             $rtrn['message'] = 'Uploaded Successfully!';
         } else {
             $rtrn['success'] = 0;
+                $rtrn['error'] = 'Error while saving data into the database';// Error response
+            }
+
+            return redirect()->route('project_app', ['GUID' => $ProjectGUID, 'ActivityGUID' => $ActivityGUID]);
+            // return $pdf->download('Order of Payment - Application.pdf');
+            
+        }
+
+        public function generateDraftCerticate($GUID, $ActivityGUID)
+        {
+            $NewActivityGUID = Session::get('NewActivityGUID');
+            $UserName = Session::get('data')['UserName'];
+
+            $project = Project::where('project.GUID', '=', $GUID)
+            ->Join('projectactivity', function ($join) {
+                $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+
+                $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+            })
+            ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
+            ->leftJoin('aspnet_users', 'proponent.GUID', '=', 'aspnet_users.ProponentGUID')
+            ->Join('region', 'region.Region', '=', 'project.Region')
+            ->select(
+                'project.Purpose',
+                'project.Address AS Address', 
+                'project.Municipality  AS Municipality', 
+                'project.Province AS Province',  
+                'project.CreatedBy AS CreatedBy', 
+                'project.GUID AS GUID', 
+                'project.PreviousECCNo',
+                'proponent.ProponentName',
+                'project.ProjectName', 
+                'project.Region  AS Region', 
+                'project.LandAreaInSqM',
+                'project.Representative as Representative',
+
+                'projectactivity.RoutedTo', 
+                'projectactivity.RoutedFrom', 
+
+                'projectactivity.RoutedToOffice', 
+                'projectactivity.RoutedFromOffice', 
+
+                'projectactivity.CreatedDate', 
+                'projectactivity.Status', 
+                'projectactivity.Details AS Remarks', 
+                'projectactivity.GUID AS ActivityGUID',
+                'projectactivity.FromDate AS FromDate',
+                'projectactivity.UpdatedDate AS UpdatedDate',
+                'aspnet_users.*',
+                'proponent.*',
+
+                'region.Address as EMBAddress',
+                'region.TelephoneNo as EMBTelephoneNo',
+                'region.EmailAddress as EMBEmailAddress',
+                'region.WebSite as EMBWebSite',
+                'region.Director as Director',
+                'region.EIAChief as EIAChief',
+                'region.EIAChiefSignature',
+                'region.DirectorSignature',
+                'region.Designation as DirectorDesignation'
+            )
+            ->first();
+
+            $templateProcessor = new TemplateProcessor('word-template/ECC.docx');
+
+            $templateProcessor->setValue('projectname', htmlspecialchars($project->ProjectName));
+            $templateProcessor->setValue('proponentname', htmlspecialchars($project->ProponentName));
+            $templateProcessor->setValue('representativedesignation', $project->Designation);
+            $templateProcessor->setValue('proponentaddress', $project->MailingAddress);
+            $templateProcessor->setValue('projectaddress', $project->Address);
+            $templateProcessor->setValue('projectdescription', $project->Description);
+
+            $templateProcessor->setValue('UserName', $project->CreatedBy);
+            $templateProcessor->setValue('region', $project->Region);
+            $templateProcessor->setValue('projectarea', $project->LandAreaInSqM . " square meters ");
+            $templateProcessor->setValue('province', $project->Province);
+            $templateProcessor->setValue('municipality', $project->Municipality);
+            $templateProcessor->setValue('representative', $project->Representative);
+
+            $templateProcessor->setValue('embaddress', $project->EMBAddress);
+            $templateProcessor->setValue('embtelephoneno', $project->EMBTelephoneNo);
+            $templateProcessor->setValue('emailaddress', $project->EMBEmailAddress);
+            $templateProcessor->setValue('website', $project->EMBWebSite);
+
+            if(Str::lower($project->EIAChief != $project->Director)){
+                $templateProcessor->setValue('eiachief', $project->EIAChief);
+            } else {
+                $templateProcessor->setValue('eiachief', '');
+            }
+            
+
+            $templateProcessor->setValue('approver', $project->Director);
+            $templateProcessor->setValue('approverdesignation', $project->DirectorDesignation);
+
+
+            $str = $project->DirectorSignature;
+            $Signature = explode("/",$str);
+            $image = 'signatures/' . $Signature[3];
+
+            $templateProcessor->setImageValue('sign', array('path' => $image, 'width' => 160, 'height' => 70, 'ratio' => false));
+
+        // $templateProcessor->setValue('dategenerated', date("F j, Y"));
+
+            $str1 = $project->EIAChiefSignature;
+            $Signature1 = explode("/",$str1);
+            $image1 = 'signatures/' . $Signature1[3];
+
+            $templateProcessor->setImageValue('eiachiefsign', array('path' => $image1, 'width' => 160, 'height' => 70, 'ratio' => false));
+
+        // $templateProcessor->setImageV    alue('qrcode', array('path' => 'img/qrc.png', 'width' => 64,  'ratio' => true));
+
+            $filename = 'Draft ECC';
+            $urlSave = 'attachments/ECC/' . $GUID . '.docx';
+        // dd($urlSave);
+            $templateProcessor->saveAs($urlSave);
+
+            $file = pathinfo($urlSave);
+
+            $filesize = filesize($urlSave) * 0.001;
+
+        //  $file = $request->file('file');
+            $filename = $file['filename'];
+            $extension = $file['extension'];
+            $basename = $file['basename'];
+            $dirname = $file['dirname'];
+
+        // File path
+        // $filepath = public_path('attachments/SignedECC/'.$filename.'.'.$extension);
+            $filepath = 'attachments/ECC/'.$filename.'.'.$extension;
+
+        // Response
+
+            $data['GUID'] = $GUID;
+            $data['ActivityGUID'] = Str::upper($NewActivityGUID);
+            $data['Description'] = 'Draft ECC';
+            $data['Directory'] = public_path();
+            $data['FileName'] = $filename;
+            $data['FilePath'] = $filepath;
+        // $data['extension'] = $extension;
+            $data['FileSizeInKB'] = round($filesize, 3);
+            $data['CreatedBy'] = $UserName;
+
+            if(DB::table('projectactivityattachmenttemp')->insert($data)){
+                $rtrn['success'] = 1;
+                $rtrn['message'] = 'Uploaded Successfully!';
+            } else {
+                $rtrn['success'] = 0;
             $rtrn['error'] = 'Error while saving data into the database';// Error response
         }
 
@@ -2014,9 +2015,9 @@ class ForActionsController extends Controller
         $templateProcessor->saveAs($urlSave);
 
 
-         $file = file_get_contents($urlSave);
+        $file = file_get_contents($urlSave);
 
-         ConvertApi::setApiSecret('oIwYrAjcSsermjaL');
+        ConvertApi::setApiSecret('oIwYrAjcSsermjaL');
 
         // # Example of saving Word docx to PDF and to PNG
         // # https://www.convertapi.com/docx-to-pdf
@@ -2213,23 +2214,23 @@ class ForActionsController extends Controller
         $ID = $req['ID'];
 
         $Holidays = Holidays::where('ID', '=', $ID)
-            ->first();
+        ->first();
 
 
         // foreach ($Holidays as $key => $value) {
-            $rowData = [];
+        $rowData = [];
 
-            $rowData['Description'] = $Holidays['Description'];
-            $rowData['OnDate'] = date("m/d/Y", strtotime($Holidays['OnDate']) );
-            $rowData['Coverage'] =explode(", ",$Holidays['Coverage']);
-            $rowData['Scope'] = $Holidays['Scope'];
-            $rowData['Notes'] = $Holidays['Notes'];
-            $rowData['UpdatedBy'] = $Holidays['UpdatedBy'];
-            $rowData['UpdatedDate'] = $Holidays['UpdatedDate'];
-            $rowData['CreatedBy'] = $Holidays['CreatedBy'];
-            $rowData['CreatedDate'] = $Holidays['CreatedDate'];
+        $rowData['Description'] = $Holidays['Description'];
+        $rowData['OnDate'] = date("m/d/Y", strtotime($Holidays['OnDate']) );
+        $rowData['Coverage'] =explode(", ",$Holidays['Coverage']);
+        $rowData['Scope'] = $Holidays['Scope'];
+        $rowData['Notes'] = $Holidays['Notes'];
+        $rowData['UpdatedBy'] = $Holidays['UpdatedBy'];
+        $rowData['UpdatedDate'] = $Holidays['UpdatedDate'];
+        $rowData['CreatedBy'] = $Holidays['CreatedBy'];
+        $rowData['CreatedDate'] = $Holidays['CreatedDate'];
 
-            return $rowData;
+        return $rowData;
         // }
     }
 
@@ -2273,7 +2274,7 @@ class ForActionsController extends Controller
             ]);
         } catch (Throwable $e) {
             report($e);
-     
+            
             return false;
         }
 
@@ -2533,7 +2534,7 @@ class ForActionsController extends Controller
             // if($start_date == $end_date){
             //     $dateDiff = 0;
             // } else {
-                $dateDiff = $this->Count_Days_Without_Weekends($start_date, $end_date);
+            $dateDiff = $this->Count_Days_Without_Weekends($start_date, $end_date);
             // }
 
 
@@ -2814,25 +2815,131 @@ class ForActionsController extends Controller
 
         $project = Project::where('project.GUID', '=', $ProjectGUID)
             // ->where('project.Stage', '>', 0 )
+        ->Join('projectactivity', function ($join) {
+            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+
+            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+        })
+        ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
+        ->select(
+            'project.Purpose',
+            'project.Address AS Address', 
+            'project.Municipality  AS Municipality', 
+            'project.Province AS Province', 
+            'project.Address', 
+            'project.CreatedBy AS CreatedBy', 
+            'project.GUID AS GUID', 
+            'project.PreviousECCNo',
+            'proponent.ProponentName',
+            'project.ProjectName', 
+            'project.Region  AS Region', 
+            'project.OrderOfPayment',
+
+            'projectactivity.RoutedTo', 
+            'projectactivity.RoutedFrom', 
+
+            'projectactivity.RoutedToOffice', 
+            'projectactivity.RoutedFromOffice', 
+
+            'projectactivity.CreatedDate', 
+            'projectactivity.Status', 
+            'projectactivity.Details AS Remarks', 
+            'projectactivity.GUID AS ActivityGUID',
+            'projectactivity.FromDate AS FromDate',
+            'projectactivity.UpdatedDate AS UpdatedDate',
+            
+        )
+        ->first();
+
+        $NewGUID = Uuid::generate()->string;
+        $GUID = Str::upper($NewGUID);
+
+        $todate = date('m/d/Y H:i:s A');
+        $Date = date('m/d/Y');
+
+        $pdf = PDF::loadView('pdf.order_of_payment', compact('project', 'todate', 'Date'));
+        $urlSavePDF = public_path('files/'.$ProjectGUID.'/'.$GUID. '.pdf');
+        $path = public_path('files/'.$ProjectGUID.'/');
+            // $savedFiles = $pdf->saveAs($urlSavePDF);
+
+
+        if(!File::exists($path)) {
+            File::makeDirectory($path, $mode = 0755, true, true);
+            
+            $pdf->save($urlSavePDF);
+        } else {
+            $pdf->save($urlSavePDF);
+        }
+
+        $file = pathinfo($urlSavePDF);
+
+        $filesize = filesize($urlSavePDF) * 0.001;
+
+            //  $file = $request->file('file');
+        $filename = $file['filename'];
+        $extension = $file['extension'];
+        $basename = $file['basename'];
+        $dirname = $file['dirname'];
+
+            // File path
+            // $filepath = public_path('attachments/SignedECC/'.$filename.'.'.$extension);
+        $filepath = 'files/'.$ProjectGUID.'/'.$filename.'.'.$extension;
+
+            // Response
+
+        $data['GUID'] = $GUID;
+        $data['ActivityGUID'] = Str::upper($NewActivityGUID);
+        $data['Description'] = 'Order of Payment - Application';
+        $data['Directory'] = public_path();
+        $data['FileName'] = $filename;
+        $data['FilePath'] = $filepath;
+            // $data['extension'] = $extension;
+        $data['FileSizeInKB'] = round($filesize, 3);
+        $data['CreatedBy'] = $UserName;
+
+        $Database = DB::table('projectactivityattachment')->insert($data);
+
+        if($Database){
+            $rtrn['success'] = 1;
+            $rtrn['message'] = 'Uploaded Successfully!';
+        } else {
+            $rtrn['success'] = 0;
+                $rtrn['error'] = 'Error while saving data into the database';// Error response
+            }
+
+            return $rtrn;
+            
+        }
+
+        public function ECCDraftCertificate(Request $req)
+        {
+            $GUID = $req['GUID'];
+
+            $project = Project::where('project.GUID', '=', $GUID)
             ->Join('projectactivity', function ($join) {
                 $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
 
                 $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
             })
             ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
+            ->leftJoin('aspnet_users', 'proponent.GUID', '=', 'aspnet_users.ProponentGUID')
+            ->Join('region', 'region.Region', '=', 'project.Region')
             ->select(
                 'project.Purpose',
                 'project.Address AS Address', 
                 'project.Municipality  AS Municipality', 
-                'project.Province AS Province', 
-                'project.Address', 
+                'project.Province AS Province',  
                 'project.CreatedBy AS CreatedBy', 
                 'project.GUID AS GUID', 
                 'project.PreviousECCNo',
                 'proponent.ProponentName',
                 'project.ProjectName', 
                 'project.Region  AS Region', 
-                'project.OrderOfPayment',
+                'project.LandAreaInSqM',
+                'project.Representative as Representative',
+                'project.Designation as Designation',
+                'project.Description as Description',
+                'project.Template',
 
                 'projectactivity.RoutedTo', 
                 'projectactivity.RoutedFrom', 
@@ -2846,200 +2953,151 @@ class ForActionsController extends Controller
                 'projectactivity.GUID AS ActivityGUID',
                 'projectactivity.FromDate AS FromDate',
                 'projectactivity.UpdatedDate AS UpdatedDate',
-                
+                'aspnet_users.*',
+                'proponent.*',
+
+                'region.Address as EMBAddress',
+                'region.TelephoneNo as EMBTelephoneNo',
+                'region.EmailAddress as EMBEmailAddress',
+                'region.WebSite as EMBWebSite',
+                'region.Director as Director',
+                'region.EIAChief as EIAChief',
+                'region.EIAChiefSignature',
+                'region.DirectorSignature',
+                'region.Designation as DirectorDesignation',
             )
             ->first();
 
-            $NewGUID = Uuid::generate()->string;
-            $GUID = Str::upper($NewGUID);
-
-            $todate = date('m/d/Y H:i:s A');
-            $Date = date('m/d/Y');
-
-            $pdf = PDF::loadView('pdf.order_of_payment', compact('project', 'todate', 'Date'));
-            $urlSavePDF = public_path('files/'.$ProjectGUID.'/'.$GUID. '.pdf');
-            $path = public_path('files/'.$ProjectGUID.'/');
-            // $savedFiles = $pdf->saveAs($urlSavePDF);
+            $draft = ECCDraftPerProject::where('ecc_draft_per_project.ProjectGUID', $GUID)
+            ->leftJoin('environmental_management_per_project', 'environmental_management_per_project.ProjectGUID', '=', 'ecc_draft_per_project.ProjectGUID')
+            ->first();
 
 
-            if(!File::exists($path)) {
-                File::makeDirectory($path, $mode = 0755, true, true);
-                
-                $pdf->save($urlSavePDF);
-            } else {
-                $pdf->save($urlSavePDF);
+            if(!$draft){
+                $ECC = ECCDraft::where('ecc_draft.Template', $project->Template)
+                ->where('ecc_draft.Type', $project->Purpose)
+                ->leftJoin('environmental_management', function ($join) {
+                    $join->on('ecc_draft.Template', 'environmental_management.Template');
+
+                    $join->on('ecc_draft.Type', 'environmental_management.Type');
+                })
+                ->select(
+                    'ecc_draft.Template As Template',
+                    'ecc_draft.Type As Type',
+                    'ecc_draft.ProjectType As ProjectType',
+                    'ecc_draft.Subject As Subject',
+                    'ecc_draft.Body As Body',
+                    'ecc_draft.ThisIsToCertify As ThisIsToCertify',
+                    'ecc_draft.ProjectDescription As ProjectDescription',
+                    'ecc_draft.ProjectComponents As ProjectComponents',
+                    'ecc_draft.ThisCertificateIsIssued As ThisCertificateIsIssued',
+                    'ecc_draft.SwornAccountabilityStatement As SwornAccountabilityStatement',
+                    'ecc_draft.GeneralConditions As GeneralConditions',
+                    'ecc_draft.Restrictions As Restrictions',
+                    'ecc_draft.PAPT As PAPT',
+
+                    'environmental_management.Template As Template',
+                    'environmental_management.ConstructionPhase As ConstructionPhase',
+                    'environmental_management.OperationPhase As OperationPhase',
+                )
+                ->first();
+
+                DB::table('ecc_draft_per_project')->insert([
+                    'ProjectGUID' => $GUID,
+                    'Template' => $ECC->Template,
+                    'ProjectType' => $ECC->ProjectType,
+                    'Subject' => $ECC->Subject,
+                    'Body' => $ECC->Body,
+                    'ThisIsToCertify' => $ECC->ThisIsToCertify,
+                    'ProjectDescription' => $ECC->ProjectDescription,
+                    'ProjectComponents' => $ECC->ProjectComponents,
+                    'ThisCertificateIsIssued' => $ECC->ThisCertificateIsIssued,
+                    'SwornAccountabilityStatement' => $ECC->SwornAccountabilityStatement,
+                    'GeneralConditions' => $ECC->GeneralConditions,
+                    'Restrictions' => $ECC->Restrictions,
+                    'PAPT' => $ECC->PAPT,
+                ]);
+
+                DB::table('environmental_management_per_project')->insert([
+                    'ProjectGUID' => $GUID,
+                    'ConstructionPhase' => $ECC->ConstructionPhase,
+                    'OperationPhase' => $ECC->OperationPhase,
+                ]);
             }
 
-            $file = pathinfo($urlSavePDF);
+            $UserRole = Session::get('data')['UserRole'];
+            
+            return view('secured.for_actions.ecc_preview', compact('draft', 'project'));
 
-            $filesize = filesize($urlSavePDF) * 0.001;
+            
+        }
 
-            //  $file = $request->file('file');
-            $filename = $file['filename'];
-            $extension = $file['extension'];
-            $basename = $file['basename'];
-            $dirname = $file['dirname'];
-
-            // File path
-            // $filepath = public_path('attachments/SignedECC/'.$filename.'.'.$extension);
-            $filepath = 'files/'.$ProjectGUID.'/'.$filename.'.'.$extension;
-
-            // Response
-
-            $data['GUID'] = $GUID;
-            $data['ActivityGUID'] = Str::upper($NewActivityGUID);
-            $data['Description'] = 'Order of Payment - Application';
-            $data['Directory'] = public_path();
-            $data['FileName'] = $filename;
-            $data['FilePath'] = $filepath;
-            // $data['extension'] = $extension;
-            $data['FileSizeInKB'] = round($filesize, 3);
-            $data['CreatedBy'] = $UserName;
-
-            $Database = DB::table('projectactivityattachment')->insert($data);
-
-            if($Database){
-                $rtrn['success'] = 1;
-                $rtrn['message'] = 'Uploaded Successfully!';
-            } else {
-                $rtrn['success'] = 0;
-                $rtrn['error'] = 'Error while saving data into the database';// Error response
-            }
-
-        return $rtrn;
-        
-    }
-
-    public function ECCDraftCertificate(Request $req)
-    {
-        $GUID = $req['GUID'];
-
-        $draft = ECCDraftPerProject::where('ecc_draft_per_project.ProjectGUID', $GUID)
-        ->leftJoin('environmental_management_per_project', 'environmental_management_per_project.ProjectGUID', '=', 'ecc_draft_per_project.ProjectGUID')
-        ->first();
-
-        $project = Project::where('project.GUID', '=', $GUID)
-        ->Join('projectactivity', function ($join) {
-            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
-
-            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
-        })
-        ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
-        ->leftJoin('aspnet_users', 'proponent.GUID', '=', 'aspnet_users.ProponentGUID')
-        ->Join('region', 'region.Region', '=', 'project.Region')
-        ->select(
-            'project.Purpose',
-            'project.Address AS Address', 
-            'project.Municipality  AS Municipality', 
-            'project.Province AS Province',  
-            'project.CreatedBy AS CreatedBy', 
-            'project.GUID AS GUID', 
-            'project.PreviousECCNo',
-            'proponent.ProponentName',
-            'project.ProjectName', 
-            'project.Region  AS Region', 
-            'project.LandAreaInSqM',
-            'project.Representative as Representative',
-            'project.Designation as Designation',
-            'project.Description as Description',
-
-            'projectactivity.RoutedTo', 
-            'projectactivity.RoutedFrom', 
-
-            'projectactivity.RoutedToOffice', 
-            'projectactivity.RoutedFromOffice', 
-
-            'projectactivity.CreatedDate', 
-            'projectactivity.Status', 
-            'projectactivity.Details AS Remarks', 
-            'projectactivity.GUID AS ActivityGUID',
-            'projectactivity.FromDate AS FromDate',
-            'projectactivity.UpdatedDate AS UpdatedDate',
-            'aspnet_users.*',
-            'proponent.*',
-
-            'region.Address as EMBAddress',
-            'region.TelephoneNo as EMBTelephoneNo',
-            'region.EmailAddress as EMBEmailAddress',
-            'region.WebSite as EMBWebSite',
-            'region.Director as Director',
-            'region.EIAChief as EIAChief',
-            'region.EIAChiefSignature',
-            'region.DirectorSignature',
-            'region.Designation as DirectorDesignation',
-        )
-        ->first();
-
-
-        return view('secured.for_actions.ecc_preview', compact('draft', 'project'));
-    }
-
-    public function ECCDraftPrint($GUID)
-    {
+        public function ECCDraftPrint($GUID)
+        {
         // $GUID = $req['GUID'];
 
-        $draft = ECCDraftPerProject::where('ecc_draft_per_project.ProjectGUID', $GUID)
-        ->leftJoin('environmental_management_per_project', 'environmental_management_per_project.ProjectGUID', '=', 'ecc_draft_per_project.ProjectGUID')
-        ->first();
+            $draft = ECCDraftPerProject::where('ecc_draft_per_project.ProjectGUID', $GUID)
+            ->leftJoin('environmental_management_per_project', 'environmental_management_per_project.ProjectGUID', '=', 'ecc_draft_per_project.ProjectGUID')
+            ->first();
 
-        $project = Project::where('project.GUID', '=', $GUID)
-        ->Join('projectactivity', function ($join) {
-            $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
+            $project = Project::where('project.GUID', '=', $GUID)
+            ->Join('projectactivity', function ($join) {
+                $join->on('project.GUID', '=', 'projectactivity.ProjectGUID');
 
-            $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
-        })
-        ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
-        ->leftJoin('aspnet_users', 'proponent.GUID', '=', 'aspnet_users.ProponentGUID')
-        ->Join('region', 'region.Region', '=', 'project.Region')
-        ->select(
-            'project.Purpose',
-            'project.Address AS Address', 
-            'project.Municipality  AS Municipality', 
-            'project.Province AS Province',  
-            'project.CreatedBy AS CreatedBy', 
-            'project.GUID AS GUID', 
-            'project.PreviousECCNo',
-            'proponent.ProponentName',
-            'project.ProjectName', 
-            'project.Region  AS Region', 
-            'project.LandAreaInSqM',
-            'project.Representative as Representative',
-            'project.Designation as Designation',
-            'project.Description as Description',
+                $join->whereRaw('projectactivity.ID IN (select MAX(a2.ID) from projectactivity as a2 join project as u2 on u2.GUID = a2.ProjectGUID group by u2.GUID)');
+            })
+            ->leftJoin('proponent', 'project.ProponentGUID', '=', 'proponent.GUID')
+            ->leftJoin('aspnet_users', 'proponent.GUID', '=', 'aspnet_users.ProponentGUID')
+            ->Join('region', 'region.Region', '=', 'project.Region')
+            ->select(
+                'project.Purpose',
+                'project.Address AS Address', 
+                'project.Municipality  AS Municipality', 
+                'project.Province AS Province',  
+                'project.CreatedBy AS CreatedBy', 
+                'project.GUID AS GUID', 
+                'project.PreviousECCNo',
+                'proponent.ProponentName',
+                'project.ProjectName', 
+                'project.Region  AS Region', 
+                'project.LandAreaInSqM',
+                'project.Representative as Representative',
+                'project.Designation as Designation',
+                'project.Description as Description',
 
-            'projectactivity.RoutedTo', 
-            'projectactivity.RoutedFrom', 
+                'projectactivity.RoutedTo', 
+                'projectactivity.RoutedFrom', 
 
-            'projectactivity.RoutedToOffice', 
-            'projectactivity.RoutedFromOffice', 
+                'projectactivity.RoutedToOffice', 
+                'projectactivity.RoutedFromOffice', 
 
-            'projectactivity.CreatedDate', 
-            'projectactivity.Status', 
-            'projectactivity.Details AS Remarks', 
-            'projectactivity.GUID AS ActivityGUID',
-            'projectactivity.FromDate AS FromDate',
-            'projectactivity.UpdatedDate AS UpdatedDate',
-            'aspnet_users.*',
-            'proponent.*',
+                'projectactivity.CreatedDate', 
+                'projectactivity.Status', 
+                'projectactivity.Details AS Remarks', 
+                'projectactivity.GUID AS ActivityGUID',
+                'projectactivity.FromDate AS FromDate',
+                'projectactivity.UpdatedDate AS UpdatedDate',
+                'aspnet_users.*',
+                'proponent.*',
 
-            'region.Address as EMBAddress',
-            'region.TelephoneNo as EMBTelephoneNo',
-            'region.EmailAddress as EMBEmailAddress',
+                'region.Address as EMBAddress',
+                'region.TelephoneNo as EMBTelephoneNo',
+                'region.EmailAddress as EMBEmailAddress',
             // 'region.WebSite as EMBWebSite',
-            'region.Director as Director',
-            'region.EIAChief as EIAChief',
-            'region.EIAChiefSignature',
-            'region.DirectorSignature',
-            'region.Designation as DirectorDesignation'
-        )
-        ->first();
+                'region.Director as Director',
+                'region.EIAChief as EIAChief',
+                'region.EIAChiefSignature',
+                'region.DirectorSignature',
+                'region.Designation as DirectorDesignation'
+            )
+            ->first();
 
-        $projectname = $project->ProjectName;
+            $projectname = $project->ProjectName;
 
-        return view('secured.for_actions.ecc_print_draft', compact('draft', 'project', 'projectname'));
+            return view('secured.for_actions.ecc_print_draft', compact('draft', 'project', 'projectname'));
 
         // $pdf = \PDF::loadView('secured.for_actions.ecc_print_draft', array('draft' => $draft, 'project' => $project));
-        
+            
         // $pdf->setOption('margin-top', 20)
 
         // ->setOption('margin-bottom', 20)
@@ -3052,7 +3110,7 @@ class ForActionsController extends Controller
         // return $pdf->stream();
 
 
-        
+            
         // $NewGUID = Uuid::generate()->string;
         // $GUID = Str::upper($NewGUID);
 
@@ -3074,110 +3132,198 @@ class ForActionsController extends Controller
         // $file = pathinfo($urlSavePDF);
 
         // $filesize = filesize($urlSavePDF) * 0.001;
-    }
+        }
 
-    public function ECCDraftData(Request $req)
-    {
-        $ProjectGUID = $req['ProjectGUID'];
+        public function ECCDraftData(Request $req)
+        {
+            $ProjectGUID = $req['ProjectGUID'];
 
-        $draft = ECCDraftPerProject::where('ecc_draft_per_project.ProjectGUID', $ProjectGUID)
-        ->leftJoin('environmental_management_per_project', 'environmental_management_per_project.ProjectGUID', '=', 'ecc_draft_per_project.ProjectGUID')
-        ->first();
-
-
-        return $draft;
-    }
-
-    public function PageSave(Request $req)
-    {
-        
-        $ProjectGUID = $req['ProjectGUID'];
-        $Page = $req['Page'];
-
-        if($Page == 1){
-
-            $Content = $req['content'];
-
-            DB::table('ecc_draft_per_project')
-            ->where('ProjectGUID','=', $ProjectGUID)
-            ->update([
-                'Body' => $Content,
-            ]);
-
-        } else if($Page == 2){
-
-            $ThisIsToCertify = $req['ThisIsToCertify'];
-            $ProjectDescription = $req['ProjectDescription'];
-            $ThisCertificateIsIssued = $req['ThisCertificateIsIssued'];
-
-            DB::table('ecc_draft_per_project')
-            ->where('ProjectGUID','=', $ProjectGUID)
-            ->update([
-                'ThisIsToCertify' => $ThisIsToCertify,
-                'ProjectDescription' => $ProjectDescription,
-                'ThisCertificateIsIssued' => $ThisCertificateIsIssued,
-            ]);
-
-        } else if($Page == 3) {
-            $SwornAccountabilityStatement = $req['SwornAccountabilityStatement'];
-
-            DB::table('ecc_draft_per_project')
-            ->where('ProjectGUID','=', $ProjectGUID)
-            ->update([
-                'SwornAccountabilityStatement' => $SwornAccountabilityStatement,
-            ]);
-        } else if($Page == 4) {
-            $ConstructionPhase = $req['ConstructionPhase'];
-            $OperationPhase = $req['OperationPhase'];
+            $draft = ECCDraftPerProject::where('ecc_draft_per_project.ProjectGUID', $ProjectGUID)
+            ->leftJoin('environmental_management_per_project', 'environmental_management_per_project.ProjectGUID', '=', 'ecc_draft_per_project.ProjectGUID')
+            ->first();
 
 
-            // DB::table('environmental_management_per_project')->insert([
-            //     'ProjectGUID' => $ProjectGUID,
-            //     'ConstructionPhase' => $ConstructionPhase,
-            //     'OperationPhase' => $OperationPhase,
-            // ]);
+            return $draft;
+        }
 
-            DB::table('environmental_management_per_project')
-            ->where('ProjectGUID','=', $ProjectGUID)
-            ->update([
-                'ConstructionPhase' => $ConstructionPhase,
-                'OperationPhase' => $OperationPhase,
-            ]);
-        } else if($Page == 5) {
-            $GeneralConditions = $req['GeneralConditions'];
+        public function generateTemplate(Request $req)
+        {
+            $GUID = $req['GUID'];
+            $Template = $req['Template'];
+            $Type = $req['Purpose'];
+        // $ActivityGUID = $req['ActivityGUID'];
 
-            DB::table('ecc_draft_per_project')
-            ->where('ProjectGUID','=', $ProjectGUID)
-            ->update([
-                'GeneralConditions' => $GeneralConditions,
-            ]);
-        } else if($Page == 6) {
-            $Restrictions = $req['Restrictions'];
+            $draft = ECCDraftPerProject::where('ecc_draft_per_project.ProjectGUID', $GUID)
+            ->leftJoin('environmental_management_per_project', 'environmental_management_per_project.ProjectGUID', '=', 'ecc_draft_per_project.ProjectGUID')
+            ->first();
 
-            DB::table('ecc_draft_per_project')
-            ->where('ProjectGUID','=', $ProjectGUID)
-            ->update([
-                'Restrictions' => $Restrictions,
-            ]);
-        } else if($Page == 7) {
-            $PAPT = $req['PAPT'];
+            if(!$draft){
+                $ECC = ECCDraft::where('ecc_draft.Template', $Template)
+                ->where('ecc_draft.Type', $Type)
+                ->leftJoin('environmental_management', function ($join) {
+                    $join->on('ecc_draft.Template', 'environmental_management.Template');
+                    $join->on('ecc_draft.Type', 'environmental_management.Type');
+                })
+                ->select(
+                    'ecc_draft.Template As Template',
+                    'ecc_draft.Type As Type',
+                    'ecc_draft.ProjectType As ProjectType',
+                    'ecc_draft.Subject As Subject',
+                    'ecc_draft.Body As Body',
+                    'ecc_draft.ThisIsToCertify As ThisIsToCertify',
+                    'ecc_draft.ProjectDescription As ProjectDescription',
+                    'ecc_draft.ProjectComponents As ProjectComponents',
+                    'ecc_draft.ThisCertificateIsIssued As ThisCertificateIsIssued',
+                    'ecc_draft.SwornAccountabilityStatement As SwornAccountabilityStatement',
+                    'ecc_draft.GeneralConditions As GeneralConditions',
+                    'ecc_draft.Restrictions As Restrictions',
+                    'ecc_draft.PAPT As PAPT',
 
-            DB::table('ecc_draft_per_project')
-            ->where('ProjectGUID','=', $ProjectGUID)
-            ->update([
-                'PAPT' => $PAPT,
-            ]);
+                    'environmental_management.Template As Template',
+                    'environmental_management.ConstructionPhase As ConstructionPhase',
+                    'environmental_management.OperationPhase As OperationPhase',
+                )->first();
+
+                DB::table('ecc_draft_per_project')->insert([
+                    'ProjectGUID' => $GUID,
+                    'Template' => $ECC->Template,
+                    'ProjectType' => $ECC->ProjectType,
+                    'Subject' => $ECC->Subject,
+                    'Body' => $ECC->Body,
+                    'ThisIsToCertify' => $ECC->ThisIsToCertify,
+                    'ProjectDescription' => $ECC->ProjectDescription,
+                    'ProjectComponents' => $ECC->ProjectComponents,
+                    'ThisCertificateIsIssued' => $ECC->ThisCertificateIsIssued,
+                    'SwornAccountabilityStatement' => $ECC->SwornAccountabilityStatement,
+                    'GeneralConditions' => $ECC->GeneralConditions,
+                    'Restrictions' => $ECC->Restrictions,
+                    'PAPT' => $ECC->PAPT,
+                ]);
+
+                DB::table('environmental_management_per_project')->insert([
+                    'ProjectGUID' => $GUID,
+                    'ConstructionPhase' => $ECC->ConstructionPhase,
+                    'OperationPhase' => $ECC->OperationPhase,
+                ]);    
+            }
+
+            $NewGUID = Uuid::generate()->string;
+            $NGUID = Str::upper($NewGUID);
+
+            $UserName = Session::get('data')['UserName'];
+            $ActivityGUID = Session::get('NewActivityGUID');
+            $NewActivityGUID = Str::upper($ActivityGUID);
+
+                // data to be insert into database
+            $data['GUID'] = $NGUID;
+            $data['ActivityGUID'] = $NewActivityGUID;
+            $data['Description'] = 'Draft ECC';
+            $data['Directory'] = public_path();
+            $data['FileName'] = 'Draft ECC';
+            $data['FilePath'] = 'ecc-draft-certificate?GUID=' . $GUID;
+                // $data['extension'] = $extension;
+            $data['FileSizeInKB'] = 0;
+            $data['CreatedBy'] = $UserName;
+
+
+            DB::table('projectactivityattachmenttemp')->insert($data);
+
+        }
+
+        public function PageSave(Request $req)
+        {
+            $ProjectGUID = $req['ProjectGUID'];
+            $Page = $req['Page'];
+
+            if($Page == 1){
+
+                $Content = $req['content'];
+
+                DB::table('ecc_draft_per_project')
+                ->where('ProjectGUID','=', $ProjectGUID)
+                ->update([
+                    'Body' => $Content,
+                ]);
+
+            } else if($Page == 2){
+
+                $ThisIsToCertify = $req['ThisIsToCertify'];
+                $ProjectDescription = $req['ProjectDescription'];
+                $ThisCertificateIsIssued = $req['ThisCertificateIsIssued'];
+
+                DB::table('ecc_draft_per_project')
+                ->where('ProjectGUID','=', $ProjectGUID)
+                ->update([
+                    'ThisIsToCertify' => $ThisIsToCertify,
+                    'ProjectDescription' => $ProjectDescription,
+                    'ThisCertificateIsIssued' => $ThisCertificateIsIssued,
+                ]);
+
+            } else if($Page == 3) {
+                $SwornAccountabilityStatement = $req['SwornAccountabilityStatement'];
+
+                DB::table('ecc_draft_per_project')
+                ->where('ProjectGUID','=', $ProjectGUID)
+                ->update([
+                    'SwornAccountabilityStatement' => $SwornAccountabilityStatement,
+                ]);
+            } else if($Page == 4) {
+                $ConstructionPhase = $req['ConstructionPhase'];
+                $OperationPhase = $req['OperationPhase'];
+
+                $EM = DB::table('environmental_management_per_project')->where('ProjectGUID', $ProjectGUID)->first();
+
+                if(!$EM){
+                    DB::table('environmental_management_per_project')->insert([
+                        'ProjectGUID' => $ProjectGUID,
+                        'ConstructionPhase' => $ConstructionPhase,
+                        'OperationPhase' => $OperationPhase,
+                    ]);
+                } else {
+                    DB::table('environmental_management_per_project')
+                    ->where('ProjectGUID','=', $ProjectGUID)
+                    ->update([
+                        'ConstructionPhase' => $ConstructionPhase,
+                        'OperationPhase' => $OperationPhase,
+                    ]);
+
+                }
+                
+            } else if($Page == 5) {
+                $GeneralConditions = $req['GeneralConditions'];
+
+                DB::table('ecc_draft_per_project')
+                ->where('ProjectGUID','=', $ProjectGUID)
+                ->update([
+                    'GeneralConditions' => $GeneralConditions,
+                ]);
+            } else if($Page == 6) {
+                $Restrictions = $req['Restrictions'];
+
+                DB::table('ecc_draft_per_project')
+                ->where('ProjectGUID','=', $ProjectGUID)
+                ->update([
+                    'Restrictions' => $Restrictions,
+                ]);
+            } else if($Page == 7) {
+                $PAPT = $req['PAPT'];
+
+                DB::table('ecc_draft_per_project')
+                ->where('ProjectGUID','=', $ProjectGUID)
+                ->update([
+                    'PAPT' => $PAPT,
+                ]);
+            }
+
+            
+
         }
 
         
 
+
+        
     }
-
-    
-
-
-    
-}
 
 
 

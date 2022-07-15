@@ -1,40 +1,40 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+<head>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
 
 
-    
+  
 
-    <link rel="stylesheet" href="../../adminlte/dist/css/AdminLTE.min.css">
+  <link rel="stylesheet" href="../../adminlte/dist/css/AdminLTE.min.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
-         folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="../../adminlte/dist/css/skins/_all-skins.min.css">
+     folder instead of downloading all of them to reduce the load. -->
+     <link rel="stylesheet" href="../../adminlte/dist/css/skins/_all-skins.min.css">
 
-    <!-- Bootstrap 3.3.7 -->
-    <!-- <link rel="stylesheet" href="../../adminlte/bower_components/bootstrap/dist/css/bootstrap.min.css"> -->
+     <!-- Bootstrap 3.3.7 -->
+     <!-- <link rel="stylesheet" href="../../adminlte/bower_components/bootstrap/dist/css/bootstrap.min.css"> -->
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
 
-    <link rel="stylesheet" href="https://d19vzq90twjlae.cloudfront.net/leaflet-0.7/leaflet.css" />
+     <link rel="stylesheet" href="https://d19vzq90twjlae.cloudfront.net/leaflet-0.7/leaflet.css" />
 
-    <link rel="stylesheet" href="../../adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+     <link rel="stylesheet" href="../../adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
 
-    <script src="https://d19vzq90twjlae.cloudfront.net/leaflet-0.7/leaflet.js">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js">
-    </script>
+     <script src="https://d19vzq90twjlae.cloudfront.net/leaflet-0.7/leaflet.js">
+     </script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js">
+     </script>
 
-    <!-- jQuery 3 -->
-    <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
+     <!-- jQuery 3 -->
+     <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
 
-    <script src="../../adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="../../adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-    <style>
+     <script src="../../adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+     <script src="../../adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+     <style>
       /*#map {position: absolute; top: 0; right: 0; bottom: 0; left: 0;}*/
     </style>
   </head>
@@ -44,63 +44,63 @@
         <!-- <a href="https://www.maptiler.com" style="position:absolute;left:10px;bottom:10px;z-index:999;"><img src="https://api.maptiler.com/resources/logo.svg" alt="MapTiler logo"></a>
         <div class="leaflet-bottom leaflet-right">
             <input type="button" id="Save" value="Save" class="leaflet-control btn-primary btn-lg pull-right"  style="height: 50px; width: 100px; margin-bottom: 400px" /> 
-        </div> -->
-      </div>
-    </div>
-    <div class="col-md-12">
-          <table class="table table-bordered" id="ProjectGeoCoordinatesTable" style="width: 100%">
-              <thead>
-                <th>Area</th>
-                <th>Type</th>
-                <th>DMS Latitude</th>
-                <th>DMS Longitude</th>            
-                <th>Decimal Latitude</th>
-                <th>Decimal Longitude</th>
-                <th hidden></th>
-                <th hidden></th>
-                <th hidden></th>
-              </thead>
-              <tbody id="geocoordinate_body">
-
-              </tbody>
-            </table>
+          </div> -->
         </div>
-<script>
+      </div>
+      <div class="col-md-12">
+        <table class="table table-bordered" id="ProjectGeoCoordinatesTable" style="width: 100%">
+          <thead>
+            <th>Area</th>
+            <th>Type</th>
+            <th>DMS Latitude</th>
+            <th>DMS Longitude</th>            
+            <th>Decimal Latitude</th>
+            <th>Decimal Longitude</th>
+            <th hidden></th>
+            <th hidden></th>
+            <th hidden></th>
+          </thead>
+          <tbody id="geocoordinate_body">
 
-  $(document).ready(function() {
+          </tbody>
+        </table>
+      </div>
+      <script>
 
-     MapsViewShapes();     
+        $(document).ready(function() {
 
-    $("#Save").on('click', function() {
-      alert('SS');
-    });
-  });
+         MapsViewShapes();     
 
-  function getCenterPoint(arr)
-  {
-    var minX, maxX, minY, maxY;
+         $("#Save").on('click', function() {
+          alert('SS');
+        });
+       });
 
-    for (var i = 0; i < arr.length; i++)
-    {
-      minX = (arr[i][0] < minX || minX == null) ? arr[i][0] : minX;
-      maxX = (arr[i][0] > maxX || maxX == null) ? arr[i][0] : maxX;
-      minY = (arr[i][1] < minY || minY == null) ? arr[i][1] : minY;
-      maxY = (arr[i][1] > maxY || maxY == null) ? arr[i][1] : maxY;
-    }
-    
-    return [(minX + maxX) / 2, (minY + maxY) / 2];
-  }
+        function getCenterPoint(arr)
+        {
+          var minX, maxX, minY, maxY;
 
-function MapsViewShapes()
-{
-  var arr1 = [];
-  var arr = [];
+          for (var i = 0; i < arr.length; i++)
+          {
+            minX = (arr[i][0] < minX || minX == null) ? arr[i][0] : minX;
+            maxX = (arr[i][0] > maxX || maxX == null) ? arr[i][0] : maxX;
+            minY = (arr[i][1] < minY || minY == null) ? arr[i][1] : minY;
+            maxY = (arr[i][1] > maxY || maxY == null) ? arr[i][1] : maxY;
+          }
+          
+          return [(minX + maxX) / 2, (minY + maxY) / 2];
+        }
 
-  $.ajax({
-    url: "{{route('getGeoTable')}}",
-    type: 'GET',
-    success: function(response){
-      var Area;
+        function MapsViewShapes()
+        {
+          var arr1 = [];
+          var arr = [];
+
+          $.ajax({
+            url: "{{route('getGeoTable')}}",
+            type: 'GET',
+            success: function(response){
+              var Area;
 
 
       //get all the data for centering
@@ -173,7 +173,7 @@ function MapsViewShapes()
     }
   });
 
-}
-    </script>
-  </body>
-</html>
+        }
+      </script>
+    </body>
+    </html>

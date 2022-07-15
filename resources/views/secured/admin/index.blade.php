@@ -1,14 +1,14 @@
 @extends('layouts.adminlte.default.layout-admin')
-  
+
 
 @section('header')
 <section class="content-header">
-        <h1 class="hidden-sm">
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-cog"></i>Manage Credentials</a></li>
-        </ol>
-    </section>
+  <h1 class="hidden-sm">
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-cog"></i>Manage Credentials</a></li>
+  </ol>
+</section>
 @stop
 
 
@@ -151,106 +151,106 @@
               </thead>
               <tbody></tbody>
             </table>
-          <!-- </div> -->
+            <!-- </div> -->
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <!-- <input type="checkbox" name="checkbox1"> -->
+    <!-- <input type="checkbox" name="checkbox1"> -->
 
-@stop
-<script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
-<!-- Bootstrap 3.3.7 -->
-<!-- <script src="../../adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js"></script> -->
-<!-- DataTables -->
-<script src="../../adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="../../adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    @stop
+    <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <!-- <script src="../../adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js"></script> -->
+    <!-- DataTables -->
+    <script src="../../adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="../../adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 
-<!-- SlimScroll -->
-<script src="../../adminlte/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-<!-- FastClick -->
-<script src="../../adminlte/bower_components/fastclick/lib/fastclick.js"></script>
-<!-- AdminLTE App -->
-<script src="../../adminlte/dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="../../adminlte/dist/js/demo.js"></script>
+    <!-- SlimScroll -->
+    <script src="../../adminlte/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <!-- FastClick -->
+    <script src="../../adminlte/bower_components/fastclick/lib/fastclick.js"></script>
+    <!-- AdminLTE App -->
+    <script src="../../adminlte/dist/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="../../adminlte/dist/js/demo.js"></script>
 
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js"></script> -->
 
-<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
 
-<script src="../../adminlte/dist/js/bootstrap-switch.js"></script>
+    <script src="../../adminlte/dist/js/bootstrap-switch.js"></script>
 
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyB6K1CFUQ1RwVJ-nyXxd6W0rfiIBe12Q&libraries=places" type="text/javascript"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyB6K1CFUQ1RwVJ-nyXxd6W0rfiIBe12Q&libraries=places" type="text/javascript"></script>
 
-<!-- iCheck 1.0.1 -->
-<script src="../../adminlte/plugins/iCheck/icheck.min.js"></script>
+    <!-- iCheck 1.0.1 -->
+    <script src="../../adminlte/plugins/iCheck/icheck.min.js"></script>
 
-<script>
-var UserOffice = "{{session('data')['UserOffice']}}";
-var UserName = "{{session('data')['UserName']}}";
-var UserRole = "{{session('data')['UserRole']}}";
+    <script>
+      var UserOffice = "{{session('data')['UserOffice']}}";
+      var UserName = "{{session('data')['UserName']}}";
+      var UserRole = "{{session('data')['UserRole']}}";
 
-$(document).ready(function(){
-  ResetSession();
-  localStorage.clear();
-  RegisteredUsers($("#office :selected").val());
+      $(document).ready(function(){
+        ResetSession();
+        localStorage.clear();
+        RegisteredUsers($("#office :selected").val());
 
-  $.ajax({
-        url: "{{route('getOffice')}}",
-        type: 'GET',
-        success: function(response){
-          $.each(response, function(index, value ) {
-            var option = "<option value='"+value['Location']+"'>"+value['Location']+"</option>";
-            $("#office").append(option); 
-          });
-        }
+        $.ajax({
+          url: "{{route('getOffice')}}",
+          type: 'GET',
+          success: function(response){
+            $.each(response, function(index, value ) {
+              var option = "<option value='"+value['Location']+"'>"+value['Location']+"</option>";
+              $("#office").append(option); 
+            });
+          }
+        });
+
+        $("#office").on("change", function() {
+          RegisteredUsers($("#office :selected").val());
+        });
+
       });
 
-  $("#office").on("change", function() {
-    RegisteredUsers($("#office :selected").val());
-  });
-
-});
-
-function ResetSession(){
-  $.ajax({
-    url: "{{route('ResetInputs')}}",
-    type: 'GET',
-    success: function(response){
-    }
-  });
-}
+      function ResetSession(){
+        $.ajax({
+          url: "{{route('ResetInputs')}}",
+          type: 'GET',
+          success: function(response){
+          }
+        });
+      }
 
 
-function NewDocument(result){
-  var href = "NewDocument/";
+      function NewDocument(result){
+        var href = "NewDocument/";
 
-  $.ajax({
-    url: "{{route('putExistingDataInSession')}}",
-    type: 'POST',
-    data: {
-      ProjectGUID : result,
-      _token: '{{csrf_token()}}',
-    },
-    success: function(response){
-      document.location = href + result;
-    }
-  }); 
-}
+        $.ajax({
+          url: "{{route('putExistingDataInSession')}}",
+          type: 'POST',
+          data: {
+            ProjectGUID : result,
+            _token: '{{csrf_token()}}',
+          },
+          success: function(response){
+            document.location = href + result;
+          }
+        }); 
+      }
 
-function checkbox(num, description)
-{
+      function checkbox(num, description)
+      {
 
   // $("input[name="+description+"]").click(function(){
     var checked = $("input[name="+description+"]").is(':checked');
     if(checked) {
-        if(!confirm('Are you sure you want to resume use of this program?')){         
-          $("input[name="+description+"]").prop('checked', false);
-          $("input[name="+description+"]").removeAttr("onclick");
-          $("input[name="+description+"]").attr("onclick", "checkbox(1,\'InECCOAS\' )");
-        }
+      if(!confirm('Are you sure you want to resume use of this program?')){         
+        $("input[name="+description+"]").prop('checked', false);
+        $("input[name="+description+"]").removeAttr("onclick");
+        $("input[name="+description+"]").attr("onclick", "checkbox(1,\'InECCOAS\' )");
+      }
     } else{
       if(!confirm('Are you sure you want to discontinue this program?')){
         $("input[name="+description+"]").prop('checked', true);
@@ -270,7 +270,7 @@ function checkbox(num, description)
   // }).then((result) => {
   //   /* Read more about isConfirmed, isDenied below */
   //   if (result.isConfirmed) {
-      
+    
   //   } else if (result.isDenied) {
   //     Swal.fire('Changes are not saved', '', 'info')
   //     $("input[name="+description+"]").prop('checked', false);

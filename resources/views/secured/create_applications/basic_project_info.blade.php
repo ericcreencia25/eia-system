@@ -1,26 +1,26 @@
 <style>
-div.col-md-12 {
-  padding-right: 0px;
-  padding-left: 0px; 
-}
+  div.col-md-12 {
+    padding-right: 0px;
+    padding-left: 0px; 
+  }
 
-div.col-md-6 {
-  padding-right: 1px;
-  padding-left: 1px; 
-}
+  div.col-md-6 {
+    padding-right: 1px;
+    padding-left: 1px; 
+  }
 </style>
 
 <div class="box-body">
   <div class="callout callout-default" style="background: #ccc; margin-bottom: 0px">
-  <div>
-    <button type="button" class="btn btn-primary pull-right" id="check_step_5">Confirm <i class="fa fa-fw fa-save"></i></button>
+    <div>
+      <button type="button" class="btn btn-primary pull-right" id="check_step_5">Confirm <i class="fa fa-fw fa-save"></i></button>
+    </div>
+    <h4><b>5.  BASIC PROJECT INFORMATION: 
+      <span id="proceed_5"></span>
+    </b><br></h4>
+    <i>Provide below the proponent and project information. All fields below are required.</i>
+    <br><br>
   </div>
-  <h4><b>5.  BASIC PROJECT INFORMATION: 
-    <span id="proceed_5"></span>
-  </b><br></h4>
-  <i>Provide below the proponent and project information. All fields below are required.</i>
-  <br><br>
-</div>
   <h4><b>PROPONENT INFORMATION</b></h4>
   <div class="col-md-12">
     <!---Left side--->
@@ -74,74 +74,74 @@ div.col-md-6 {
         <label>Establishment Name</label>
         <input type="text" class="form-control" placeholder="" id="establishment_name" required>
       </div> -->
-  <div class="col-md-12">
-    <!---Left side--->
-    <div class="col-md-6">
       <div class="col-md-12">
-        <label>Project Name</label>
-        <input type="text" class="form-control" placeholder="" id="project_name" required>
-      </div>
-      <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
-        <label>Project Location: Specific Address</label>
-        <input type="text" class="form-control" placeholder="" id="project_location">
-      </div>
-      <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
-        <label>Municipality</label>
-        <select class="form-control select2" id='municipality' name='municipality' style="width: 100%;">
-        </select>
-      </div>
-      <div class="col-md-6" >
-        <label>Total Project Land Area (sq. m.)</label>
-        <input type="text" class="form-control" placeholder="" id="project_landarea">
-      </div>
-      <div class="col-md-6">
-        <label>Total Projects/Building Footprint Area (sq. m)</label>
-        <input type="text" class="form-control" placeholder="" id="project_footprintarea">
+        <!---Left side--->
+        <div class="col-md-6">
+          <div class="col-md-12">
+            <label>Project Name</label>
+            <input type="text" class="form-control" placeholder="" id="project_name" required>
+          </div>
+          <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
+            <label>Project Location: Specific Address</label>
+            <input type="text" class="form-control" placeholder="" id="project_location">
+          </div>
+          <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
+            <label>Municipality</label>
+            <select class="form-control select2" id='municipality' name='municipality' style="width: 100%;">
+            </select>
+          </div>
+          <div class="col-md-6" >
+            <label>Total Project Land Area (sq. m.)</label>
+            <input type="text" class="form-control" placeholder="" id="project_landarea">
+          </div>
+          <div class="col-md-6">
+            <label>Total Projects/Building Footprint Area (sq. m)</label>
+            <input type="text" class="form-control" placeholder="" id="project_footprintarea">
+          </div>
+        </div>
+        <!---right side--->
+        <div class="col-md-6">
+          <div class="col-md-12">
+            <label>Mailing Address</label>
+            <input type="text" class="form-control" placeholder="" id="mailing_address">
+          </div>
+          <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
+            <label>Province</label>
+            <select class="form-control" id="province" name="province">
+            </select>
+          </div>
+          <div class="col-md-6  mb-3" style="padding-top: 10px; padding-bottom: 10px;">
+            <label>Zone Classification (i.e. industrial, residential)</label>
+            <input type="text" class="form-control" placeholder="" id="zone_classification">
+          </div>
+          <div class="col-md-6">
+            <label>No. of Employees</label>
+            <input type="text" class="form-control" placeholder="" id="no_of_employees">
+          </div>
+          <div class="col-md-6">
+            <label>Total Project Cost (Php)</label>
+            <input type="text" class="form-control" placeholder="" id="total_project_cost">
+          </div>
+        </div>
       </div>
     </div>
-    <!---right side--->
-    <div class="col-md-6">
-      <div class="col-md-12">
-        <label>Mailing Address</label>
-        <input type="text" class="form-control" placeholder="" id="mailing_address">
-      </div>
-      <div class="col-md-6" style="padding-top: 10px; padding-bottom: 10px;">
-        <label>Province</label>
-        <select class="form-control" id="province" name="province">
-        </select>
-      </div>
-      <div class="col-md-6  mb-3" style="padding-top: 10px; padding-bottom: 10px;">
-        <label>Zone Classification (i.e. industrial, residential)</label>
-        <input type="text" class="form-control" placeholder="" id="zone_classification">
-      </div>
-      <div class="col-md-6">
-        <label>No. of Employees</label>
-        <input type="text" class="form-control" placeholder="" id="no_of_employees">
-      </div>
-      <div class="col-md-6">
-        <label>Total Project Cost (Php)</label>
-        <input type="text" class="form-control" placeholder="" id="total_project_cost">
-      </div>
+
+    <div class="overlay" style="display:none;">
+      <div class="spinner"></div>
+      <br/>
+      <h3 style="font-family: Arial, Sans; color: white;" id="overlay-message">Saving your changes. Please be patient</h3>
     </div>
-  </div>
-</div>
-
-<div class="overlay" style="display:none;">
-    <div class="spinner"></div>
-    <br/>
-    <h3 style="font-family: Arial, Sans; color: white;" id="overlay-message">Saving your changes. Please be patient</h3>
-</div>
 
 
-<script>
-  $(document).ready(function(){
-    $('.select2').select2();
+    <script>
+      $(document).ready(function(){
+        $('.select2').select2();
 
-    var now = moment().format("YYYY/MM/DD");
-    var start_date = now;
-    var end_date = now;
+        var now = moment().format("YYYY/MM/DD");
+        var start_date = now;
+        var end_date = now;
 
-    var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        var date = new Date(), y = date.getFullYear(), m = date.getMonth();
 
     //get First day of the current month
     var firstDay = new Date(y, m, 1);
@@ -380,7 +380,7 @@ div.col-md-6 {
                   $("#step_5").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 
                   $('#myTab li a')[5].click();
-                    location.reload();
+                  location.reload();
                 }
               });
             });

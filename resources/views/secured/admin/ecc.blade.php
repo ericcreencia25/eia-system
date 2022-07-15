@@ -360,108 +360,108 @@
   var ComponentGUID = '{{ $Project->ComponentGUID}}';
   var Representative = '{{ $Project->CreatedBy}}';
 
-$(function (){
+  $(function (){
 
-  bsCustomFileInput.init();
+    bsCustomFileInput.init();
 
-  $('#getProjectTypeAdmin').DataTable({
-    "destroy" : true,
-    "paging": false,
-    "lengthChange": false,
-    "searching": false,
-    "ordering": false,
-    "info": false,
-    "autoWidth": true,
-    "responsive": true,
-    "ajax": {
-      "url": "{{route('getProjectTypeAdmin')}}",
-      "type": "POST",
-      "data": {
-        ComponentGUID : ComponentGUID,
-        _token: '{{csrf_token()}}' ,
+    $('#getProjectTypeAdmin').DataTable({
+      "destroy" : true,
+      "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": false,
+      "info": false,
+      "autoWidth": true,
+      "responsive": true,
+      "ajax": {
+        "url": "{{route('getProjectTypeAdmin')}}",
+        "type": "POST",
+        "data": {
+          ComponentGUID : ComponentGUID,
+          _token: '{{csrf_token()}}' ,
+        },
       },
-    },
-    "columns": [
-    {data: 'ProjectType', name: 'ProjectType'},
-    {data: 'ProjectSubType', name: 'ProjectSubType'},
-    {data: 'ProjectSpecificType', name: 'ProjectSpecificType'},
-    {data: 'ProjectSpecificSubType', name: 'ProjectSpecificSubType'},
-    {data: 'Parameter', name: 'Parameter'},
-    {data: 'UnitOfMeasure', name: 'UnitOfMeasure'},
-    {data: 'ReportType', name: 'ReportType'},
-    ],
-    "language": 
-    {
-      'loadingRecords': '&nbsp;',
-      'processing': '<div class="spinner"></div>Processing...'
-    },
-    "fnDrawCallback": function() {
-      $("input[data-bootstrap-switch]").each(function(){
-        $(this).bootstrapSwitch('state', $(this).prop('checked'));
-      })
-    },
-  });
-
-  $('#getUserAccountsAdmin').DataTable({
-    "destroy" : true,
-    "paging": false,
-    "lengthChange": false,
-    "searching": false,
-    "ordering": false,
-    "info": false,
-    "autoWidth": true,
-    "responsive": true,
-    "ajax": {
-      "url": "{{route('getUserAccountsAdmin')}}",
-      "type": "POST",
-      "data": {
-        Representative : Representative,
-        _token: '{{csrf_token()}}' ,
+      "columns": [
+      {data: 'ProjectType', name: 'ProjectType'},
+      {data: 'ProjectSubType', name: 'ProjectSubType'},
+      {data: 'ProjectSpecificType', name: 'ProjectSpecificType'},
+      {data: 'ProjectSpecificSubType', name: 'ProjectSpecificSubType'},
+      {data: 'Parameter', name: 'Parameter'},
+      {data: 'UnitOfMeasure', name: 'UnitOfMeasure'},
+      {data: 'ReportType', name: 'ReportType'},
+      ],
+      "language": 
+      {
+        'loadingRecords': '&nbsp;',
+        'processing': '<div class="spinner"></div>Processing...'
       },
-    },
-    "columns": [
-    {data: 'UserName', name: 'UserName'},
-    {data: 'Designation', name: 'Designation'},
-    {data: 'Email', name: 'Email'},
-    {data: 'BirthDate', name: 'BirthDate'},
-    {data: 'MobileNo', name: 'MobileNo'},
-    {data: 'GovernmentID', name: 'GovernmentID'},
-    {data: 'AuthorizationLetter', name: 'AuthorizationLetter'},
-    {data: 'SecDTIRegistration', name: 'SecDTIRegistration'},
-
-    ],
-    "language": 
-    {
-      'loadingRecords': '&nbsp;',
-      'processing': '<div class="spinner"></div>Processing...'
-    },
-    "fnDrawCallback": function() {
-      $("input[data-bootstrap-switch]").each(function(){
-        $(this).bootstrapSwitch('state', $(this).prop('checked'));
-      })
-    },
-  });
-
-  $('#getAttachmentsAdmin').DataTable({
-    "destroy" : true,
-    "paging": false,
-    "lengthChange": false,
-    "searching": false,
-    "ordering": false,
-    "info": false,
-    "autoWidth": true,
-    "responsive": true,
-    "ajax": {
-      "url": "{{route('getAttachmentsAdmin')}}",
-      "type": "POST",
-      "data": {
-        ProjectGUID : ProjectGUID,
-        _token: '{{csrf_token()}}' ,
+      "fnDrawCallback": function() {
+        $("input[data-bootstrap-switch]").each(function(){
+          $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        })
       },
-    },
-    "columns": [
-    {data: 'Timestamp', name: 'Timestamp'},
-    {data: 'Description', name: 'Description'},
+    });
+
+    $('#getUserAccountsAdmin').DataTable({
+      "destroy" : true,
+      "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": false,
+      "info": false,
+      "autoWidth": true,
+      "responsive": true,
+      "ajax": {
+        "url": "{{route('getUserAccountsAdmin')}}",
+        "type": "POST",
+        "data": {
+          Representative : Representative,
+          _token: '{{csrf_token()}}' ,
+        },
+      },
+      "columns": [
+      {data: 'UserName', name: 'UserName'},
+      {data: 'Designation', name: 'Designation'},
+      {data: 'Email', name: 'Email'},
+      {data: 'BirthDate', name: 'BirthDate'},
+      {data: 'MobileNo', name: 'MobileNo'},
+      {data: 'GovernmentID', name: 'GovernmentID'},
+      {data: 'AuthorizationLetter', name: 'AuthorizationLetter'},
+      {data: 'SecDTIRegistration', name: 'SecDTIRegistration'},
+
+      ],
+      "language": 
+      {
+        'loadingRecords': '&nbsp;',
+        'processing': '<div class="spinner"></div>Processing...'
+      },
+      "fnDrawCallback": function() {
+        $("input[data-bootstrap-switch]").each(function(){
+          $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        })
+      },
+    });
+
+    $('#getAttachmentsAdmin').DataTable({
+      "destroy" : true,
+      "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": false,
+      "info": false,
+      "autoWidth": true,
+      "responsive": true,
+      "ajax": {
+        "url": "{{route('getAttachmentsAdmin')}}",
+        "type": "POST",
+        "data": {
+          ProjectGUID : ProjectGUID,
+          _token: '{{csrf_token()}}' ,
+        },
+      },
+      "columns": [
+      {data: 'Timestamp', name: 'Timestamp'},
+      {data: 'Description', name: 'Description'},
     // {data: 'Input', name: 'Input'},
     {data: 'Upload', name: 'Upload'},
 
@@ -477,116 +477,116 @@ $(function (){
       })
     },
   });
-  
-  $('#getRoutingHistoryAdmin').DataTable({
-    "destroy" : true,
-    "paging": false,
-    "lengthChange": false,
-    "searching": false,
-    "ordering": false,
-    "info": false,
-    "autoWidth": true,
-    "responsive": true,
-    "ajax": {
-      "url": "{{route('getRoutingHistoryAdmin')}}",
-      "type": "POST",
-      "data": {
-        ProjectGUID : ProjectGUID,
-        _token: '{{csrf_token()}}' ,
+    
+    $('#getRoutingHistoryAdmin').DataTable({
+      "destroy" : true,
+      "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": false,
+      "info": false,
+      "autoWidth": true,
+      "responsive": true,
+      "ajax": {
+        "url": "{{route('getRoutingHistoryAdmin')}}",
+        "type": "POST",
+        "data": {
+          ProjectGUID : ProjectGUID,
+          _token: '{{csrf_token()}}' ,
+        },
       },
-    },
-    "columns": [
-    {data: 'Timestamp', name: 'Timestamp'},
-    {data: 'RoutedFrom', name: 'RoutedFrom'},
-    {data: 'FromOffice', name: 'FromOffice'},
-    {data: 'RoutedTo', name: 'RoutedTo'},
-    {data: 'ToOffice', name: 'ToOffice'},
+      "columns": [
+      {data: 'Timestamp', name: 'Timestamp'},
+      {data: 'RoutedFrom', name: 'RoutedFrom'},
+      {data: 'FromOffice', name: 'FromOffice'},
+      {data: 'RoutedTo', name: 'RoutedTo'},
+      {data: 'ToOffice', name: 'ToOffice'},
 
-    ],
-    "language": 
-    {
-      'loadingRecords': '&nbsp;',
-      'processing': '<div class="spinner"></div>Processing...'
-    },
-    "fnDrawCallback": function() {
-      $("input[data-bootstrap-switch]").each(function(){
-        $(this).bootstrapSwitch('state', $(this).prop('checked'));
-      })
-    },
-  });
-
-  $('#getRequirementsAdmin').DataTable({
-    "destroy" : true,
-    "paging": false,
-    "lengthChange": false,
-    "searching": false,
-    "ordering": false,
-    "info": false,
-    "autoWidth": true,
-    "responsive": true,
-    "ajax": {
-      "url": "{{route('getRequirementsAdmin')}}",
-      "type": "POST",
-      "data": {
-        ProjectGUID : ProjectGUID,
-        _token: '{{csrf_token()}}' ,
+      ],
+      "language": 
+      {
+        'loadingRecords': '&nbsp;',
+        'processing': '<div class="spinner"></div>Processing...'
       },
-    },
-    "columns": [
-    {data: 'Compliant', name: 'Compliant'},
-    {data: 'Required', name: 'Required'},
-    {data: 'Description', name: 'Description'},
-
-    ],
-    "language": 
-    {
-      'loadingRecords': '&nbsp;',
-      'processing': '<div class="spinner"></div>Processing...'
-    },
-    "fnDrawCallback": function() {
-      $("input[data-bootstrap-switch]").each(function(){
-        $(this).bootstrapSwitch('state', $(this).prop('checked'));
-      })
-    },
-  });
-
-  $('#getProcessingTimeAdmin').DataTable({
-    "destroy" : true,
-    "paging": false,
-    "lengthChange": false,
-    "searching": false,
-    "ordering": false,
-    "info": false,
-    "autoWidth": true,
-    "responsive": true,
-    "ajax": {
-      "url": "{{route('getProcessingTimeAdmin')}}",
-      "type": "POST",
-      "data": {
-        ProjectGUID : ProjectGUID,
-        _token: '{{csrf_token()}}' ,
+      "fnDrawCallback": function() {
+        $("input[data-bootstrap-switch]").each(function(){
+          $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        })
       },
-    },
-    "columns": [
-    {data: 'Timestamp', name: 'Timestamp'},
-    {data: 'RoutedFrom', name: 'RoutedFrom'},
-    {data: 'RoutedTo', name: 'RoutedTo'},
-    {data: 'Status', name: 'Status'},
-    {data: 'AccumulatedDays', name: 'AccumulatedDays'},
+    });
 
-    ],
-    "language": 
-    {
-      'loadingRecords': '&nbsp;',
-      'processing': '<div class="spinner"></div>Processing...'
-    },
-    "fnDrawCallback": function() {
-      $("input[data-bootstrap-switch]").each(function(){
-        $(this).bootstrapSwitch('state', $(this).prop('checked'));
-      })
-    },
+    $('#getRequirementsAdmin').DataTable({
+      "destroy" : true,
+      "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": false,
+      "info": false,
+      "autoWidth": true,
+      "responsive": true,
+      "ajax": {
+        "url": "{{route('getRequirementsAdmin')}}",
+        "type": "POST",
+        "data": {
+          ProjectGUID : ProjectGUID,
+          _token: '{{csrf_token()}}' ,
+        },
+      },
+      "columns": [
+      {data: 'Compliant', name: 'Compliant'},
+      {data: 'Required', name: 'Required'},
+      {data: 'Description', name: 'Description'},
+
+      ],
+      "language": 
+      {
+        'loadingRecords': '&nbsp;',
+        'processing': '<div class="spinner"></div>Processing...'
+      },
+      "fnDrawCallback": function() {
+        $("input[data-bootstrap-switch]").each(function(){
+          $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        })
+      },
+    });
+
+    $('#getProcessingTimeAdmin').DataTable({
+      "destroy" : true,
+      "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": false,
+      "info": false,
+      "autoWidth": true,
+      "responsive": true,
+      "ajax": {
+        "url": "{{route('getProcessingTimeAdmin')}}",
+        "type": "POST",
+        "data": {
+          ProjectGUID : ProjectGUID,
+          _token: '{{csrf_token()}}' ,
+        },
+      },
+      "columns": [
+      {data: 'Timestamp', name: 'Timestamp'},
+      {data: 'RoutedFrom', name: 'RoutedFrom'},
+      {data: 'RoutedTo', name: 'RoutedTo'},
+      {data: 'Status', name: 'Status'},
+      {data: 'AccumulatedDays', name: 'AccumulatedDays'},
+
+      ],
+      "language": 
+      {
+        'loadingRecords': '&nbsp;',
+        'processing': '<div class="spinner"></div>Processing...'
+      },
+      "fnDrawCallback": function() {
+        $("input[data-bootstrap-switch]").each(function(){
+          $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        })
+      },
+    });
   });
-});
 
 function uploadFile(description, id, ActivityGUID)
 {

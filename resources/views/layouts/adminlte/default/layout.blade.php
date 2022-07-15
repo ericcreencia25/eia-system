@@ -60,12 +60,6 @@
 
   <link rel="stylesheet" href="../../adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
-  <script src="https://cdn.tiny.cloud/1/u1zby00l4hbcsuf7u8q6mm6iekqmrs3txm1ih2nk2x23fy21/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-
-  <script>
-             tinymce.init({
-               selector: 'textarea#editor', });
-        </script>
 
 
 </head>
@@ -276,10 +270,6 @@
 <!---sweetalert2--->
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
-<script src="../../adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-
-<script src="https://cdn.tiny.cloud/1/u1zby00l4hbcsuf7u8q6mm6iekqmrs3txm1ih2nk2x23fy21/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 </body>
 </html>
 

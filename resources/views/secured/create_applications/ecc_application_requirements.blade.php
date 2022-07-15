@@ -15,13 +15,13 @@
 
 <div class="box-body">
     <div class="callout callout-default" style="background: #ccc; margin-bottom: 0px">
-    <div>
-        <button type="button" class="btn btn-primary pull-right" id="check_step_7">Confirm <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
+        <div>
+            <button type="button" class="btn btn-primary pull-right" id="check_step_7">Confirm <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
+        </div>
+        <h4><b>7. ECC Application Requirements</b><br></h4>
+        <i>Click the browse button to select the scanned copy of the requirement then click the 'Upload' arrow to attach the file or the bin icon to remove the uploaded file. You can click the description to view the uploaded file. Only PDF file is allowed not larger than 10MB.</i>
+        <br><br>
     </div>
-    <h4><b>7. ECC Application Requirements</b><br></h4>
-    <i>Click the browse button to select the scanned copy of the requirement then click the 'Upload' arrow to attach the file or the bin icon to remove the uploaded file. You can click the description to view the uploaded file. Only PDF file is allowed not larger than 10MB.</i>
-    <br><br>
-</div>
     <div class="box-body no-padding">
         <table class="table table-bordered" id="ApplicationRequirements" style="width: 100%;  display: table; table-layout: fixed;" >
             <thead>
@@ -88,7 +88,7 @@
                     IsGovProject : IsGovProject,
                     InTenInstrument : InTenInstrument,
                     IsAncestralDomain : IsAncestralDomain,
-                     _token: '{{csrf_token()}}' ,
+                    _token: '{{csrf_token()}}' ,
                 }
             },
             columns: [
@@ -155,7 +155,7 @@
                     text: 'You need to attach the electronic copy of the requirements.',
                     // footer: '<a href="">Why do I have this issue?</a>',
                     width: '850px'
-                  });
+                });
             }
         });
     });
@@ -192,7 +192,7 @@
               confirmButtonColor: '#3085d6',
               cancelButtonColor: '#d33',
               confirmButtonText: 'Confirm'
-            }).then((result) => {
+          }).then((result) => {
               if (result.isConfirmed) {
                  // $("#modal-default").modal('show');
                 // AJAX request 
@@ -243,49 +243,49 @@
 
                             Swal.fire({
                                 icon: 'success',
-                              title: response['message'],
-                              showDenyButton: false,
-                              showCancelButton: false,
-                              confirmButtonText: 'Confirm',
+                                title: response['message'],
+                                showDenyButton: false,
+                                showCancelButton: false,
+                                confirmButtonText: 'Confirm',
                               // denyButtonText: `Don't save`,
-                            }).then((result) => {
+                          }).then((result) => {
                               /* Read more about isConfirmed, isDenied below */
                               if (result.dismiss || result.isConfirmed) {
                                 location.reload();
-                              } else if (result.isDenied) {
+                            } else if (result.isDenied) {
                                 Swal.fire('Changes are not saved', '', 'info')
-                              }
-                            })
+                            }
+                        })
 
-                        } else {
-                            alert("error : " + JSON.stringify(response['error']) );
-                        }
-                        
-                    },
-                    error: function(response){
-                        alert("error : " + JSON.stringify(response) );
+                      } else {
+                        alert("error : " + JSON.stringify(response['error']) );
                     }
-                });
-              }
+                    
+                },
+                error: function(response){
+                    alert("error : " + JSON.stringify(response) );
+                }
+            });
+            }
 
               // $('#modal-default').on('hidden.bs.modal', function () {
               //   location.reload();
               //     // do something…
               //   })
-            })
-        }else{
-            Swal.fire({
-                icon: 'warning',
-                title: 'Please select a file.',
-                showConfirmButton: false,
-                timer: 1300,
-                width: '850px'
-            });
-        }
+          })
+      }else{
+        Swal.fire({
+            icon: 'warning',
+            title: 'Please select a file.',
+            showConfirmButton: false,
+            timer: 1300,
+            width: '850px'
+        });
     }
+}
 
-    function deleteFile(TempGUID){
-        var fd = new FormData();
+function deleteFile(TempGUID){
+    var fd = new FormData();
 
             // Append data 
             fd.append('TempGUID', TempGUID);
@@ -334,4 +334,4 @@
                 }
             })
         }
-</script>
+    </script>

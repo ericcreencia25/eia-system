@@ -12,6 +12,8 @@ use App\Models\ProjectActivity;
 use App\Models\ActionRequiredPerson;
 use App\Models\ProjectActivityAttachment;
 use App\Models\ProjectActivityAttachmentTemp;
+use App\Models\ECCDraft;
+use App\Models\ECCDraftPerProject;
 use Illuminate\Http\Request;
 use Session;
 use App\Http\Controllers\AspnetUserController;
@@ -33,8 +35,8 @@ use Illuminate\Support\Facades\Hash;
 
 // use PhpOffice\PhpWord\TemplateProcessor;
 use \PhpOffice\PhpWord\TemplateProcessor,
-    \PhpOffice\PhpWord\Shared\Html,
-    \PhpOffice\PhpWord\PhpWord;
+\PhpOffice\PhpWord\Shared\Html,
+\PhpOffice\PhpWord\PhpWord;
 
 use File;
 use PDF;
@@ -130,7 +132,7 @@ class AdministrationsController extends Controller
                 $details = '<center><label><input name="InECCOAS_'.$user->UserId.'" style="width: 30px; height: 30px" type="checkbox" class="flat-red" onclick="checkbox(0,\'InECCOAS_'.$user->UserId.'\' )"></label></center>';
             }
 
-              return $details;
+            return $details;
         })
         ->addColumn('DefaultRecipient', function($user){
 
@@ -148,7 +150,7 @@ class AdministrationsController extends Controller
         })
         ->addColumn('InCNCOAS', function($user){
             if($user->InCNCOAS == 1){
-                    
+                
                 $details = '<center><label><input name="InECCOAS_'.$user->UserId.'" style="width: 30px; height: 30px" type="checkbox" class="flat-red" onclick="checkbox(0,\'InECCOAS_'.$user->UserId.'\' )" checked></label></center>';
 
 
@@ -403,7 +405,7 @@ class AdministrationsController extends Controller
                 </label>';
             }
 
-              return $details;
+            return $details;
         })
         ->addColumn('CNC', function($ActionRequiredPerson){
             if($ActionRequiredPerson->InCNCOAS == 1){
@@ -554,24 +556,24 @@ class AdministrationsController extends Controller
 
         $component = Component::leftJoin('componentthreshold', 'component.GUID', '=', 'componentthreshold.ComponentGUID')
         ->where('component.GUID', $ComponentGUID)
-            ->select(
-                'component.GUID as GUID',
-                'component.ProjectType as ProjectType',
-                'component.ProjectSubType as ProjectSubType',
-                'component.ProjectSpecificSubType as ProjectSpecificSubType',
-                'component.ProjectSpecificType as ProjectSpecificType',
-                'component.Parameter as Parameter',
-                'component.UnitOfMeasure as UnitOfMeasure',
+        ->select(
+            'component.GUID as GUID',
+            'component.ProjectType as ProjectType',
+            'component.ProjectSubType as ProjectSubType',
+            'component.ProjectSpecificSubType as ProjectSpecificSubType',
+            'component.ProjectSpecificType as ProjectSpecificType',
+            'component.Parameter as Parameter',
+            'component.UnitOfMeasure as UnitOfMeasure',
 
-                'componentthreshold.Category as Category',
-                'componentthreshold.Minimum',
-                'componentthreshold.Maximum',
-                'componentthreshold.ReportType as ReportType',
-                'componentthreshold.GUID as componentthresholdGUID',
-                'componentthreshold.ReferenceID',
-            )
-            ->orderByRaw('componentthreshold.ID')
-            ->get();
+            'componentthreshold.Category as Category',
+            'componentthreshold.Minimum',
+            'componentthreshold.Maximum',
+            'componentthreshold.ReportType as ReportType',
+            'componentthreshold.GUID as componentthresholdGUID',
+            'componentthreshold.ReferenceID',
+        )
+        ->orderByRaw('componentthreshold.ID')
+        ->get();
 
         return DataTables::of($component)
         ->addColumn('Category', function($component){
@@ -677,9 +679,9 @@ class AdministrationsController extends Controller
         return DataTables::of($attachments)
         ->addColumn('Description', function($attachments){
             $details = '<div id="">
-                <a title="Click here to view the uploaded file" target="_blank" style="text-decoration:none;" 
-                href="'.url($attachments->FilePath).'">'.$attachments->Description.'</a>
-                </div>';
+            <a title="Click here to view the uploaded file" target="_blank" style="text-decoration:none;" 
+            href="'.url($attachments->FilePath).'">'.$attachments->Description.'</a>
+            </div>';
 
             return $details;
         })
@@ -691,12 +693,12 @@ class AdministrationsController extends Controller
         ->addColumn('Upload', function($attachments){
             $details = '<form id="multi-file-upload-ajax" enctype="multipart/form-data">';
             $details .= '<div class="form-group row">
-                            <div class="col-sm-6"><input id="files_'.$attachments->ID.'" type="file" name="files" /></div>
-                            <div class="col-sm-6">
-                                <button type="button" class="btn btn-primary btn-sm" name="submit" onclick="uploadFile(\''. $attachments->Description.'\', \''. $attachments->ID.'\', \''. $attachments->ActivityGUID.'\')" ><i class="fa fa-upload"></i> Upload</button>
-                            </div>
-                        </div>
-                    </form>';
+            <div class="col-sm-6"><input id="files_'.$attachments->ID.'" type="file" name="files" /></div>
+            <div class="col-sm-6">
+            <button type="button" class="btn btn-primary btn-sm" name="submit" onclick="uploadFile(\''. $attachments->Description.'\', \''. $attachments->ID.'\', \''. $attachments->ActivityGUID.'\')" ><i class="fa fa-upload"></i> Upload</button>
+            </div>
+            </div>
+            </form>';
 
             return $details;
         })
@@ -774,21 +776,21 @@ class AdministrationsController extends Controller
         ->addColumn('Compliant', function($project){
             if($project->Compliant == 1){
                 $details = '<center><div class="form-group">
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" checked disabled>
-                    </label>
-                  </div>
-                  </div>';
-              } else {
+                <div class="checkbox">
+                <label>
+                <input type="checkbox" checked disabled>
+                </label>
+                </div>
+                </div>';
+            } else {
                 $details = '<center><div class="form-group">
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" disabled>
-                    </label>
-                  </div>
-                  </div>';
-              }
+                <div class="checkbox">
+                <label>
+                <input type="checkbox" disabled>
+                </label>
+                </div>
+                </div>';
+            }
 
             // if($project->Compliant == 1){
             //     $details = 'Complied';
@@ -819,21 +821,21 @@ class AdministrationsController extends Controller
 
             if($project->Required == 1){
                 $details = '<center><div class="form-group">
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" checked disabled>
-                    </label>
-                  </div>
-                  </div>';
-              } else {
+                <div class="checkbox">
+                <label>
+                <input type="checkbox" checked disabled>
+                </label>
+                </div>
+                </div>';
+            } else {
                 $details = '<center><div class="form-group">
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" disabled>
-                    </label>
-                  </div>
-                  </div>';
-              }
+                <div class="checkbox">
+                <label>
+                <input type="checkbox" disabled>
+                </label>
+                </div>
+                </div>';
+            }
 
             // if( $project->Required == 1){ 
             //     $Required = "Required" ;
@@ -908,77 +910,222 @@ class AdministrationsController extends Controller
             'file' => 'required|mimes:pdf|max:2048'
         ]);
 
-      if ($validator->fails()) {
+        if ($validator->fails()) {
 
-         $rtrn['success'] = 0;
+           $rtrn['success'] = 0;
          $rtrn['error'] = $validator->errors()->first('file');// Error response
 
-      }else{
-         if($request->file('file')) {
+     }else{
+       if($request->file('file')) {
 
-             $file = $request->file('file');
-             $filename = $file->getClientOriginalName();
-             
+           $file = $request->file('file');
+           $filename = $file->getClientOriginalName();
+           
              // $filename = $NewGUID;
-             
+           
              // filesize
-             $size = $file->getSize();
-             $filesize = $size * 0.001;
+           $size = $file->getSize();
+           $filesize = $size * 0.001;
              // File extension
-             $extension = $file->getClientOriginalExtension();
+           $extension = $file->getClientOriginalExtension();
 
-             $path = public_path('files/'.$ProjectGUID);
+           $path = public_path('files/'.$ProjectGUID);
                 // $savedFiles = $pdf->saveAs($urlSavePDF);
 
-            if(!File::exists($path)) {
-                File::makeDirectory($path, $mode = 0755, true, true);
-                    
+           if(!File::exists($path)) {
+            File::makeDirectory($path, $mode = 0755, true, true);
+            
                 // File upload location
-                $location = 'files/'.$ProjectGUID.'/';
+            $location = 'files/'.$ProjectGUID.'/';
 
                 // // Upload file
-                $file->move($location,$NewGUID.'.'.$extension);
+            $file->move($location,$NewGUID.'.'.$extension);
 
-            } else {
-                $location = 'files/'.$ProjectGUID.'/';
+        } else {
+            $location = 'files/'.$ProjectGUID.'/';
 
-                $file->move($location,$NewGUID.'.'.$extension);
-            }
+            $file->move($location,$NewGUID.'.'.$extension);
+        }
 
              // File path
              // $filepath = public_path('files/'.$NewGUID.'.'.$extension);
-             $filepath = 'files/'.$ProjectGUID.'/'.$NewGUID.'.'.$extension;
+        $filepath = 'files/'.$ProjectGUID.'/'.$NewGUID.'.'.$extension;
 
              // Response
-             $rtrn['success'] = 1;
-             $rtrn['message'] = 'Uploaded Successfully!';
+        $rtrn['success'] = 1;
+        $rtrn['message'] = 'Uploaded Successfully!';
 
-             $dataRow['GUID'] = $GUID;
-             $dataRow['ActivityGUID'] = $ActivityGUID;
-             $dataRow['Description'] = $description;
-             $dataRow['Directory'] = public_path();
-             $dataRow['FileName'] = $filename;
-             $dataRow['FilePath'] = $filepath;
+        $dataRow['GUID'] = $GUID;
+        $dataRow['ActivityGUID'] = $ActivityGUID;
+        $dataRow['Description'] = $description;
+        $dataRow['Directory'] = public_path();
+        $dataRow['FileName'] = $filename;
+        $dataRow['FilePath'] = $filepath;
              // $data['extension'] = $extension;
-             $dataRow['FileSizeInKB'] = $filesize;
-             $dataRow['CreatedBy'] = $UserName;
-             $dataRow['CreatedDate'] = $now->format('Y-m-d H:i:s');
+        $dataRow['FileSizeInKB'] = $filesize;
+        $dataRow['CreatedBy'] = $UserName;
+        $dataRow['CreatedDate'] = $now->format('Y-m-d H:i:s');
 
 
-             DB::table('projectactivityattachment')
-                ->where('ID','=', $id)
-                ->where('ActivityGUID','=', $ActivityGUID)
-                ->where('Description','=', $description)
-                ->update($dataRow);
-         }else{
+        DB::table('projectactivityattachment')
+        ->where('ID','=', $id)
+        ->where('ActivityGUID','=', $ActivityGUID)
+        ->where('Description','=', $description)
+        ->update($dataRow);
+    }else{
              // Response
-             $rtrn['success'] = 2;
-             $rtrn['message'] = 'File not uploaded.'; 
-         }
-      }
-      return response()->json($rtrn);
+       $rtrn['success'] = 2;
+       $rtrn['message'] = 'File not uploaded.'; 
+   }
+}
+return response()->json($rtrn);
+}
+
+
+Public function ECCDraftDataAdmin(Request $req)
+{
+    $Template = $req['Template'];
+    $ApplicationType  = $req['ApplicationType'];
+
+    $draft = ECCDraft::where('ecc_draft.Template', $Template)
+    ->where('ecc_draft.Type', $ApplicationType)
+    ->leftJoin('environmental_management', function ($join) {
+        $join->on('ecc_draft.Template', 'environmental_management.Template');
+
+        $join->on('ecc_draft.Type', 'environmental_management.Type');
+    })
+    ->first();
+
+
+    return $draft;
+}
+
+public function ECCDraftCertficateAdmin(Request $req)
+{
+    $Template = $req['Template'];
+    $ApplicationType = $req['ApplicationType'];
+
+    $draft = ECCDraft::where('ecc_draft.Template', $Template)
+    ->where('ecc_draft.Type', $ApplicationType)
+    ->leftJoin('environmental_management', function ($join) {
+        $join->on('ecc_draft.Template', 'environmental_management.Template');
+
+        $join->on('ecc_draft.Type', 'environmental_management.Type');
+    })
+    ->first();
+    
+    return view('secured.admin.ecc_preview', compact('draft', 'Template', 'ApplicationType'));
+}
+
+public function PageSaveAdmin(Request $req)
+{
+    
+    $Template = $req['Template'];
+    $ApplicationType = $req['ApplicationType'];
+    $Page = $req['Page'];
+
+    if($Page == 1){
+
+        $Content = $req['content'];
+
+        $ECC = DB::table('ecc_draft')->where('Template','=', $Template)
+        ->where('Type','=', $ApplicationType)->first();
+
+        if(!$ECC){
+            DB::table('ecc_draft')->insert([
+                'Template' => $Template,
+                'Type' => $ApplicationType,
+                'Body' => $Content,
+            ]);
+        } else {
+            DB::table('ecc_draft')
+            ->where('Template','=', $Template)
+            ->where('Type','=', $ApplicationType)
+            ->update([
+                'Body' => $Content,
+            ]);
+        }
+
+        
+    } else if($Page == 2){
+
+        $ThisIsToCertify = $req['ThisIsToCertify'];
+        $ProjectDescription = $req['ProjectDescription'];
+        $ThisCertificateIsIssued = $req['ThisCertificateIsIssued'];
+
+        DB::table('ecc_draft')
+        ->where('Template','=', $Template)
+        ->where('Type','=', $ApplicationType)
+        ->update([
+            'ThisIsToCertify' => $ThisIsToCertify,
+            'ProjectDescription' => $ProjectDescription,
+            'ThisCertificateIsIssued' => $ThisCertificateIsIssued,
+        ]);
+
+    } else if($Page == 3) {
+        $SwornAccountabilityStatement = $req['SwornAccountabilityStatement'];
+
+        DB::table('ecc_draft')
+        ->where('Template','=', $Template)
+        ->where('Type','=', $ApplicationType)
+        ->update([
+            'SwornAccountabilityStatement' => $SwornAccountabilityStatement,
+        ]);
+    } else if($Page == 4) {
+        $ConstructionPhase = $req['ConstructionPhase'];
+        $OperationPhase = $req['OperationPhase'];
+
+        $EM = DB::table('environmental_management')->where('Template','=', $Template)
+        ->where('Type','=', $ApplicationType)->first();
+
+        if(!$EM){
+            DB::table('environmental_management')->insert([
+                'Template' => $Template,
+                'Type' => $ApplicationType,
+                'ConstructionPhase' => $ConstructionPhase,
+                'OperationPhase' => $OperationPhase,
+            ]);
+        } else {
+            DB::table('environmental_management')
+            ->where('Template','=', $Template)
+            ->where('Type','=', $ApplicationType)
+            ->update([
+                'ConstructionPhase' => $ConstructionPhase,
+                'OperationPhase' => $OperationPhase,
+            ]);
+
+        }
+        
+    } else if($Page == 5) {
+        $GeneralConditions = $req['GeneralConditions'];
+
+        DB::table('ecc_draft')
+        ->where('Template','=', $Template)
+        ->where('Type','=', $ApplicationType)
+        ->update([
+            'GeneralConditions' => $GeneralConditions,
+        ]);
+    } else if($Page == 6) {
+        $Restrictions = $req['Restrictions'];
+
+        DB::table('ecc_draft')
+        ->where('Template','=', $Template)
+        ->where('Type','=', $ApplicationType)
+        ->update([
+            'Restrictions' => $Restrictions,
+        ]);
+    } else if($Page == 7) {
+        $PAPT = $req['PAPT'];
+
+        DB::table('ecc_draft')
+        ->where('Template','=', $Template)
+        ->where('Type','=', $ApplicationType)
+        ->update([
+            'PAPT' => $PAPT,
+        ]);
     }
 
     
 
+}
 }

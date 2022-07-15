@@ -77,6 +77,7 @@
       <h2 class="page-header">
         <div class="box-header with-border" style="background-color:#106A9A; color:White; padding:10px;">
           <h3 class="box-title" style="font-weight:bold;">ECC DRAFT CERTIFICATE</h3>
+          <button type="button" class="btn btn-default pull-right" id="preview-all-page"><i class="fa fa-fw fa-file-pdf-o"></i>PREVIEW FILE</button>
         </div>
       </h2>
 
@@ -221,11 +222,6 @@
                         <p class="MsoListParagraph" style="margin-left: 18.0pt; text-align: justify; text-indent: -18.0pt; mso-list: l0 level1 lfo1;"><!-- [if !supportLists]--><strong><span lang="EN-US" style="font-size: 11.0pt; font-family: 'Bookman Old Style',serif; mso-fareast-font-family: 'Bookman Old Style'; mso-bidi-font-family: 'Bookman Old Style';"><span style="mso-list: Ignore;">A.<span style="font: 7.0pt 'Times New Roman';">&nbsp;&nbsp; </span></span></span></strong><!--[endif]--><strong><span lang="EN-US" style="font-size: 11.0pt; font-family: 'Bookman Old Style',serif; color: black; mso-color-alt: windowtext;">Construction Phase</span></strong></p>
                       </td>
                     </tr>
-                    <tr style="mso-yfti-irow: 2; mso-yfti-lastrow: yes;">
-                      <td style="width: 820.688px; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; border-left: 1pt solid windowtext; border-image: initial; border-top: none; background: rgb(208, 206, 206); padding: 0cm 5.4pt;" colspan="3" valign="top">
-                        <p class="MsoNormal" style="margin-bottom: 0cm; line-height: normal;"><span lang="EN-US" style="font-family: 'Bookman Old Style', serif; color: black; font-size: 10pt;">Site Development/Site Clearing</span></p>
-                      </td>
-                    </tr>
                   </tbody>
                 </table>
                 <!-- <div align="center">
@@ -251,16 +247,11 @@
                   <tbody>
                     <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes;">
                       <td style="width: 474.65pt; border: solid; background: rgb(180, 198, 231); padding: 0cm 5.4pt;" valign="top" width="633">
-                        <p class="MsoListParagraph" style="margin-left: 18.0pt; text-indent: -18.0pt; mso-list: l0 level1 lfo1;"><!-- [if !supportLists]--><span lang="EN-US" style="font-size: 11.0pt; font-family: 'Bookman Old Style',serif; mso-fareast-font-family: 'Bookman Old Style'; mso-bidi-font-family: 'Bookman Old Style'; mso-bidi-font-weight: bold; mso-bidi-font-style: italic;"><span style="mso-list: Ignore;">A.<span style="font: 7.0pt 'Times New Roman';">&nbsp;&nbsp; </span></span></span><!--[endif]--><span lang="EN-US" style="font-size: 11.0pt; font-family: 'Bookman Old Style',serif; color: black; mso-color-alt: windowtext; mso-bidi-font-weight: bold; mso-bidi-font-style: italic;">Operation Phase</span></p>
-                           </td>
-                           </tr>
-                           <tr style="mso-yfti-irow: 1; mso-yfti-lastrow: yes;">
-                           <td style="width: 474.65pt; border-width: initial; border-style: none solid solid; border-color: initial; border-image: initial; background: rgb(208, 206, 206); padding: 0cm 5.4pt;" valign="top" width="633">
-                           <p class="MsoNormal" style="margin-bottom: 0cm; margin-top: 0cm; mso-margin-bottom-alt: 12.75pt; mso-margin-top-alt: 0cm; mso-add-space: auto; line-height: normal;"><span lang="EN-US" style="font-family: 'Bookman Old Style',serif; mso-fareast-font-family: 'Times New Roman'; mso-bidi-font-family: 'Times New Roman'; color: black; mso-color-alt: windowtext;">Operation and Maintenance of the Main and Support Facilities</span></p>
-                           </td>
-                           </tr>
-                           </tbody>
-                           </table>
+                        <p class="MsoListParagraph" style="margin-left: 18.0pt; text-indent: -18.0pt; mso-list: l0 level1 lfo1;"><!-- [if !supportLists]--><span lang="EN-US" style="font-size: 11.0pt; font-family: 'Bookman Old Style',serif; mso-fareast-font-family: 'Bookman Old Style'; mso-bidi-font-family: 'Bookman Old Style'; mso-bidi-font-weight: bold; mso-bidi-font-style: italic;"><span style="mso-list: Ignore;">A.<span style="font: 7.0pt 'Times New Roman';">&nbsp;&nbsp; </span></span></span><!--[endif]--><span lang="EN-US" style="font-size: 11.0pt; font-family: 'Bookman Old Style',serif; color: black; mso-color-alt: windowtext; mso-bidi-font-weight: bold; mso-bidi-font-style: italic;">Operational Phase</span></p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
                 <div id="operation-phase-editable" style="font-size: 12.0pt; font-family: 'Bookman Old Style',serif; mso-fareast-font-family: 'Times New Roman';"></div>
               </center>
               <br>
@@ -334,13 +325,13 @@
                     <li><a href="#tab_5" data-toggle="tab">General Conditions</a></li>
                     <li><a href="#tab_6" data-toggle="tab">Restrictions</a></li>
                     <li><a href="#tab_7" data-toggle="tab">Project Assessment Planning Tool</a></li>
-                    <li class="pull-right"><button type="button" class="btn btn-default pull-right" id="preview-all-page"><i class="fa fa-fw fa-eye"></i>ALL PREVIEW</button></li>
+                    <!-- <li class="pull-right"></li> -->
                   </ul>
                   <div class="tab-content">
                     <!--FIRST TAB EDITABLE-->
                     <div class="tab-pane active" id="tab_1"><br>
                       <button type="button" class="btn btn-default pull-right" id="preview-first-page"><i class="fa fa-fw fa-eye"></i> Preview</button>
-                      <button type="button" class="btn btn-default pull-right" id="first-page"><i class="fa fa-save"></i> Save</button>                      <br><br>
+                      <button type="button" class="btn btn-default pull-right" id="first-page"><i class="fa fa-save"></i> Save</button> <br><br>
                       <div class="box-body">
                         <br>
                         <div class="form-group">
@@ -359,6 +350,7 @@
 
                     <div class="tab-pane" id="tab_2"><br>
                     <!--SECOND TAB EDITABLE-->
+                      
                       <button type="button" class="btn btn-default pull-right" id="preview-second-page"><i class="fa fa-fw fa-eye"></i> Preview</button>
                       <button type="submit" class="btn btn-default pull-right" id="second-page"><i class="fa fa-save"></i> Save</button>
                       <br><br>
@@ -401,6 +393,7 @@
 
                     <div class="tab-pane" id="tab_3"><br>
                     <!--THIRD TAB EDITABLE-->
+                    
                     <button type="button" class="btn btn-default pull-right" id="preview-third-page"><i class="fa fa-fw fa-eye"></i> Preview</button>
                     <button type="submit" class="btn btn-default pull-right" id="third-page"><i class="fa fa-save"></i> Save</button>
                     <br><br>
@@ -445,6 +438,7 @@
                     
                     <div class="tab-pane" id="tab_4"><br>
                     <!--FOURTH TAB EDITABLE-->
+                    
                     <button type="button" class="btn btn-default pull-right" id="preview-fourth-page"><i class="fa fa-fw fa-eye"></i> Preview</button>
                     <button type="submit" class="btn btn-default pull-right" id="fourth-page"><i class="fa fa-save"></i> Save</button>
                     <br><br>
@@ -491,11 +485,6 @@
                                   <p class="MsoListParagraph" style="margin-left: 18.0pt; text-align: justify; text-indent: -18.0pt; mso-list: l0 level1 lfo1;"><!-- [if !supportLists]--><strong><span lang="EN-US" style="font-size: 11.0pt; font-family: 'Bookman Old Style',serif; mso-fareast-font-family: 'Bookman Old Style'; mso-bidi-font-family: 'Bookman Old Style';"><span style="mso-list: Ignore;">A.<span style="font: 7.0pt 'Times New Roman';">&nbsp;&nbsp; </span></span></span></strong><!--[endif]--><strong><span lang="EN-US" style="font-size: 11.0pt; font-family: 'Bookman Old Style',serif; color: black; mso-color-alt: windowtext;">Construction Phase</span></strong></p>
                                 </td>
                               </tr>
-                              <tr style="mso-yfti-irow: 2; mso-yfti-lastrow: yes;">
-                                <td style="width: 820.688px; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; border-left: 1pt solid windowtext; border-image: initial; border-top: none; background: rgb(208, 206, 206); padding: 0cm 5.4pt;" colspan="3" valign="top">
-                                  <p class="MsoNormal" style="margin-bottom: 0cm; line-height: normal;"><span lang="EN-US" style="font-family: 'Bookman Old Style', serif; color: black; font-size: 10pt;">Site Development/Site Clearing</span></p>
-                                </td>
-                              </tr>
                             </tbody>
                           </table>
                         </center>
@@ -512,11 +501,6 @@
                            <p class="MsoListParagraph" style="margin-left: 18.0pt; text-indent: -18.0pt; mso-list: l0 level1 lfo1;"><!-- [if !supportLists]--><span lang="EN-US" style="font-size: 11.0pt; font-family: 'Bookman Old Style',serif; mso-fareast-font-family: 'Bookman Old Style'; mso-bidi-font-family: 'Bookman Old Style'; mso-bidi-font-weight: bold; mso-bidi-font-style: italic;"><span style="mso-list: Ignore;">A.<span style="font: 7.0pt 'Times New Roman';">&nbsp;&nbsp; </span></span></span><!--[endif]--><span lang="EN-US" style="font-size: 11.0pt; font-family: 'Bookman Old Style',serif; color: black; mso-color-alt: windowtext; mso-bidi-font-weight: bold; mso-bidi-font-style: italic;">Operation Phase</span></p>
                            </td>
                            </tr>
-                           <tr style="mso-yfti-irow: 1; mso-yfti-lastrow: yes;">
-                           <td style="width: 474.65pt; border-width: initial; border-style: none solid solid; border-color: initial; border-image: initial; background: rgb(208, 206, 206); padding: 0cm 5.4pt;" valign="top" width="633">
-                           <p class="MsoNormal" style="margin-bottom: 0cm; margin-top: 0cm; mso-margin-bottom-alt: 12.75pt; mso-margin-top-alt: 0cm; mso-add-space: auto; line-height: normal;"><span lang="EN-US" style="font-family: 'Bookman Old Style',serif; mso-fareast-font-family: 'Times New Roman'; mso-bidi-font-family: 'Times New Roman'; color: black; mso-color-alt: windowtext;">Operation and Maintenance of the Main and Support Facilities</span></p>
-                           </td>
-                           </tr>
                            </tbody>
                            </table>
                         </center>
@@ -527,6 +511,7 @@
                   </div>
                       <div class="tab-pane" id="tab_5">
                         <!--FIFTH TAB EDITABLE-->
+                        
                         <button type="button" class="btn btn-default pull-right" id="preview-fifth-page"><i class="fa fa-fw fa-eye"></i> Preview</button>
                         <button type="button" class="btn btn-default pull-right" id="fifth-page"><i class="fa fa-save"></i> Save</button>
                         <br><br>
@@ -543,6 +528,7 @@
                       </div>
                       <div class="tab-pane" id="tab_6">
                         <!--FIFTH TAB EDITABLE-->
+                        
                         <button type="button" class="btn btn-default pull-right" id="preview-sixth-page"><i class="fa fa-fw fa-eye"></i> Preview</button>
                         <button type="button" class="btn btn-default pull-right" id="sixth-page"><i class="fa fa-save"></i> Save</button>
                         <br><br>
@@ -559,6 +545,7 @@
                       </div>
                       <div class="tab-pane" id="tab_7">
                         <!--FIFTH TAB EDITABLE-->
+                        
                         <button type="button" class="btn btn-default pull-right" id="preview-seventh-page"><i class="fa fa-fw fa-eye"></i> Preview</button>
                         <button type="button" class="btn btn-default pull-right" id="seventh-page"><i class="fa fa-save"></i> Save</button>
                         <br><br>
@@ -657,6 +644,7 @@
   noneditable_noneditable_class: "mceNonEditable",
   toolbar_mode: 'sliding',
   contextmenu: "link image imagetools table",
+  nonbreaking_force_tab: true
  });
 
 var ProjectGUID = "{{ $draft->ProjectGUID}}";

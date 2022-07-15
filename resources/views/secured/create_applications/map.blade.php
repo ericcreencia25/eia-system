@@ -27,37 +27,37 @@
     $.ajax({
       url: "{{route('getGeoTable')}}",
       
-        type: 'GET',
-        success: function(response){
+      type: 'GET',
+      success: function(response){
 
-          $.each(response, function(index, value ) {
+        $.each(response, function(index, value ) {
 
-            if(value[0] == Area){
-              areaType = value[1];
-              arr.push([parseFloat(value[4]) , parseFloat(value[5]) ]);
-            }
+          if(value[0] == Area){
+            areaType = value[1];
+            arr.push([parseFloat(value[4]) , parseFloat(value[5]) ]);
+          }
 
-            arr1.push([parseFloat(value[4]) , parseFloat(value[5]) ]);
-          });
+          arr1.push([parseFloat(value[4]) , parseFloat(value[5]) ]);
+        });
 
-          var centerPoint = getCenterPoint(arr1);
+        var centerPoint = getCenterPoint(arr1);
 
-          var map = L.map('map').setView(centerPoint, 18);
-          L.tileLayer('https://maps/tilehosting.com/styles/streets/{z}/{x}/{y}.png?key=HfiQgsMsSnorjEs2Sxek', {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-            maxZoom: 21,
-            crossOrigin: true,
-          }).addTo(map);
+        var map = L.map('map').setView(centerPoint, 18);
+        L.tileLayer('https://maps/tilehosting.com/styles/streets/{z}/{x}/{y}.png?key=HfiQgsMsSnorjEs2Sxek', {
+          attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+          maxZoom: 21,
+          crossOrigin: true,
+        }).addTo(map);
 
 
 
-          var polygon = L.polygon(
-            arr
-            ).addTo(map).bindPopup("I am a polygon.");
+        var polygon = L.polygon(
+          arr
+          ).addTo(map).bindPopup("I am a polygon.");
 
-          polygon.bindPopup("Area " + Area + ': ' + areaType).openPopup();
-          
-          var popup = L.popup();
+        polygon.bindPopup("Area " + Area + ': ' + areaType).openPopup();
+        
+        var popup = L.popup();
 
           // map.on("click", function(event) {
           //   popup
@@ -89,51 +89,51 @@
 
   function successFunction(position) 
   {
-      var lat = position.coords.latitude;
-      var long = position.coords.longitude;
+    var lat = position.coords.latitude;
+    var long = position.coords.longitude;
 
-      var container = L.DomUtil.get('map');
+    var container = L.DomUtil.get('map');
 
-      if(container != null){
-        container._leaflet_id = null;
-      } 
+    if(container != null){
+      container._leaflet_id = null;
+    } 
 
-      var map = L.map('map').setView([lat, long], 19);
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        maxZoom: 19,
-        crossOrigin: true,
-      }).addTo(map);
+    var map = L.map('map').setView([lat, long], 19);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+      crossOrigin: true,
+    }).addTo(map);
 
 
-      var popup = L.popup();
+    var popup = L.popup();
 
-      var marker = L.marker([lat, long]).addTo(map);
-          marker.bindPopup("Your current location: " + lat + ', ' + long).openPopup();
+    var marker = L.marker([lat, long]).addTo(map);
+    marker.bindPopup("Your current location: " + lat + ', ' + long).openPopup();
 
-          map.on("click", function(event) {
+    map.on("click", function(event) {
 
-            var lat = event.latlng.lat;
-            var lng = event.latlng.lng;
+      var lat = event.latlng.lat;
+      var lng = event.latlng.lng;
 
-            $("#deci_lat").val(lat);
-            $("#deci_long").val(lng);
+      $("#deci_lat").val(lat);
+      $("#deci_long").val(lng);
 
-            popup
-              .setLatLng(event.latlng)
-              .setContent("You clicked the map at " + event.latlng.toString())
-              .openOn(map);
-            });
+      popup
+      .setLatLng(event.latlng)
+      .setContent("You clicked the map at " + event.latlng.toString())
+      .openOn(map);
+    });
 
-          setTimeout(function(){ map.invalidateSize()}, 400);
+    setTimeout(function(){ map.invalidateSize()}, 400);
   }
 
   function errorFunction(position) 
   {
-      alert('Error while getting your location!');
+    alert('Error while getting your location!');
   }
-    
-  </script>
+  
+</script>
 
 
 <!-- </html> -->

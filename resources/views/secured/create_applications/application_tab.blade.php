@@ -3,10 +3,10 @@
 @extends('layouts.adminlte.default.layout')
 
 @section('header')
-    <section class="content-header">
-        <h1 class="hidden-sm">
-        </h1>
-      </section>
+<section class="content-header">
+  <h1 class="hidden-sm">
+  </h1>
+</section>
 @stop
 
 @section('content')

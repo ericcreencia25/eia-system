@@ -17,17 +17,17 @@
       padding: 15px;
       background: white;
       color: black;
-       border: 5px solid gold;
-       font-family: sans-serif;
-       font-size: 1.2em;
+      border: 5px solid gold;
+      font-family: sans-serif;
+      font-size: 1.2em;
     }
     #addButton {
       padding: 15px;
       background: white;
       color: black;
-       border: 5px solid gold;
-       font-family: sans-serif;
-       font-size: 1.2em;
+      border: 5px solid gold;
+      font-family: sans-serif;
+      font-size: 1.2em;
     }
   </style>
   <link rel="stylesheet" href="../../adminlte/bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -51,27 +51,27 @@
 
   <link rel="stylesheet" href="../../adminlte/dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
-       folder instead of downloading all of them to reduce the load. -->
-  <link rel="stylesheet" href="../../adminlte/dist/css/skins/_all-skins.min.css">
+   folder instead of downloading all of them to reduce the load. -->
+   <link rel="stylesheet" href="../../adminlte/dist/css/skins/_all-skins.min.css">
 
-  <!-- Google Font -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+   <!-- Google Font -->
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 
-  <link rel="stylesheet" href="https://js.arcgis.com/4.11/esri/css/main.css">
-  <script src="https://js.arcgis.com/4.11/"></script>
+   <link rel="stylesheet" href="https://js.arcgis.com/4.11/esri/css/main.css">
+   <script src="https://js.arcgis.com/4.11/"></script>
 
-  <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
-  <!-- Bootstrap 3.3.7 -->
-  <script src="../../adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+   <script src="../../adminlte/bower_components/jquery/dist/jquery.min.js"></script>
+   <!-- Bootstrap 3.3.7 -->
+   <script src="../../adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
-  <!-- AdminLTE App -->
-  <script src="../../adminlte/dist/js/adminlte.min.js"></script>
-  <!-- AdminLTE for demo purposes -->
-  <script src="../../adminlte/dist/js/demo.js"></script>
-  
-  <script>
+   <!-- AdminLTE App -->
+   <script src="../../adminlte/dist/js/adminlte.min.js"></script>
+   <!-- AdminLTE for demo purposes -->
+   <script src="../../adminlte/dist/js/demo.js"></script>
+   
+   <script>
     var data = localStorage.getItem("ReqStorage");
     var ReqStorage = data ? JSON.parse(data) : [];
     var arrayPoly = [];
@@ -84,9 +84,9 @@
     var NewGUID=arr[1];
 
     var stored = localStorage.getItem("ReqStorage");
-        stored = JSON.parse(stored || '[]');
-        ReqStorage.concat(stored);
-        localStorage.setItem("ReqStorage", JSON.stringify(ReqStorage));
+    stored = JSON.parse(stored || '[]');
+    ReqStorage.concat(stored);
+    localStorage.setItem("ReqStorage", JSON.stringify(ReqStorage));
 
     if(stored.length > 0){
       var description = stored[0]['description'];
@@ -164,17 +164,17 @@
     }
     
     require([
-        "esri/tasks/Locator",
-        "esri/Map",
-        "esri/views/MapView",
-        "esri/Graphic",
-        "esri/layers/GraphicsLayer"
-    ], function(Locator, Map, MapView, Graphic, GraphicsLayer) {
+      "esri/tasks/Locator",
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/Graphic",
+      "esri/layers/GraphicsLayer"
+      ], function(Locator, Map, MapView, Graphic, GraphicsLayer) {
 
       // Set up a locator task using the world geocoding service
       var locatorTask = new Locator({
         url:
-          "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"
+        "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"
       });
 
       var map = new Map({
@@ -190,8 +190,8 @@
         zoom: 15
       });
       
-       view.ui.add("instruction", "bottom-left");
-       view.ui.add("addButton", "top-right");
+      view.ui.add("instruction", "bottom-left");
+      view.ui.add("addButton", "top-right");
       
       const graphicsLayer = new GraphicsLayer();
       map.add(graphicsLayer);   
@@ -219,7 +219,7 @@
       }
 
       var simpleLineSymbol = {
-         type: "simple-line",
+       type: "simple-line",
          color: [226, 119, 40], // orange
          width: 2
        };
@@ -227,9 +227,9 @@
        var polyline = {
          type: "polyline",
          paths: [
-           [-118.821527826096, 34.0139576938577],
-           [-118.814893761649, 34.0080602407843],
-           [-118.808878330345, 34.0016642996246]
+         [-118.821527826096, 34.0139576938577],
+         [-118.814893761649, 34.0080602407843],
+         [-118.808878330345, 34.0016642996246]
          ]
        };
 
@@ -315,29 +315,29 @@
   </div>
   <div id="addButton">
     <table cellspacing="0" cellpadding="3" style="background-color:#C3D1E6;  ">
-        <tbody>
-          <tr style="font-size:7pt">
-            <td colspan="2">Clik icon to Add Area</td>
-            <td style="padding-left:30px;">Selected Area</td>
-            <td style="padding-left:30px;"></td>
-          </tr>
-          <tr>
-            <td> <input type="image" name="" id="" title="Click to add a polygon" src="../img/polygon.PNG" onclick="addSelectedArea('polygon')" style="background-color:White;width:30px;"> 
-            </td>
-            <td> 
-              <input type="image" name="" id="" title="Click to add a line" src="../img/line.PNG" onclick="addSelectedArea('line')" style="background-color:White;width:30px;">
-            </td>
-            <td>
-              <select name="" id="selected_area" style="width:50px;">
-                <option selected="selected" value=""></option>
-              </select>
-            </td>
-            <td>
-              <input type="submit" name="" class="btn btn-block btn-flat btn-success btn-sm" value="Add" id="add_point" title="Click to add point">
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <tbody>
+        <tr style="font-size:7pt">
+          <td colspan="2">Clik icon to Add Area</td>
+          <td style="padding-left:30px;">Selected Area</td>
+          <td style="padding-left:30px;"></td>
+        </tr>
+        <tr>
+          <td> <input type="image" name="" id="" title="Click to add a polygon" src="../img/polygon.PNG" onclick="addSelectedArea('polygon')" style="background-color:White;width:30px;"> 
+          </td>
+          <td> 
+            <input type="image" name="" id="" title="Click to add a line" src="../img/line.PNG" onclick="addSelectedArea('line')" style="background-color:White;width:30px;">
+          </td>
+          <td>
+            <select name="" id="selected_area" style="width:50px;">
+              <option selected="selected" value=""></option>
+            </select>
+          </td>
+          <td>
+            <input type="submit" name="" class="btn btn-block btn-flat btn-success btn-sm" value="Add" id="add_point" title="Click to add point">
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </body>
 
@@ -364,13 +364,13 @@
   });
 
   ///append area in dropdown
-function addSelectedArea(Area){
-  var counts = $('#selected_area option:last-child').text();
+  function addSelectedArea(Area){
+    var counts = $('#selected_area option:last-child').text();
 
-  if(counts == ''){counts = 0}
+    if(counts == ''){counts = 0}
 
-  var counter = parseInt(counts) + 1;
-  var message = "Add a " + Area + "?";
+      var counter = parseInt(counts) + 1;
+    var message = "Add a " + Area + "?";
 
   // var lastValue = $('#selected_area option:last-child').text();
   // console.log(lastValue);

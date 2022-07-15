@@ -20,12 +20,12 @@
 
 <script>
 
-$(document).ready(function(){
-  $('#check_step_3').on("click", function() {
-    var description = $("#description_input").val();
+  $(document).ready(function(){
+    $('#check_step_3').on("click", function() {
+      var description = $("#description_input").val();
 
 
-    if(description != ''){
+      if(description != ''){
       // Pace.on('done', function() {
         $.ajax({
           url: "{{route('ThirdStep')}}",
@@ -42,32 +42,32 @@ $(document).ready(function(){
 
             $('#overlay').fadeOut(2000, () => {
 
-            Swal.fire({
-              title: 'Step 3 is already saved in the session.',
-              icon: 'success',
-              showCancelButton: false,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Confirm'
-            }).then((result) => {
-              if (result.dismiss || result.isConfirmed) {
-                $("#step_3").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+              Swal.fire({
+                title: 'Step 3 is already saved in the session.',
+                icon: 'success',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+              }).then((result) => {
+                if (result.dismiss || result.isConfirmed) {
+                  $("#step_3").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 
-                var next = $('#mytabs li.active').next()
-                next.length?
-                next.find('a').click():
-                $('#myTab li a')[3].click();
+                  var next = $('#mytabs li.active').next()
+                  next.length?
+                  next.find('a').click():
+                  $('#myTab li a')[3].click();
 
 
 
-                $("#li_step_4").attr("class", "able");
-                $("#step_4").attr("data-toggle", "tab");
+                  $("#li_step_4").attr("class", "able");
+                  $("#step_4").attr("data-toggle", "tab");
 
-                location.reload();
-              }
-            })
+                  location.reload();
+                }
+              })
 
-          });
+            });
 
           }
         });
@@ -97,16 +97,16 @@ $(document).ready(function(){
     }
   });
 
-  var step3_check = "{{ Session::has('step_3') ? Session::get('step_3')['third'] : 'N/A' }}";
+    var step3_check = "{{ Session::has('step_3') ? Session::get('step_3')['third'] : 'N/A' }}";
 
-  if(step3_check == 1){
-    $("#step_3").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+    if(step3_check == 1){
+      $("#step_3").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 
-    $("#li_step_4").attr("class", "able");
-    $("#step_4").attr("data-toggle", "tab");
-  } else if (step3_check == 0){
-    $("#step_3").css({"background-color":"#dd4b39", "color": "#ffffff"});
-  } else if (step3_check == "N/A"){
+      $("#li_step_4").attr("class", "able");
+      $("#step_4").attr("data-toggle", "tab");
+    } else if (step3_check == 0){
+      $("#step_3").css({"background-color":"#dd4b39", "color": "#ffffff"});
+    } else if (step3_check == "N/A"){
     // $("#step_3").css({"background-color":"#fff", "color": "#444"});
   }
 });

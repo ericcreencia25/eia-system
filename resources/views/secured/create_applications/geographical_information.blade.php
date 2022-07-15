@@ -1,23 +1,23 @@
 <style>
-.pointer {cursor: pointer;}
+  .pointer {cursor: pointer;}
 
-.align-left {
-  text-align: left;
-}
+  .align-left {
+    text-align: left;
+  }
 
 </style>
 
 <div class="box-body">
   <div class="callout callout-default" style="background: #ccc; margin-bottom: 0px">
-  <div>
-    <button type="button" class="btn btn btn-primary pull-right" id="check_step_4">Confirm <i class="fa fa-fw fa-save"></i></button>
-  </div>
-  <h4><b>4. PROJECT GEOGRAPHICAL INFORMATION: 
+    <div>
+      <button type="button" class="btn btn btn-primary pull-right" id="check_step_4">Confirm <i class="fa fa-fw fa-save"></i></button>
+    </div>
+    <h4><b>4. PROJECT GEOGRAPHICAL INFORMATION: 
 
-    <span id="proceed_4"></span>
-  </b><br></h4>
-  <i>Select from the shape icon below to add the project area (triangle - for polygon area, Line icon - for bridge, roads etc). Click only once if you only have (1) project area. The project area number will appear in the list. If you have MORE THAN (1) project area, make sure you have selected the appropriate project area number from the list before adding the geo-coordinate (latitude and longitude). Please add the coordinates in sequence. You may have to pad/add '0' if the coordinate has fewer digits. For consistency purposes, please use the World Geodetic System 1984 (WGS84) Datum Convention. Mobile Phones and most online maps are using this convention by default.</i><br><br>
-</div>
+      <span id="proceed_4"></span>
+    </b><br></h4>
+    <i>Select from the shape icon below to add the project area (triangle - for polygon area, Line icon - for bridge, roads etc). Click only once if you only have (1) project area. The project area number will appear in the list. If you have MORE THAN (1) project area, make sure you have selected the appropriate project area number from the list before adding the geo-coordinate (latitude and longitude). Please add the coordinates in sequence. You may have to pad/add '0' if the coordinate has fewer digits. For consistency purposes, please use the World Geodetic System 1984 (WGS84) Datum Convention. Mobile Phones and most online maps are using this convention by default.</i><br><br>
+  </div>
   <div style="border:Solid 1px Silver;">
     <div style="  background-color:#C3D1E6; ">
       <table cellspacing="0" cellpadding="3" style="background-color:#C3D1E6;  ">
@@ -89,13 +89,13 @@
               </tbody>
             </table>
           </div> -->
-        <!-- </div> -->
+          <!-- </div> -->
+        </div>
       </div>
-    </div>
-    <div class="box">
-      <div  class="box-body">
-        <div class="col-md-12" style="padding-top: 10px">
-          <table class="table table-bordered" id="ProjectGeoCoordinatesTable" style="width: 100%">
+      <div class="box">
+        <div  class="box-body">
+          <div class="col-md-12" style="padding-top: 10px">
+            <table class="table table-bordered" id="ProjectGeoCoordinatesTable" style="width: 100%">
               <thead>
                 <th>Area</th>
                 <th>Type</th>
@@ -111,25 +111,25 @@
 
               </tbody>
             </table>
+          </div>
         </div>
       </div>
     </div>
+    @extends('secured.create_applications.map')
   </div>
-  @extends('secured.create_applications.map')
-</div>
-<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-<!-- <script type="text/javascript" src="https://unpkg.com/default-passive-events"></script> -->
+  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+  <!-- <script type="text/javascript" src="https://unpkg.com/default-passive-events"></script> -->
 
-<script>
-  var url=window.location.pathname;
-  var arr=url.split('/');
-  var NewGUID=arr[2];
-  let polygonCount = 0;
-  let lineCount = 0;
-  var coordinatesChecklist = [];
-  var hash = window.location.hash;
+  <script>
+    var url=window.location.pathname;
+    var arr=url.split('/');
+    var NewGUID=arr[2];
+    let polygonCount = 0;
+    let lineCount = 0;
+    var coordinatesChecklist = [];
+    var hash = window.location.hash;
 
-  $(document).ready(function() {
+    $(document).ready(function() {
 
     // $("#li_step_4").on('click', function() {
       
@@ -230,11 +230,11 @@
     } else if(step4_check == "N/A"){
       if (navigator.geolocation)
       {
-          navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
+        navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
       }
       else 
       {
-          alert('It seems like Geolocation, which is required for this page, is not enabled in your browser.');
+        alert('It seems like Geolocation, which is required for this page, is not enabled in your browser.');
       }
       // $("#step_4").css({"background-color":"#fff", "color": "#444"});
     }
@@ -255,9 +255,9 @@
       })
     });
 
-  var successMessage = [];
-  var errorMessage = [];
-  var text = '';
+    var successMessage = [];
+    var errorMessage = [];
+    var text = '';
 
   /// onclick of proceed: save to session
   $('#check_step_4').on("click", function() {
@@ -295,11 +295,11 @@ function addSelectedArea(Area){
         $("#selected_area").append('<option value='+ Area + '__' + response  +' >' +counter+'</option>');
 
         var area_append = "<tr class='row_"+ counter +"'>";
-            area_append += "<td>"+counter+"</td>";
-            area_append += '<td><button type="button" class="btn btn-default" id="map-view" data-toggle="modal" data-target="#modal-default"><img src="../img/globe.jpg" style="width:17px;" /></button></td>';
-            area_append += "</tr>";
+        area_append += "<td>"+counter+"</td>";
+        area_append += '<td><button type="button" class="btn btn-default" id="map-view" data-toggle="modal" data-target="#modal-default"><img src="../img/globe.jpg" style="width:17px;" /></button></td>';
+        area_append += "</tr>";
 
-            $("#geocoordinate_body_area").append(area_append);
+        $("#geocoordinate_body_area").append(area_append);
       }
     });
   }else{
@@ -368,10 +368,10 @@ function DDtoDMS(dec)
     var DMS = deg + '°' + min + "'" +  tempsec.toFixed(2);;
 
     return DMS;
-} 
+  } 
 
-function DMStoDD(dms)
-{
+  function DMStoDD(dms)
+  {
     // Converts DMS( Degrees / minutes / seconds )  to decimal format
     vars = dms.split("°");
     var deg = vars[0];
@@ -390,57 +390,57 @@ function DMStoDD(dms)
     var decimal = parseInt(deg) + parseFloat(decimal_point) ;
 
     return decimal
-} 
+  } 
 
-function RemoveArea(){
-  var message = 'Removing the selected project area will also delete its geo-coordinates. Do you want to continue?';
-  var selected_area = $('#selected_area option:selected').text();
-  var selected_area_val = $('#selected_area option:selected').val();
-  var deleteRow = '.row_' + selected_area;
-  
-  Swal.fire({
-    title: 'Are you sure?',
-    text: "Removing the selected project area will also delete its geo-coordinates. Do you want to continue?",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Confirm'
-  }).then((result) => {
-    if (result.dismiss || result.isConfirmed) {
-      $(deleteRow).remove();
-    $("#selected_area option[value='"+selected_area_val +"']").remove();
-    }
-  });
-}
+  function RemoveArea(){
+    var message = 'Removing the selected project area will also delete its geo-coordinates. Do you want to continue?';
+    var selected_area = $('#selected_area option:selected').text();
+    var selected_area_val = $('#selected_area option:selected').val();
+    var deleteRow = '.row_' + selected_area;
+    
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "Removing the selected project area will also delete its geo-coordinates. Do you want to continue?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Confirm'
+    }).then((result) => {
+      if (result.dismiss || result.isConfirmed) {
+        $(deleteRow).remove();
+        $("#selected_area option[value='"+selected_area_val +"']").remove();
+      }
+    });
+  }
 
-function clickMe(latitude, longitude)
-{
-  var coords = latitude + "," + longitude;
+  function clickMe(latitude, longitude)
+  {
+    var coords = latitude + "," + longitude;
 
-  var url = 'https://maps.google.com/maps?q='+ coords +'&z=18&ie=UTF8&iwloc=&output=embed';
-  var iframe = '<iframe id="googlemap"  src="'+url+'"width="1000" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>';
+    var url = 'https://maps.google.com/maps?q='+ coords +'&z=18&ie=UTF8&iwloc=&output=embed';
+    var iframe = '<iframe id="googlemap"  src="'+url+'"width="1000" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>';
 
-  Swal.fire({
-    html: iframe,
-    showCloseButton: true,
-    showCancelButton: false,
-    focusConfirm: false,
-    showConfirmButton: false,
-    width: 1100,
-  })
-}
+    Swal.fire({
+      html: iframe,
+      showCloseButton: true,
+      showCancelButton: false,
+      focusConfirm: false,
+      showConfirmButton: false,
+      width: 1100,
+    })
+  }
 
-function modalMessage(successMessage, errorMessage)
-{
-  var text = '';
+  function modalMessage(successMessage, errorMessage)
+  {
+    var text = '';
 
-  $.each(errorMessage, function(index, value ) {
-    text += '<div class="align-left"><b>Area:</b> <i>' + value['Area'] + '</i> | <b>Type:</b> <i>' + value['AreaType'] + '</i> | <i>invalid coordinates count</i><br></div>';
-  });
+    $.each(errorMessage, function(index, value ) {
+      text += '<div class="align-left"><b>Area:</b> <i>' + value['Area'] + '</i> | <b>Type:</b> <i>' + value['AreaType'] + '</i> | <i>invalid coordinates count</i><br></div>';
+    });
 
-  Swal.fire({
-    icon: 'error',
+    Swal.fire({
+      icon: 'error',
     // title: 'Oops...',
     html : text,
     text: 'Something went wrong!',
@@ -462,8 +462,8 @@ function whyDoIHaveThisIssue()
     title: '<strong>Information</strong>',
     icon: 'info',
     html:
-      '<b>Area Type</b>: <i>Polygon, needs 3 or more coordinates (Longitude, Latitude) </i><br>' +
-      '<b>Area Type</b>: <i>Line, needs 2 coordinates (Longitude, Latitude) </i>',
+    '<b>Area Type</b>: <i>Polygon, needs 3 or more coordinates (Longitude, Latitude) </i><br>' +
+    '<b>Area Type</b>: <i>Line, needs 2 coordinates (Longitude, Latitude) </i>',
     showCloseButton: false,
     showCancelButton: false
   })
@@ -514,34 +514,34 @@ function checkSucessErrorMessage()
         modalMessage(successMessage, errorMessage);
       }  else {
         Swal.fire({
-                icon: 'success',
-                title: 'Step 4 is already saved in the session.',
-                showDenyButton: false,
-                showCancelButton: false,
-                confirmButtonText: 'Confirm',
-              }).then((result) => {
-                /* Read more about isConfirmed, isDenied below */
-                if (result.dismiss || result.isConfirmed) {
-                  $("#step_4").css({"background-color":"#3c8dbc", "color": "#ffffff"});
+          icon: 'success',
+          title: 'Step 4 is already saved in the session.',
+          showDenyButton: false,
+          showCancelButton: false,
+          confirmButtonText: 'Confirm',
+        }).then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+          if (result.dismiss || result.isConfirmed) {
+            $("#step_4").css({"background-color":"#3c8dbc", "color": "#ffffff"});
 
-                  $('#myTab li a')[4].click();
-                  
-                  location.reload();
-                } else if (result.isDenied) {
-                  Swal.fire('Changes are not saved', '', 'info')
-                }
-              })
-            }
+            $('#myTab li a')[4].click();
+            
+            location.reload();
+          } else if (result.isDenied) {
+            Swal.fire('Changes are not saved', '', 'info')
           }
-        });
+        })
+      }
+    }
+  });
 }
 
 function proceedNextStep()
 {
   var data = $('#ProjectGeoCoordinatesTable').DataTable()
-      .rows()
-      .data()
-      .toArray();
+  .rows()
+  .data()
+  .toArray();
 
   const array_check = [];
 
@@ -554,9 +554,9 @@ function proceedNextStep()
       data: {
         data : data,
         fourth : 1,
-         _token: '{{csrf_token()}}',
-       },
-       success: function(response){
+        _token: '{{csrf_token()}}',
+      },
+      success: function(response){
         checkSucessErrorMessage();
       }
     });
@@ -638,10 +638,10 @@ function Maps()
         $("#deci_long").val(lng);
 
         popup
-            .setLatLng(event.latlng)
-            .setContent("You clicked the map at " + event.latlng.toString())
-            .openOn(map);
-          });
+        .setLatLng(event.latlng)
+        .setContent("You clicked the map at " + event.latlng.toString())
+        .openOn(map);
+      });
 
       const groupedData = response.reduce((acc, curr) => {
         (acc[curr[0]] = acc[curr[0]] || []).push(curr);

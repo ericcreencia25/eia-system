@@ -1,14 +1,7 @@
 @extends('layouts.adminlte.default.layout-admin-3')
-  
+
 
 @section('header')
-<!-- <section class="content-header">
-        <h1 class="hidden-sm">
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-cog"></i>Manage Credentials</a></li>
-        </ol>
-    </section> -->
 @stop
 
 
@@ -144,78 +137,78 @@
 
 
 <script>
-var UserOffice = "{{session('data')['UserOffice']}}";
-var UserName = "{{session('data')['UserName']}}";
-var UserRole = "{{session('data')['UserRole']}}";
+  var UserOffice = "{{session('data')['UserOffice']}}";
+  var UserName = "{{session('data')['UserName']}}";
+  var UserRole = "{{session('data')['UserRole']}}";
 
-$(function (){
-  Signatories();
+  $(function (){
+    Signatories();
 
-  $.ajax({
-    url: "{{route('getOffice')}}",
-    type: 'GET',
-    success: function(response){
-      $.each(response, function(index, value ) {
-        var option = "<option value='"+value['Location']+"'>"+value['Location']+"</option>";
-        $("#office").append(option); 
-      });
-    }
+    $.ajax({
+      url: "{{route('getOffice')}}",
+      type: 'GET',
+      success: function(response){
+        $.each(response, function(index, value ) {
+          var option = "<option value='"+value['Location']+"'>"+value['Location']+"</option>";
+          $("#office").append(option); 
+        });
+      }
+    });
+
   });
 
-});
+  function Signatories()
+  {
+    $('#Signatories').DataTable({
+      "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": false,
+      "autoWidth": false,
+      "responsive": true,
+      "destroy" : true,
+      lengthMenu: [100, 200],
+      ajax: {
+        "url": "{{route('getSignatories')}}",
+        "type": "GET",
+      },
+      columns: [
+      {data: 'Region', name: 'Region'},
+      {data: 'Address', name: 'Address'},
+      {data: 'EIAChief', name: 'EIAChief'},
+      {data: 'Director', name: 'Director'},
+      {data: 'Action', name: 'Action'},
+      ],
+      language: 
+      {
+        'loadingRecords': '&nbsp;',
+        'processing': '<div class="spinner"></div>Processing...'
+      }
+    });
+  }
 
-function Signatories()
-{
-  $('#Signatories').DataTable({
-    "paging": false,
-    "lengthChange": false,
-    "searching": false,
-    "ordering": true,
-    "info": false,
-    "autoWidth": false,
-    "responsive": true,
-    "destroy" : true,
-    lengthMenu: [100, 200],
-    ajax: {
-      "url": "{{route('getSignatories')}}",
-      "type": "GET",
-    },
-    columns: [
-    {data: 'Region', name: 'Region'},
-    {data: 'Address', name: 'Address'},
-    {data: 'EIAChief', name: 'EIAChief'},
-    {data: 'Director', name: 'Director'},
-    {data: 'Action', name: 'Action'},
-    ],
-    language: 
-    {
-      'loadingRecords': '&nbsp;',
-      'processing': '<div class="spinner"></div>Processing...'
-    }
-  });
-}
+  function regionalInfo(GUID)
+  {
+    $.ajax({
+      url: "{{route('getRegionalInformation')}}",
+      type: 'POST',
+      data: {
+        GUID : GUID,
+        _token: '{{csrf_token()}}' ,
+      },  
+      success: function(response){
+        $("#regional-title").html('Regional Information: ' + response['Region']);
+        $("#Address").val(response['Address']);
+        $("#TelephoneNo").val(response['TelephoneNo']);
+        $("#EmailAddress").val(response['EmailAddress']);
+        $("#Website").val(response['Website']);
+        $("#EIAChief").val(response['EIAChief']);        
+        $("#Director").val(response['Director']);
+        $("#Designation").val(response['Designation']);
+      }
+    });
 
-function regionalInfo(GUID)
-{
-  $.ajax({
-    url: "{{route('getRegionalInformation')}}",
-    type: 'POST',
-    data: {
-      GUID : GUID,
-      _token: '{{csrf_token()}}' ,
-    },  
-    success: function(response){
-      $("#regional-title").html('Regional Information: ' + response['Region']);
-      $("#Address").val(response['Address']);
-      $("#TelephoneNo").val(response['TelephoneNo']);
-      $("#EmailAddress").val(response['EmailAddress']);
-      $("#Website").val(response['Website']);
-      $("#EIAChief").val(response['EIAChief']);        
-      $("#Director").val(response['Director']);
-      $("#Designation").val(response['Designation']);
-    }
-  });
-
-  $("#RegionalInformation").modal('show');
-}
+    $("#RegionalInformation").modal('show');
+  }
 </script>
